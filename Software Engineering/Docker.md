@@ -1,0 +1,1 @@
+- Each Job in the CI pipeline described in the CI.yml spuns up a fresh Virtual Machine(VM) with its own OS so all jobs run in parallel with their own sequential steps like setting up services in docker containers and getting the environment ready for the main task of that job

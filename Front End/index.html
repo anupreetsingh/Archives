@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A demo page showcasing HTML structure, semantics, and form elements." />
+    <title>HTML Reference Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Inline CSS example from HTML.md */
+      .intro { font-weight: 500; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #333; padding: 0.5rem; }
+      th { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <!-- HTML comments: visible only in source; use for notes. -->
+
+    <header>
+      <h1>HTML Reference Demo</h1>
+      <p class="intro">This page demonstrates most HTML elements and semantics described in the reference.</p>
+      <nav>
+        <ul>
+          <li><a href="#structure">Structure</a></li>
+          <li><a href="#content">Content</a></li>
+          <li><a href="#media">Media</a></li>
+          <li><a href="#table">Table</a></li>
+          <li><a href="#form">Form</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="structure">
+        <h2>Document structure and semantics</h2>
+        <article>
+          <h3>Semantic elements</h3>
+          <p>
+            This page uses <strong>semantic elements</strong>: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>,
+            <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;figure&gt;</code>,
+            <code>&lt;aside&gt;</code>, and <code>&lt;footer&gt;</code>. They help with
+            <em>accessibility</em>, SEO, and maintainability.
+          </p>
+          <p>
+            Character entities: &lt; &gt; &amp; &quot; &nbsp; &copy; (e.g. &copy; 2025).
+          </p>
+        </article>
+      </section>
+
+      <section id="content">
+        <h2>Content elements</h2>
+        <article>
+          <h3>Headings and text</h3>
+          <p>
+            Use one <code>&lt;h1&gt;</code> per page, then <code>&lt;h2&gt;</code> for sections,
+            <code>&lt;h3&gt;</code> for subsections. <strong>Strong</strong> for importance,
+            <em>em</em> for emphasis.
+          </p>
+          <h4>Lists</h4>
+          <ul>
+            <li>Unordered list item one</li>
+            <li>Unordered list item two
+              <ul>
+                <li>Nested list item</li>
+              </ul>
+            </li>
+          </ul>
+          <ol>
+            <li>Ordered list step one</li>
+            <li>Ordered list step two</li>
+          </ol>
+          <p>
+            Links: <a href="https://example.com">Click here</a> or <a href="#form">Jump to form</a> (same-page).
+          </p>
+          <p>
+            Line breaks:<br>
+            can be added<br>
+            inside a paragraph.
+          </p>
+          <p>
+            <span>A <span>span</span> is a generic inline wrapper</span>; use with <abbr title="Cascading Style Sheets">CSS</abbr> for styling.
+          </p>
+          <blockquote>
+            Blockquote for quoted blocks of text from another source.
+          </blockquote>
+        </article>
+      </section>
+
+      <section id="media">
+        <h2>Media</h2>
+        <article>
+          <h3>Image</h3>
+          <figure>
+            <img src="https://i.pinimg.com/736x/01/81/58/0181581b2aaebf0ddfb4d7199582207b.jpg" alt="Bloodborne Poster from Etsy" />
+            <figcaption>Resident Evil Requiem Poster</figcaption>
+          </figure>
+          <h3>Video</h3>
+          <figure>
+            <iframe src="https://www.youtube.com/embed/_Tmh_OuslmE?si=WCW5zCmt808trwTn" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <figcaption>Requiem Speedrun Video with controls and Original Poster (thumbnail).</figcaption>
+          </figure>
+          <h3>Audio</h3>
+          <figure>
+            <audio src="https://www.w3schools.com/html/horse.mp3" controls>
+              <track kind="descriptions" src="" label="English" />
+              Your browser does not support the audio element.
+            </audio>
+            <figcaption>Troll Horse Audio with controls and Original Poster (thumbnail).</figcaption>
+          </figure>
+        </article>
+      </section>
+
+      <aside>
+        <h3>Aside</h3>
+        <p>Tangentially related content: sidebar, pull quotes, or ads. This is an <code>&lt;aside&gt;</code>.</p>
+      </aside>
+
+      <section id="table">
+        <h2>Tabular data</h2>
+        <table>
+          <caption>Example table: semantic elements and purpose</caption>
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>&lt;header&gt;</code></td>
+              <td>Introductory content or nav for the page or section.</td>
+            </tr>
+            <tr>
+              <td><code>&lt;nav&gt;</code></td>
+              <td>Navigation links.</td>
+            </tr>
+            <tr>
+              <td><code>&lt;main&gt;</code></td>
+              <td>Primary content; only one per page.</td>
+            </tr>
+            <tr>
+              <td><code>&lt;article&gt;</code></td>
+              <td>Self-contained content (e.g. blog post, product card).</td>
+            </tr>
+            <tr>
+              <td><code>&lt;footer&gt;</code></td>
+              <td>Footer for the page or section.</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">Table footer: optional summary or notes.</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section id="form">
+        <h2>Forms and input</h2>
+        <p>Forms collect data; controls with a <code>name</code> attribute are submitted. Use <code>method="get"</code> (URL query) or <code>method="post"</code> (request body).</p>
+        <form action="/submit" method="post">
+          <p>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required />
+          </p>
+          <p>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+          </p>
+          <p>
+            <label for="pwd">Password</label>
+            <input type="password" id="pwd" name="password" placeholder="••••••••" required />
+          </p>
+          <p>
+            <label for="tel">Phone</label>
+            <input type="tel" id="tel" name="phone" placeholder="+1 234 567 8900" />
+          </p>
+          <p>
+            <label for="url">Website</label>
+            <input type="url" id="url" name="website" placeholder="https://example.com" />
+          </p>
+          <p>
+            <label for="num">Number</label>
+            <input type="number" id="num" name="quantity" value="1" min="1" max="100" />
+          </p>
+          <p>
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" />
+          </p>
+          <p>
+            <label for="search">Search</label>
+            <input type="search" id="search" name="q" placeholder="Search..." />
+          </p>
+          <p>
+            <span>Options (radio, same name = one choice):</span><br>
+            <input type="radio" id="opt-a" name="choice" value="a" />
+            <label for="opt-a">Option A</label>
+
+            <input type="radio" id="opt-b" name="choice" value="b" />
+            <label for="opt-b">Option B</label>
+
+          </p>
+          <p>
+            <input type="checkbox" id="agree" name="agree" value="yes" required />
+            <label for="agree">I agree to the terms</label>
+          </p>
+          
+          <p>
+            <label style="padding: 24px;" for="file">File upload</label>
+            <input type="file" id="file" name="attachment" />
+          </p>
+          <p>
+            <input type="hidden" name="token" value="demo-hidden-value" />
+          </p>
+
+          <p>
+            <label for="msg">Message (textarea)</label>
+            <textarea id="msg" name="message" rows="4" cols="40" placeholder="Multi-line text here..." required></textarea>
+          </p>
+          <p>
+            <label for="country">Country (select)</label>
+            <select id="country" name="country" required>
+              <option value="">Choose...</option>
+              <option value="us">United States</option>
+              <option value="uk">United Kingdom</option>
+              <option value="ca">Canada</option>
+              <option value="in">India</option>
+            </select>
+          </p>
+        
+          <p>
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+            <button type="button">Custom (no submit)</button>
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <hr />
+
+    <footer>
+      <p>&copy; 2025 HTML Reference Demo. Links, contact, or legal info go in the <code>&lt;footer&gt;</code>.</p>
+    </footer>
+  </body>
+</html>
