@@ -4,7 +4,7 @@ A reference covering four key language dimensions:
 
 1. **Static vs Dynamic** typing  
 2. **Weak vs Strong** typing  
-3. **Procedural vs OOP**  
+3. **Procedural vs OOP vs Functional**  
 4. **Compiled vs Interpreted**
 
 ---

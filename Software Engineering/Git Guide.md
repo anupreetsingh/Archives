@@ -10,7 +10,7 @@
    - [1. Fork](#1-fork)
    - [2. Clone](#2-clone)
         - [Adding Remote](#adding-remote)
-   - [3. Stage](#3-stage)
+   - [3. Staging](#3-staging)
    - [4. Commit](#4-commit)
         - [Tag](#tag)
    - [5. Pushing](#5-pushing)
@@ -111,9 +111,11 @@ Another common remote to add is the original repo you forked from and set it is 
 git remote add upstream <parent-repo-url>
 ```
 
-### 3. Stage
+### 3. Staging
 
 Once you are done making changes to your project in an editor you need to add the files in their current state to the staging area(index) of the local repo. This process is called staging a file.
+
+Once an untracked file is staged with `git add`, it becomes tracked. After that, Git will notice later edits to that file and show them as `Changes not staged for commit` until you stage those edits too.
 
 It can be done in the following ways:
 
@@ -123,13 +125,19 @@ git add .             # stage all changes in current directory
 git add -A            # stage all changes in the entire local repo no matter which level of the directory you call it from
 ```
 
-By default the staging area is the same as the last commit(where HEAD points).
+**Staging Area/Index** is originally a copy of the commit that HEAD points to. When you add file to it, you are changing that copy. So you could have 3 different version of the same file:
 
-When you stage anything you are updating the staging area(either by adding new files to it or updating the version of the files staged in the last commit).
+```text
+HEAD                 = Version 1 # last commit
+Staging Area / Index = Version 2 # staged version of the file
+Working Directory    = Version 3 # most recently edited version of the file.
+```
 
 ### 4. Commit
 
-When you are done staging, you take a snapshot of that staging area in its current form by commiting.
+When you are done staging the files you want in the next commit, you take a new snapshot of the staging area.
+
+A commit only requires the staging area to be different from the current commit (`HEAD`) in at least one way. You can stage some edited files and leave other edited files unstaged to exclude them from this commit.
 
 A commit requires a commit message, and is made like this:
 
@@ -205,7 +213,7 @@ Merging means combining the commits of two branches so one branch includes the o
 |--------|--------|--------|
 | **Merge** | `git merge other-branch` | One of the [Merge Outcomes](#merge-outcomes) depending on the relation between branches|
 | **Squash** | `git merge --squash other-branch` | Combines all changes from the other branch into one set of changes, applies them to the current branch’s working tree and stages them.<br> Does not create a commit.<br> You need to run `git commit` to create the single squash commit. |
-| **Rebase** | `git rebase <target-branch>` (while on curr-branch)  | curr-branch = The branch that gets moved.<br>The target-branch = The new base for the replayed commits of curr-branch <br> It takes all the commits from cur-branch and replays(same metadate, new commit) them onto target-branch with the latest commit on target-branch as the base, so history stays linear and no merge commit is created.  <br>**Flags (full commands):**<br>• `git rebase --abort` — Cancels the rebase and restores your branch to its state before the rebase; use when you want to give up.<br>• `git rebase --continue` — Resumes the rebase after you’ve resolved conflicts and staged the files; use when you’re ready to finish.<br>• `git rebase --skip` — Drops the current commit being replayed and continues; use when that commit is redundant or you no longer want it.<br>• `git rebase -i main` (or `--interactive <target>`) — Opens an editor to pick, reorder, squash, or edit commits before they’re replayed; use when you want to clean up or rearrange history. |
+| **Rebase** | `git rebase <target-branch>` (while on curr-branch)  | curr-branch = The branch that gets moved.<br>The target-branch = The new base for the replayed commits of curr-branch <br> It takes all the commits from curr-branch and replays(same metadata, new commit) them onto tip of the target-branch as the new base for the curr-branch, so history stays linear and no merge commit is created.  <br>**Flags (full commands):**<br>• `git rebase --abort` — Cancels the rebase and restores your branch to its state before the rebase; use when you want to give up.<br>• `git rebase --continue` — Resumes the rebase after you’ve resolved conflicts and staged the files; use when you’re ready to finish.<br>• `git rebase --skip` — Drops the current commit being replayed and continues; use when that commit is redundant or you no longer want it.<br>• `git rebase -i <target-upstream>` — Opens an editor to pick, reorder, squash, or edit commits before they’re replayed on the target-upstream commit ; use when you want to clean up or rearrange history.<br>• `git rebase --update-refs <target-branch>` — After replaying commits, automatically moves any local branch pointers that pointed to the old commits so they point to the rewritten commits instead; useful when you have stacked branches.|
 | **Cherry-pick** | `git cherry-pick <commit-hash>` or `git cherry-pick <commit1> <commit2>...` (while on target-branch) | Applies one or more specific commits (by hash) from another branch onto the current branch, creating new commits with the same changes. Use when you want only selected commits, not a full merge or rebase.<br>**Flags (full commands):**<br>• `git cherry-pick --abort` — Cancels the cherry-pick and restores the branch to its state before the operation.<br>• `git cherry-pick --continue` — Resumes after resolving conflicts and staging the files.<br>• `git cherry-pick --skip` — Skips the current commit and continues with the rest.<br>• `git cherry-pick -n` (or `--no-commit`) — Applies the changes without committing; lets you stage and commit manually (e.g. to squash several cherry-picked commits into one). |
 
 ### Merge outcomes
@@ -414,7 +422,7 @@ Temporarily save uncommitted changes and clean the working tree:
 ```bash
 git stash                    # stash changes (including staged)
 git stash -u                 # include untracked files
-git stash list               # list stashes
+git stash list               # shows a stacked view(LIFO) of your stashed changes
 git stash pop                # apply most recent stash and remove it
 git stash apply              # apply most recent stash, keep it
 git stash drop               # remove most recent stash
@@ -426,9 +434,9 @@ Restore files in the working tree (and optionally the index) to a given state:
 
 | Command | Effect |
 |--------|--------|
-| `git restore <file>` | Restore file to last commit (HEAD); discards unstaged changes. |
-| `git restore --staged <file>` | Unstage the file (index matches HEAD for that file). |
-| `git restore --source=<tree> <file>` | Restore file from another commit or branch (e.g. `--source=main`). |
+| `git restore <file>` | Restore file in working directory from the Staging Area/Index; Index ─► Working Directory |
+| `git restore --staged <file>` | Restores staged version of the file from HEAD and unstages the file since INDEX ==HEAD for that file; HEAD ─► Index; Working Directory version of the file does not change;  |
+| `git restore --source=<tree> <file>` | Restore file in the working directory from another commit(e.g. `--source=main`). |
 
 ### 3. `rm` (Remove files)
 
@@ -437,18 +445,21 @@ Remove from both the working directory and Git’s tracking:
 ```bash
 git rm <file>                # delete file and stage the deletion
 git rm -r <directory>        # recursive: remove directory and contents
-git rm --cached <file>       # stop tracking; file stays on disk as untracked
+git rm --cached <file>       # remove the file from Git's index/staging area, but keep it as is on disk
+                             # this stages a deletion for the next commit
+                             # File shows as untracked from now on
+                             # Needs to be followed with an addition to .igitignore for the file to be completely ignored and not pop up as untracked from now on
 ```
 
 ### 4. Reset
 
-Move the current branch (and optionally the index and working tree) to another commit:
+Moving the current branch pointer(and optionally the index and working tree) to another commit
 
 | Option | Effect |
 |--------|--------|
-| `git reset` (default = `--mixed`) | Move branch to HEAD; unstage all; working tree unchanged. |
-| `git reset --soft <commit>` | Move branch to commit; keep index and working tree (changes stay staged). |
-| `git reset --hard <commit>` | Move branch to commit; reset index and working tree (all local changes lost). |
+| `git reset <commit>` (` default = `--mixed`) | Move the branch pointer to the commit and HEAD follows with it; Staging area reset to commit; working tree remains as is |
+| `git reset --soft <commit>` | Move branch pointer to commit; keep index and working tree (changes stay staged) as is. |
+| `git reset --hard <commit>` | Move branch to commit; reset index and working tree (all local changes lost) to the commmit. |
 
 Example: `git reset --soft HEAD~1` undoes the last commit but keeps changes staged.
 

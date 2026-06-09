@@ -156,7 +156,18 @@ Reserve 100 MB of zero-initialized memory
 - Read/Write accessible.
 - Typically grows **upward** toward higher addresses.
 - Usually shared by all threads in a process.
-- Objects can be manually created and removed using `malloc`/`free` in C, `new`/`delete` in C++, or automatically managed through C++ abstractions such as smart pointers and RAII.
+- Objects can be manually created and removed using `malloc`/`free` in C, `new`/`delete` in C++, or automatically managed through C++ abstractions such as smart pointers and RAII. High level languages such as python have automatic garbage collectors that free up unused objects.
+
+**Memory Leak:** Occurs when heap memory is allocated but never released, even though the program no longer has any way to use it.
+
+Example:
+
+```cpp
+int* value = new int(42);
+// Forgot: delete value;
+```
+
+The pointer may disappear, but the heap memory remains allocated.
 
 #### Stack
 
@@ -190,16 +201,7 @@ Stack                    Heap
 +------------+          +------+
 ```
 
-**Memory Leak:** Occurs when heap memory is allocated but never released, even though the program no longer has any way to use it
-
-Example:
-
-```cpp
-int* value = new int(42);
-// Forgot: delete value;
-```
-
-The pointer may disappear, but the heap memory remains allocated.
+**Stack Overflow:** Occurs when a program uses more stack memory than is available, usually because of excessive or infinite recursion. Each function call adds a new frame to the stack, and if too many frames are added without returning, the stack runs out of space.
 
 **Segmentation Fault:** A kind of error that happens when a program tries to access memory it's not allowed to use or isn't valid anymore. The word stems from segmentation in memory and a program accessing a wrong segment
 
