@@ -22,7 +22,7 @@ class Dog:
     def speak(self):
         # - This is an **instance method**.
         # - The first parameter of the instance method must be `self`.
-        # - When you call an instance method like: dog1.speak(), python automatically translates it to dog.speak(dog1) puts dog1 in place of self on the back end
+        # - When you call an instance method like: dog1.speak(), python automatically translates it to Dog.speak(dog1) puts dog1 in place of self on the back end
         # - Inside this method, we can access instance variables using `self.name`, `self.age`, etc. These will execute as dog1.name and dog1.age
         print(f"My name is {self.name} and I am {self.age} years old.")
 
@@ -107,7 +107,7 @@ class Example:
 - **Class Attributes**:
   - Declared directly inside the class but outside methods.
   - Shared across all instances of the class.
-  - Accessible via the class name (`ClassName.attribute`) or instance (`instance.attribute`).
+  - Accessible via the class name (`<ClassName>.<attributeName>`) or instance (`instance.attribute`).
   - If modified through the class, the change is seen by all instances.
 
 Example:

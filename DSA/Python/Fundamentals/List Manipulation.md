@@ -75,20 +75,56 @@ nums.reverse()  # [2, 1, 3]
 # 15. slicing → Access part of the list
 part = nums[1:3]  # [1, 3]
 
-# 16. copy() → Create a shallow copy of the list
+# 16. copy() → Create a shallow copy of the list, essentially make a new list with same reference to the elements
 copy_nums = nums.copy()
 ```
 
-## 17. List Comprehension (Quick way to build a list)
+## Repetition with `*`
+
+The `*` operator creates a new list by repeating references to items of the original list.
+This is a shallow copy behavior: the outer list is new, but the elements inside are the same object references.
+
+```python
+[1, 2] * 3   # [1, 2, 1, 2, 1, 2]
+[0] * 5      # [0, 0, 0, 0, 0]
+[] * 5       # [] since there are no elements in `[]` to repeat
+```
+
+**Updating** elements of the new list
+
+```python
+# For immutable objects like numbers and strings, updating the object at an index only means rebinding the index to a new object
+nums = [0] * 5      # [0, 0, 0, 0, 0]
+nums[0] = 99        # [99, 0, 0, 0, 0] 
+words = ["hi"] * 3      # ["hi", "hi", "hi"]
+words[0] = "bye"        # ["bye", "hi", "hi"]
+
+# For mutable values like lists, updating the object actually updates the object and hence changes value at all other repeated references. 
+matrix = [[]] * 5 # [[], [], [], [], []]
+matrix[0].append(1) # [[1], [1], [1], [1], [1]]
+# This rebinds that index to a new list object and does not update the repeated list object
+matrix[0] = [99]         # [[99], [1], [1], [1], [1]] 
+```
+
+Use list comprehension when you need separate inner list elements:
+
+```python
+matrix = [[] for _ in range(5)]
+matrix[0].append(1)
+# [[1], [], [], [], []]
+```
+
+## List Comprehension (Quick way to build a list from an existing iterable)
 
 Full Syntax: `[ expression_if_true if condition else expression_if_false for item in iterable if filter_condition ]`
+Full Syntax: `[ <Ternary conditional part> <Iteration> <Filter part> ]`
 
 ```python
 result = [x**2 if x > 5 else x for x in range(10) if x % 2 == 0]
 # [0, 2, 4, 36, 64]
 ```
 
-We use either none, conditional part, filtering part, or both depending on our needs.
+We use either none, Ternary conditional part, filtering part, or both depending on our needs.
 
 **Basic Syntax (no conditions)** — `[expression for item in iterable]`
 
@@ -97,14 +133,14 @@ squares = [x**2 for x in range(5)]
 # [0, 1, 4, 9, 16]
 ```
 
-**Conditional Expression Syntax** (if BEFORE → controls the value). All items in the iterable are included, just their form vary depending on the expression applied to them based on the condition — `[expression_if_true if condition else expression_if_false for item in iterable]`
+**Conditional Expression Syntax** (if BEFORE iterable→ controls the value). All items in the iterable are included, just their form vary depending on the expression applied to them based on the condition — `[expression_if_true if condition else expression_if_false for item in iterable]`
 
 ```python
 pos_or_neg = [x if x % 2 == 0 else -x for x in range(6)]
 # [0, -1, 2, -3, 4, -5]
 ```
 
-**Filtering Syntax** (if AFTER expression → controls inclusion). Items are filtered out from the iterable depending on the condition — `[expression for item in iterable if condition]`
+**Filtering Syntax** (if AFTER iterable → controls inclusion). Items are filtered out from the iterable depending on the condition — `[expression for item in iterable if condition]`
 
 ```python
 evens = [x for x in range(10) if x % 2 == 0]

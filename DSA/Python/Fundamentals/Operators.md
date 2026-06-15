@@ -37,8 +37,11 @@ print(a - b)  # Subtraction ➖ : 7
 print(a * b)  # Multiplication ✖️ : 30
 print(a / b)  # Division ➗ : 3.333..., returns the Quotient as a floating point number
 print(a % b)  # Modulus 🧮 : 1, Returns the Remainder of the division
-print(a//b)   # Floor Division : 3 , returns the Quotient as an integer(Rounded down), so for -10//3 it gives -4(since it rounds down a number)
-              # Floor Division is particularly handy when trying to reverse a list cause n//2 will takes you upto index of last swap
+print(a//b)   # Floor Division : 3 , returns the Quotient as an integer(Rounded down towards negative infinity aka leftwards on the number line), so -10//3 gives -4.
+              # Particularly useful for reversing a list since n//2  gives middle index in case of odd elements and first element of second half in case of even elements. So you only have to traverse the first half of the list 
+              # for i in range(n // 2):
+              #     arr[i], arr[n - 1 - i] = arr[n - 1 - i], arr[i]
+            
 ```
 
 ## 2. Relational / Comparison Operators
