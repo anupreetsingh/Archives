@@ -4,9 +4,9 @@
 - A heap is a binary tree stored as a list.
 - In a min-heap: the smallest element is always at the root (index 0).
 - Very useful for problems like:
-    - finding kth largest/smallest element
-    - priority queues
-    - streaming data (e.g., running median)
+  - finding kth largest/smallest element
+  - priority queues
+  - streaming data (e.g., running median)
 
 ```python
 # Importing the standard python module for heaps

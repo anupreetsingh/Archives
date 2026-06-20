@@ -1,15 +1,16 @@
 # Technical Understanding of the project
 
-
 ## Catalog Composition
-The NIST_SP-800-53_rev5_catalog.json catalog is actually is the combination of: 
+
+The NIST_SP-800-53_rev5_catalog.json catalog is actually is the combination of:
+
 1. **SP 800-53** Rev 5.2 Controls - which supplies Controls, statements, guidance(Discussion in pdf version), and enhancements
-2. **SP 800‑53A** Rev 5.2 Assessment Procedures. - which supplies the assessment-objective, examine, interview and test parts. 
+2. **SP 800‑53A** Rev 5.2 Assessment Procedures. - which supplies the assessment-objective, examine, interview and test parts.
 Transformer 1 2 asddasdasdawadsdadws sadasdasd
 Each control in the OSCAL JSON catalog is described by:
 
-- **id** — Code of the control. e.g. `ac-2`, `ac-2.1`. 
-- **class** — Typically `SP800-53` for base controls and `SP800-53-enhancement` for enhancements. 
+- **id** — Code of the control. e.g. `ac-2`, `ac-2.1`.
+- **class** — Typically `SP800-53` for base controls and `SP800-53-enhancement` for enhancements.
 - **title** — Human-readable name of the control (e.g. "Account Management").
 - **params** — Parameter placeholders referenced from prose via `{{ insert: param, <id> }}`. Organizations supply concrete values when tailoring a baseline for themselves(e.g. retention period, role names).
 - **props** — Key/value metadata tags attached to the control or its parts. Common names: `label` (display label like `AC-2`), `sort-id`, `status` (e.g. `withdrawn`), and assessment-method markers. Used for filtering, sorting, and rendering.
@@ -29,12 +30,10 @@ Chunks of OSCAL / NIST control catalog text (requirements, statements, etc.)
 `core/intelligence`: retrieves and analyzes platform evidence
 *Query Path:*  VectorStoreService.search() → EmbeddingClient → Qdrant → returns control-oriented results (no Postgres join for the chunk text itself in the same way)
 
-
 **platform_evidence**
 Vectors tied to platform_evidence rows — operational evidence (logs, findings payloads, connector output, etc.)
 `core/ai`: Use models to generate answers from prompts optionally grounded by `core/intelligence`
 *Query Path:* EvidenceSearchService.search_semantic() → embed query → Qdrant → then load matching rows from Postgres by evidence id
-
 
 ## Execution Flow of RAG for the OSCAL Controls
 
@@ -93,20 +92,21 @@ Each step below is one element of that flow and has two components: **What this 
 1. For each `OscalControl` from Layer 1, `build_control_chunks(control, catalog)` in `core/frameworks/embedding_formatter.py` produces its chunks. It draws on two sources: the control's own `statement`/`guidance` strings, and the `OscalControlPart` items in `control.assessment_parts` collected during Parse.
 
 2. It emits chunks in this order, each stamped with a `chunk_type`:
-  - **statement** — one chunk from `control.statement` (when present)
-  - **guidance** — one chunk from `control.guidance` (when present)
-  - one chunk per `OscalControlPart` in `control.assessment_parts`, whose `chunk_type` is the part's own `name` (e.g. `assessment-objective`)
+
+- **statement** — one chunk from `control.statement` (when present)
+- **guidance** — one chunk from `control.guidance` (when present)
+- one chunk per `OscalControlPart` in `control.assessment_parts`, whose `chunk_type` is the part's own `name` (e.g. `assessment-objective`)
 
 3. Because Parse collected a parent objective and its children as separate `OscalControlPart` entries (with the parent's prose already containing the combined child text via `_collect_prose()`), the assessment chunks are overlapping and fine-grained. For example, objectives `pt-8_obj.b`, `pt-8_obj.b-1`, and `pt-8_obj.b-2` become three chunks: `pt-8_obj.b` (whose prose contains `b-1` and `b-2`), plus `b-1` and `b-2` on their own. This is what lets a grounded answer cite a precise sub-objective like `[AC-2.3_obj.a]`.
 
 4. For every chunk, `build_control_chunks()` prepares the text:
-  - `resolve_param_inserts(content, control.params)` replaces `{{ insert: param, ... }}` tokens with human-readable values derived from the control's `params`
-  - `_format_chunk_text()` prepends self-contained headers (`Control ID`, `Control Title`, `Family`, `Chunk Type`, and, for assessment chunks, `Part ID` then `Part Label`) to the resolved body
+
+- `resolve_param_inserts(content, control.params)` replaces `{{ insert: param, ... }}` tokens with human-readable values derived from the control's `params`
+- `_format_chunk_text()` prepends self-contained headers (`Control ID`, `Control Title`, `Family`, `Chunk Type`, and, for assessment chunks, `Part ID` then `Part Label`) to the resolved body
 
 5. Each chunk is returned as a `ControlChunk` with two fields: `text` (the formatted body to embed) and `metadata`, a `ControlChunkMetadata` carrying `control_id`, `family`, `parent_control_id`, `part_id`, `chunk_type`, `catalog_version`, and `catalog_uuid`.
 
 6. As a result, Layer 2 turns one control into several self-contained chunks, each independently retrievable and citable.
-
 
 #### Layer 3: Embed
 
@@ -135,8 +135,9 @@ Each step below is one element of that flow and has two components: **What this 
 1. `VectorStoreService.index_catalog()` in `core/ai/vector_store.py` routes the write through the selected profile's bundle to `OscalVectorIndexer`. The indexer calls `ensure_collection(vector_size)` to create the collection (with `Distance.COSINE`) on first use and to add payload indexes on `control_id`, `family`, `catalog_uuid`, etc.
 
 2. For each chunk, `_to_point()` builds a Qdrant `PointStruct` with two parts:
-  - the **vector** from Layer 3
-  - the **payload**, the chunk's metadata plus its `text` (`control_id`, `family`, `catalog_uuid`, `chunk_type`, `text`, `catalog_version`, …) — this is what makes filtered retrieval possible later
+
+- the **vector** from Layer 3
+- the **payload**, the chunk's metadata plus its `text` (`control_id`, `family`, `catalog_uuid`, `chunk_type`, `text`, `catalog_version`, …) — this is what makes filtered retrieval possible later
 
 3. Points are upserted in batches of 100. *Which* collection they land in depends on the active **embedding profile**: an `EmbeddingProfile` (built by `build_profiles()` in `core/ai/embedding_profiles.py`) pairs a provider + model with its own collection, because vectors from different models have different dimensions and cannot share a collection. `VectorStoreService` holds one embedder/indexer bundle per profile, and `_select(profile)` routes the write — the **default** profile reuses the legacy `oscal_controls` collection (so upgrading needs no re-index), while every other profile gets a namespaced `oscal_controls__{profile}` (e.g. `oscal_controls__openai_text_embedding_3_small`). This is why `EmbeddingClient` accepts `provider`/`model` overrides: one `Settings` instance yields a distinct embedder per profile.
 
@@ -161,8 +162,6 @@ Each step below is one element of that flow and has two components: **What this 
 6. Each returned hit is mapped by `_hit_to_result()` into a `ControlSearchResult` — `control_id`, `family`, `chunk_type`, `text`, `catalog_version`, plus the similarity `score` — drawn from the payload stored in Layer 4.
 
 7. `search_controls()` wraps the list in a `ControlSearchResponse` (query, results, total) and returns it. The API hands back plain text plus metadata, never raw vectors.
-
-
 
 #### Layer 6: Inference (LLM)
 
@@ -276,20 +275,23 @@ docker exec -it $(docker compose ps -q ollama) free -h
 
 3. It returns a `ReindexResponse` (`catalogs_indexed`, `total_chunks`, `catalog_titles`, `force`). The docstring notes this runs synchronously and can take minutes for large catalogs, so the CLI (`scripts/index_oscal_vectors.py`) remains the preferred path for production bulk indexing.
 
-## Manual CLI RAG Setup:
+## Manual CLI RAG Setup
 
 Step 1: Set up the docker containers
+
 ```bash
 docker compose up -d
 ```
 
 Step 2: Pull the embedding model and the chat model inside the Ollama container so it can serve them locally (the `ollama` CLI lives inside the container, not on the host)
+
 ```bash
 docker exec -it cyberdome-ollama-1 ollama pull nomic-embed-text # replace `nomic-embed-text` with a different model like `mxbai-embed-large` for testing a different embedding model. But remember - you will have to build a different embedding profile for that. 
 docker exec -it cyberdome-ollama-1 ollama pull llama3.1  # replace `llama 3.1` with a different model like `qwen3:8b` for testing a different chat model
 ```
 
 Step 3: Create a fresh project virtualenv using Python 3.13 (the project's `pyproject.toml` requires `>=3.13`; the default `python3` on macOS may be 3.12), activate it, verify Python is pointing at the venv at the right version, then install the project + dev dependencies so the next Python command has everything it needs
+
 ```bash
 rm -rf .venv
 /opt/homebrew/bin/python3.13 -m venv .venv
@@ -300,6 +302,7 @@ python -m pip install -e ".[dev]"
 ```
 
 Step 4: Index the OSCAL catalog into Qdrant so the control chunks are embedded and stored for retrieval (`--force` drops and recreates the collection for a clean state)
+
 ```bash
 python scripts/index_oscal_vectors.py --list-profiles # Confirm both profiles report AVAIL=yes
 python scripts/index_oscal_vectors.py --force # Index using the default profile(ollama_nomic_embed_text) results in a collection named `oscal_vectors`
@@ -307,16 +310,17 @@ python scripts/index_oscal_vectors.py --profile openai_text_embedding_3_small --
 ```
 
 Step 5: Verify both collections are populated
-curl -s 'http://localhost:8000/api/v1/health/qdrant?profile=ollama_nomic_embed_text' | jq
-curl -s 'http://localhost:8000/api/v1/health/qdrant?profile=openai_text_embedding_3_small' | jq
-
+curl -s '<http://localhost:8000/api/v1/health/qdrant?profile=ollama_nomic_embed_text>' | jq
+curl -s '<http://localhost:8000/api/v1/health/qdrant?profile=openai_text_embedding_3_small>' | jq
 
 Step 6: Start the FastAPI backend so the search and ask endpoints become reachable
+
 ```bash
 uvicorn core.app:create_app --factory --reload --port 8000
 ```
 
 Step 7: Run a semantic search against the indexed controls to confirm retrieval is working end-to-end
+
 ```bash
 curl -sG 'http://localhost:8000/api/v1/search/controls' \
     --data-urlencode 'q=What does the control baseline require for account management?' \
@@ -324,6 +328,7 @@ curl -sG 'http://localhost:8000/api/v1/search/controls' \
 ```
 
 Step 8: Ask a grounded RAG question using 2 models on the collections made from the 2 profiles—
+
 ```bash
 Q='What does AC-2 require for inactive account disablement?'
 
@@ -341,30 +346,39 @@ Q='What does AC-2 require for inactive account disablement?'
 ## Sample questions for testing embedding profiles and models
 
 1. **Prompt:** What does AC-2 require for inactive account disablement?
-  - **Tests:** Basic control retrieval and summarization.
+
+- **Tests:** Basic control retrieval and summarization.
 
 2. **Prompt:** How does AC-2(3) differ from AC-2?
-  - **Tests:** Retrieval of control enhancements and comparison.
+
+- **Tests:** Retrieval of control enhancements and comparison.
 
 3. **Prompt:** Which controls support multifactor authentication, and how are they related?
-  - **Tests:** Multi-control retrieval and reasoning.
+
+- **Tests:** Multi-control retrieval and reasoning.
 
 4. **Prompt:** What evidence would an auditor expect to see to assess compliance with AU-6?
-  - **Tests:** Conversion of control text into compliance guidance.
+
+- **Tests:** Conversion of control text into compliance guidance.
 
 5. **Prompt:** Which controls are relevant to privileged account management, and why?
-  - **Tests:** Thematic retrieval across multiple families.
+
+- **Tests:** Thematic retrieval across multiple families.
 
 6. **Prompt:** Build a table of controls related to remote access, including their control families and purposes.
-  - **Tests:** Aggregation, organization, and synthesis.
+
+- **Tests:** Aggregation, organization, and synthesis.
 
 ### Prompts that return Insufficient evidence
 
 1. **Prompt:** What organization-defined parameters exist in IA-5?
-  - **Tests:** OSCAL-specific structured data retrieval.
+
+- **Tests:** OSCAL-specific structured data retrieval.
 
 2. **Prompt:** Is AC-2 included in the Moderate baseline?
-  - **Tests:** Baseline/profile awareness.
+
+- **Tests:** Baseline/profile awareness.
 
 3. **Prompt:** What does control AC-999 require?
-  - **Tests:** Hallucination resistance and ability to recognize nonexistent controls.
+
+- **Tests:** Hallucination resistance and ability to recognize nonexistent controls.

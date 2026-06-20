@@ -16,8 +16,19 @@ person = {
 
 ```python
 print(person["name"])  # Output: Alice
+```
 
-# Safe access using .get() (returns None or default if key not found)
+If the key does not exist, `dictionary[key]` raises a `KeyError`.
+
+Safer syntax:
+
+```python
+dictionary.get(key, default_value)
+```
+
+`.get()` returns the value if the key exists. If the key is missing, it returns `None` or the provided default value.
+
+```python
 print(person.get("job"))             # Output: None
 print(person.get("job", "Unknown"))  # Output: Unknown
 ```

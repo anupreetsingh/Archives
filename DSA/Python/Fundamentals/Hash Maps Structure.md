@@ -11,9 +11,9 @@ In Python, `dict` is a highly optimized hash table implementation. It's built wi
 
 - A dynamic array of slots (buckets).
 - Each slot can either be:
-    - Empty
-    - Occupied with (key, value)
-    - A "dummy" marker (from a deleted key)
+  - Empty
+  - Occupied with (key, value)
+  - A "dummy" marker (from a deleted key)
 
 Keys must be immutable & hashable because the hash value must not change.
 

@@ -1,4 +1,4 @@
-# 🐍 Object Oriented Programming — Four Pillars
+# Object Oriented Programming — Four Pillars
 
 ## 1. Encapsulation
 
@@ -41,7 +41,7 @@ from abc import ABC, abstractmethod
 class Vehicle(ABC):
     @abstractmethod # Forces the subclass to implement that method
     def move(self):
-        pass  # pass is a placeholder, it does nothing, it is only there to tell us that this method here is not doing, and the @abstractmethod tells us it is defined in some sub class
+        pass  # pass is a placeholder, it does nothing, it is only there to tell us that this method here is not doing, and the 
 
 class Car(Vehicle):
     def move(self):
@@ -96,10 +96,29 @@ Two main types of Polymorphism:
 
 ### 4.1 Method Overloading (Compile-time Polymorphism)
 
-- Multiple methods with the same name but different parameters.
-- The correct version is chosen based on arguments passed.
-- Common in Java/C++, but Python does NOT support true overloading.
-- In Python, it can be *simulated* using default or variable arguments.
+- Method overloading means multiple methods have the same name but different parameters.
+- The correct version is chosen based on the arguments passed.
+- This is common in Java/C++ and is considered compile-time polymorphism.
+- Python does NOT support true method overloading.
+
+Example in Java:
+
+```java
+class MathOps {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+
+// add(2, 3) chooses add(int, int)
+// add(2, 3, 4) chooses add(int, int, int)
+```
+
+In Python, overloading is usually simulated using default arguments or variable arguments.
 
 ```python
 class MathOps:
@@ -111,7 +130,7 @@ m = MathOps()
 print(m.add(2, 3))        # Output: 5
 print(m.add(2, 3, 4))     # Output: 9
 
-# → Same method name 'add', behaves differently depending on arguments.
+# Same method name 'add', behaves differently depending on arguments.
 ```
 
 ### 4.2 Method Overriding (Run-time Polymorphism)
@@ -147,13 +166,13 @@ for a in animals:
 POLYMORPHISM → "Many forms" — one name, many behaviors.
 
 - **OVERLOADING (Compile-time)**
-    - Same method name, different parameters
-    - Chosen at compile-time
-    - Not truly supported in Python (simulated)
+  - Same method name, different parameters
+  - Chosen at compile-time
+  - Not truly supported in Python (simulated)
 - **OVERRIDING (Run-time)**
-    - Same method name, same parameters in subclass
-    - Chosen at runtime based on object type
-    - Fully supported in Python
+  - Same method name, same parameters in subclass
+  - Chosen at runtime based on object type
+  - Fully supported in Python
 
 Quick Comparison Table:
 
