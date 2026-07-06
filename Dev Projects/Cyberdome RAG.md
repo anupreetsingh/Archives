@@ -43,8 +43,6 @@ The pipeline runs in three groups of layers:
 - **Online query** (Layer 5 Search → Layer 6 Inference) — runs per HTTP request: embed the question, retrieve the nearest chunks, and (for RAG) generate a grounded answer.
 - **Delivery & operations surface** (Layer 7 Frontend page → Layer 8 Pickers & health → Layer 9 Answer rendering → Layer 10 Model management → Layer 11 Admin reindex) — the React "Compliance Q&A" page and the admin endpoints that drive it. This is the part a user actually touches: it chooses the embedding profile and chat model per request, shows whether the index is reachable, renders answers with clickable citations, and lets an operator pull/remove Ollama models or trigger a reindex from the browser.
 
-~~The first thread (Parse → Layer 6) is what *produces* an answer; the second (Layers 7–11) is what *lets a human ask for one and manage the moving parts*. Read end to end, control starts at the indexer, comes to rest in Qdrant, and then — on a user's click in Layer 7 — flows back out through the query layers and returns to the screen in Layer 9.~~
-
 Each step below is one element of that flow and has two components: **What this step does** (its intent) and **Control flow (start → end)** (how and why control moves to the next element — the gateways, function calls, and objects involved). A function's or class's home file is named the first time it appears and is not repeated afterward. All UI calls go through `api.get` / `api.post` in `frontend/src/api/client.ts`, which prefixes the `/api` base — so a path written here as `/v1/search/ask` hits the backend's `/api/v1/search/ask`.
 
 #### Parse (precedes Layer 1)

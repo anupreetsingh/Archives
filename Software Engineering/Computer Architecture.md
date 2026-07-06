@@ -252,3 +252,138 @@ This closes the loop with the earlier sections:
 - **Each process** has its own virtual address space backed by its own page table → processes are isolated.
 - A **context switch** between processes also switches the active page table (and the TLB is flushed or tagged so stale translations aren't reused).
 - **Threads within the same process** share one page table, which is exactly why they share heap and global memory while still getting their own private stacks.
+
+## Operating System(OS)
+
+An operating system is the software layer that manages hardware resources such as CPU, memory, storage, and devices, while also giving applications common services like filesystems, networking, and process management.
+
+An OS is not just one program. It is a collection of components that work together to let applications use hardware safely and consistently.
+
+```text
+User space
+├── Applications
+│   └── ask for OS services through system calls or system libraries
+└── System programs and user interfaces
+    ├── shell
+    ├── terminal
+    ├── desktop environment
+    └── background services
+
+Kernel space / operating system core
+└── Kernel
+    ├── process and thread management
+    ├── memory management
+    ├── filesystems
+    ├── networking
+    ├── device drivers
+    └── permissions and isolation
+```
+
+Typical interaction:
+
+```text
+Application or shell
+  ↓ system call
+Kernel
+  ↓ controls
+Hardware
+  ↓ returns result
+Kernel
+  ↓ returns result
+Application or shell
+```
+
+### Kernel
+
+The kernel is the core component of an OS. Applications usually do not access hardware directly. Instead, they ask the kernel to perform privileged operations through **system calls**.
+
+The kernel is responsible for managing the most important system resources:
+
+- CPU scheduling
+- processes and threads
+- memory management
+- virtual memory
+- filesystems
+- device drivers
+- networking
+- permissions and isolation
+
+#### System Calls
+
+A **system call** is the controlled entry point from a user-space program into the kernel.
+
+Examples:
+
+- creating a process
+- reading or writing a file
+- allocating memory
+- sending data over a network
+- asking for information about the system
+
+#### Device Drivers
+
+A **device driver** is software that lets the kernel communicate with a specific hardware device, such as a keyboard, display, network card, or storage drive.
+
+Applications usually do not talk to devices directly. They ask the kernel, and the kernel uses the appropriate driver.
+
+#### Filesystems
+
+A **filesystem** organizes data on storage devices into files and directories.
+
+Applications use file operations like open, read, write, and delete. The kernel and filesystem code translate those requests into lower-level storage operations.
+
+#### User Mode and Kernel Mode
+
+Modern operating systems separate normal application code from privileged kernel code.
+
+- **User mode**: where regular applications run
+- **Kernel mode**: where the OS kernel runs
+
+This separation prevents normal programs from directly modifying hardware, other programs' memory, or protected system resources.
+
+#### Kernel in Other Contexts
+
+The word **kernel** can also mean the central execution component of a system.
+
+For example, in a Jupyter Notebook, the Python kernel is the process that executes Python code and maintains runtime state, including variables, functions, classes, and imported modules/packages in memory.
+
+### System Programs and User Interfaces
+
+System programs are normal user-space programs that come with or are closely associated with the OS. They help users and other programs interact with the system.
+
+Examples:
+
+- command-line shells
+- terminals
+- file managers
+- desktop environments
+- background services
+
+#### Shell and Terminal
+
+A **terminal** is an interface for text input and output.
+
+A **shell** is the program that interprets commands typed by the user.
+
+Examples of shells:
+
+- `zsh`
+- `bash`
+- `fish`
+- PowerShell
+
+The terminal provides text input/output. The shell runs inside the terminal, reads commands from it, interprets them, and asks the operating system to execute programs.
+
+The shell is not the kernel. It is a normal user-space program that asks the operating system to run commands.
+
+```text
+User
+  ↓ types text
+Terminal
+  ↓ sends input to
+Shell
+  ↓ asks the OS to run programs
+Kernel
+  ↓ manages hardware and processes
+Hardware
+```

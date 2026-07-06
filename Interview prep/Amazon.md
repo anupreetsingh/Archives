@@ -6,7 +6,7 @@ Amazon behavioral interviews are built around the Leadership Principles. Prepare
 - **Behavior**: what you personally did
 - **Impact**: measurable result, using data like money, time, customers, reliability, latency, people, services, tickets, incidents, or deadlines when possible
 
-### Crux
+## Crux
 
 Priorities in decreasing order:
 
@@ -14,52 +14,198 @@ Priorities in decreasing order:
 2. Be an owner of the things you work on
 3. Deliver results without missing critical deadlines
 
-### The 16 Principles
+Some principles reinforce each other(like bias for action and deliver results); others pull in opposite directions(Bias for action and Insisting on higher standards;). Knowing which one to lean on in a given moment is a nuanced judgment call — but when they conflict, the priorities above are a useful tie-breaker.
 
-| Principle | What Amazon Is Looking For | Story Angle |
-| --- | --- | --- |
-| Customer Obsession | You start with customer pain, not internal convenience. | A time you changed a plan because customer impact mattered more. |
-| Ownership | You act beyond your assigned scope and think long-term. | A problem nobody owned that you took responsibility for. |
-| Invent and Simplify | You create simpler systems or processes, even when the first version is imperfect. | A time you removed complexity, automated work, or found a better design. |
-| Are Right, A Lot | You use judgment, evidence, and diverse viewpoints to make good decisions. | A decision where you used data, challenged assumptions, or changed your mind. |
-| Learn and Be Curious | You actively learn and apply new knowledge. | A time you picked up a new tool, domain, or skill to solve a problem. |
-| Hire and Develop the Best | You raise the bar for teammates and help others grow. | Mentoring, onboarding, interviewing, feedback, or improving team standards. |
-| Insist on the Highest Standards | You do not accept weak quality or recurring defects. | A bug, design issue, test gap, or process problem you pushed to fix properly. |
-| Think Big | You propose bold ideas and connect work to larger business impact. | A time you reframed a small task into a bigger opportunity. |
-| Bias for Action | You make reversible decisions quickly with limited information. | A time you moved fast during ambiguity, an outage, or a deadline. |
-| Frugality | You accomplish more with fewer resources. | Reducing cost, avoiding over-engineering, reusing tools, or simplifying scope. |
-| Earn Trust | You communicate honestly, listen well, and follow through. | A conflict, mistake, or stakeholder issue where transparency mattered. |
-| Dive Deep | You understand details and verify assumptions yourself. | Debugging, root-cause analysis, metrics investigation, or production issue analysis. |
-| Have Backbone; Disagree and Commit | You respectfully challenge decisions, then fully support the final call. | A disagreement where you used evidence, escalated appropriately, and aligned after. |
-| Deliver Results | You focus on the most important outcomes despite setbacks. | A hard deadline, blocked project, incident, or launch you drove to completion. |
-| Strive to be Earth's Best Employer | You improve the work environment and help people do their best work. | Inclusion, psychological safety, team health, coaching, or reducing burnout. |
-| Success and Scale Bring Broad Responsibility | You consider the broader impact of large systems and decisions. | Security, privacy, sustainability, accessibility, ethics, reliability, or community impact. |
+## The 16 Principles
 
-### Story Prep Checklist
+### 1. Customer Obsession
 
-For each principle, prepare at least one story where:
+> Customer obsession. Leaders start with the customer and work backwards. They work vigorously to earn and keep customer trust. Although leaders pay attention to competitors, they obsess over customers.
 
-1. The problem had real stakes.
-2. Your individual contribution is clear.
-3. You explain tradeoffs, not just actions.
-4. You include measurable impact.
-5. You can answer follow-ups about mistakes, alternatives, and what you learned.
+**What Amazon is looking for:**
+A time you worked backwards from a real customer need and chose their long-term interest over speed, revenue, or your own convenience.
 
-### Strong Behavioral Answer Shape
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
 
-1. **Situation**: "The issue was..."
-2. **Goal**: "The important outcome was..."
-3. **Action**: "I did..."
-4. **Tradeoff**: "The hard decision was..."
-5. **Result**: "This improved/reduced/increased..."
-6. **Learning**: "Next time I would..."
+### 2. Ownership
 
-### Common Follow-Up Questions
+> Ownership. Leaders are owners, they think long term and don't sacrifice long-term value for short-term results. They act on behalf of the entire company beyond just their own team. They never say "that's not my job."
 
-- What data did you use?
-- What was your exact role?
-- What did you do when someone disagreed?
-- What tradeoff did you make?
-- What would you do differently?
-- How did this help the customer?
-- How did you know the result was successful?
+**What Amazon is looking for:**
+A time you took on a problem outside your remit — found or became the owner, caught a dropped handoff, or chose long-term value over a "not my job" shortcut.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 3. Invent and Simplify
+
+> Invent and Simplify. Leaders expect and require innovation and invention from their teams and always find ways to simplify. They are externally aware, look for new ideas from everywhere, and are not limited by "not invented here." As we do new things, we accept that we may be misunderstood for long periods of time.
+
+**What Amazon is looking for:**
+A time you invented a new solution or radically simplified a complex one — ideally a simplifying insight that unlocked the result — even after early attempts failed.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 4. Are Right, A Lot
+
+> Are Right, A Lot. Leaders are right a lot. They have strong judgment and good instincts. They seek diverse perspectives and work to disconfirm their beliefs.
+
+**What Amazon is looking for:**
+A time you made a high-stakes call under ambiguity by seeking others' input and questioning your own assumptions — not by insisting your idea win.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 5. Learn and Be Curious
+
+> Learn and Be Curious. Leaders are never done learning and always seek to improve themselves. They are curious about new possibilities and act to explore them.
+
+**What Amazon is looking for:**
+A time you taught yourself something new outside your comfort zone and turned it into a concrete plan you actually executed.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 6. Hire and Develop the Best
+
+> Hire and Develop the Best. Leaders raise the performance bar with every hire and promotion. They recognize exceptional talent and willingly move them throughout the organization. Leaders develop leaders and take seriously their role in coaching others. We work on behalf of our people to invent mechanisms for development, like Career Choice.
+
+**What Amazon is looking for:**
+A time you held the hiring bar, or coached someone through a hard growth area with honest feedback rather than just praise.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 7. Insist on the Highest Standards
+
+> Insist on the Highest Standards. Leaders have relentlessly high standards — many people may think these standards are unreasonably high. Leaders are continually raising the bar and drive their teams to deliver high quality products, services, and processes. Leaders ensure that defects do not get sent down the line and that problems are fixed so they stay fixed.
+
+**What Amazon is looking for:**
+A time you refused to accept "good enough" — raised the bar or fixed a defect at its root so it stayed fixed.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 8. Think Big
+
+> Think big. Thinking small is a self-fulfilling prophecy. Leaders create and communicate a bold direction that inspires results. They think differently and look around corners for ways to serve customers.
+
+**What Amazon is looking for:**
+A time you set or pushed a bolder, bigger-than-asked vision and rallied others toward it.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 9. Bias for Action
+
+> Bias for action. Speed matters in business. Many decisions and actions are reversible and do not need extensive study. We value calculated risk taking.
+
+**What Amazon is looking for:**
+A time you moved fast on a reversible (two-way-door) decision and took a calculated risk instead of over-analyzing.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 10. Frugality
+
+> Frugality. Accomplish more with less. Constraints breed resourcefulness, self-sufficiency, and invention. There are no extra points for growing head count, budget size, or fixed expense.
+
+**What Amazon is looking for:**
+A time you delivered more with fewer resources — small team, tight budget — and let the constraint drive a creative solution.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 11. Earn Trust
+
+> Earn Trust. Leaders listen attentively, speak candidly, and treat others respectfully. They are vocally self-critical even when doing so is awkward or embarrassing. Leaders do not believe their or their team's body odor smells of perfume. They benchmark themselves and their teams against the best.
+
+**What Amazon is looking for:**
+A time you earned trust by being candid and self-critical — owning a mistake, giving hard feedback, or backing a claim with data.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 12. Dive Deep
+
+> Dive Deep. Leaders operate at all levels, stay connected to the details, audit frequently, and are skeptical when metrics and anecdotes differ. No task is beneath them.
+
+**What Amazon is looking for:**
+A time you dug into the details or data, distrusted a clean metric, and followed an anecdote to uncover the real issue.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 13. Have Backbone; Disagree and Commit
+
+> Have Backbone; Disagree and Commit. Leaders are obligated to respectfully challenge decisions when they disagree, even when doing so is uncomfortable or exhausting. Leaders have conviction and are tenacious. They do not compromise for the sake of social cohesion. Once a decision is determined, they commit wholly.
+
+**What Amazon is looking for:**
+A time you respectfully challenged a decision you thought was wrong, then fully committed once the call was made — whichever way it went.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 14. Deliver Results
+
+> Deliver results. Leaders focus on the key inputs for their businesses and deliver them with the right quality and in a timely fashion. Despite setbacks, they rise to the occasion and never settle.
+
+**What Amazon is looking for:**
+A time you delivered despite setbacks by focusing on the inputs you controlled, and kept iterating after launch instead of stopping.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 15. Strive to be Earth's Best Employer
+
+> Strive to be Earth's Best Employer. Leaders work every day to create a safer, more productive, higher performing, more diverse, and more just work environment. They lead with empathy, have fun at work, and make it easy for others to have fun. Leaders ask themselves: Are my fellow employees growing? Are they empowered? Are they ready for what's next? Leaders have a vision for and commitment to their employees' personal success, whether that be at Amazon or elsewhere.
+
+**What Amazon is looking for:**
+A time you made your team or workplace safer, more inclusive, or more empowering — or helped a teammate grow.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —
+
+### 16. Success and Scale Bring Broad Responsibility
+
+> Success and Scale Bring Broad Responsibility. We started in a garage, but we're not there anymore. We are big, we impact the world, and we are far from perfect. We must be humble and thoughtful about even the secondary effects of our actions. Our local communities, planet, and future generations need us to be better every day. We must begin each day with a determination to make better, do better, and be better for our customers, our employees, our partners, and the world at large. And we must end every day knowing we can do even more tomorrow. Leaders create more than they consume and always leave things better than how they found them.
+
+**What Amazon is looking for:**
+A time you weighed the broader or secondary impact of your work and left something — community, codebase, process — better than you found it.
+
+**My story (SBI):**
+Situation —
+Behavior —
+Impact —

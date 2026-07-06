@@ -303,8 +303,9 @@ copy_nums = nums.copy()
 
 ### Repetition with `*`
 
-The `*` operator creates a new list by repeating references to items of the original list.
-This is a shallow copy behavior: the outer list is new, but the elements inside are the same object references.
+For sequence types like lists and tuples, the `*` operator creates a new sequence by repeating the original sequence `n` times.
+
+This is shallow-copy behavior: the outer container object, either a list or tuple, is new, but the elements inside are references to the original element objects, repeated `n` times.
 
 ```python
 [1, 2] * 3   # [1, 2, 1, 2, 1, 2]
@@ -336,35 +337,116 @@ matrix[0].append(1)
 # [[1], [], [], [], []]
 ```
 
-### List Comprehension (Quick way to build a list from an existing iterable)
+### List Comprehension
 
-Full Syntax: `[ expression_if_true if condition else expression_if_false for item in iterable if filter_condition ]`
-Full Syntax: `[ <Ternary conditional part> <Iteration> <Filter part> ]`
+A list comprehension is a compact way to build a new list from an iterable.
+
+#### Basic Syntax
 
 ```python
-result = [x**2 if x > 5 else x for x in range(10) if x % 2 == 0]
-# [0, 2, 4, 36, 64]
+[expression for item in iterable]
 ```
 
-We use either none, Ternary conditional part, filtering part, or both depending on our needs.
-
-**Basic Syntax (no conditions)** — `[expression for item in iterable]`
+The `expression` decides **what value gets added** to the new list. Every item that reaches the expression is still included, but the value added depends on the condition.
 
 ```python
-squares = [x**2 for x in range(5)]
-# [0, 1, 4, 9, 16]
+nums = [1, 2, 3, 4]
+
+[x for x in nums]
+# `x` is the expression
+# [1,2,3,4]
+
+squares = [x**2 for x in nums]
+# Expression: `x**2` 
+# [1, 4, 9, 16]
+
+labels = ["even" if x % 2 == 0 else "odd" for x in nums]
+# Ternary Expression: "even" if x % 2 == 0 else "odd"
+# ['odd', 'even', 'odd', 'even']
 ```
 
-**Conditional Expression Syntax** (if BEFORE iterable→ controls the value). All items in the iterable are included, just their form vary depending on the expression applied to them based on the condition — `[expression_if_true if condition else expression_if_false for item in iterable]`
+#### Filtering Syntax
+
+A filter controls **whether an item reaches the expression and gets included at all**.
 
 ```python
-pos_or_neg = [x if x % 2 == 0 else -x for x in range(6)]
-# [0, -1, 2, -3, 4, -5]
+[expression for item in iterable if condition]
+
+nums = [1, 2, 3, 4, 5, 6]
+
+evens = [x for x in nums if x % 2 == 0]
+# Filter: `if x % 2 == 0`
+# [2, 4, 6]
 ```
 
-**Filtering Syntax** (if AFTER iterable → controls inclusion). Items are filtered out from the iterable depending on the condition — `[expression for item in iterable if condition]`
+#### Nested List Comprehension
+
+A nested, or stacked, list comprehension has more than one `for` loop.
 
 ```python
-evens = [x for x in range(10) if x % 2 == 0]
-# [0, 2, 4, 6, 8]
+[expression for outer_item in outer_iterable for inner_item in inner_iterable]
+```
+
+Example:
+
+```python
+
+# Example 1: Flattening the nested List
+matrix = [[1, 2], [3, 4], [5, 6]]
+
+flat = [num for row in matrix for num in row]
+# `num` is the expression
+# `for row in matrix` is the outer loop
+# `for num in row` is the inner loop
+# [1, 2, 3, 4, 5, 6]
+
+# The `for` clauses are written in the same order as normal nested loops.
+
+# Equivalent to:
+flat = []
+for row in matrix:
+    for num in row:
+        flat.append(num)
+
+# Example 2: Doubling the nested list
+doubled = [[num * 2 for num in row] for row in matrix]
+# `[num * 2 for num in row]` is the outer expression
+# `num * 2` is the inner expression
+# [[2, 4], [6, 8], [10, 12]]
+
+# Equivalent to:
+doubled = []
+for row in matrix:
+    new_row = []
+    for num in row:
+        new_row.append(num * 2)
+    doubled.append(new_row)
+```
+
+#### Combined Example
+
+We can combine nested loops, filters, and a ternary expression in one list comprehension.
+
+```python
+matrix = [[1, 2], [3, 4, 5], [6]]
+
+result = [
+    num * 10 if num % 2 == 0 else num
+    for row in matrix
+    if len(row) > 1
+    for num in row
+    if num > 2
+]
+# Ternary Expression: `num * 10 if num % 2 == 0 else num`
+# Outer Filter: `if len(row) > 1`
+# Inner Filter: `if num > 2`
+# [3, 40, 5]
+
+# Equivalent to:
+result = []
+for row in matrix:
+    if len(row) > 1:
+        for num in row:
+            if num > 2:
+                result.append(num * 10 if num % 2 == 0 else num)
 ```

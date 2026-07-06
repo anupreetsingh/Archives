@@ -20,15 +20,34 @@ A code distribution written by someone else that can be installed and used in yo
 
 Program for installing packages and frameworks from the internet. They could be System level and Language Level.
 
+Packages can be installed individually, but most projects need a saved list of packages so the project can be installed again without dependency issues. Dependency issues happen when packages need different versions of the same package, when a package is missing, or when two developers are using different versions of a dependency.
+
+Different package managers need to know **where** to install a package and **how** to record that package for the project.
+
+**Python:** The "current environment" is usually a **virtual environment** or a **conda environment**. Installing a package adds it to that environment and may also update a dependency file for the project.
+
+**TypeScript/Javascript:** With Node.js, the closest idea is the current **Node project**. Packages are usually installed into the project's `node_modules` folder and recorded in `package.json` and a lock file.
+
+**Java:** Packages are usually called **dependencies**. Maven and Gradle do not normally install dependencies directly into a local project folder the same way npm does. Instead, dependencies are declared in a build file, downloaded into a local cache, and added to the project's build/classpath when the application is compiled or run.
+
+| Ecosystem | Package Manager | Project Dependency File |
+|---|---|---|
+| Python | pip | `requirements.txt` |
+| Python | uv | `pyproject.toml` / `uv.lock` |
+| Python | Conda | `environment.yml` |
+| TypeScript/Javascript | npm | `package.json` / `package-lock.json` |
+| Java | Maven | `pom.xml` |
+| Java | Gradle | `build.gradle` / `build.gradle.kts` |
+
 ### Backend Framework
 
 A software framework built on top of a backend programming language that provides structure, conventions, and prebuilt functionality for developing server-side applications, reducing the amount of boilerplate code developers need to write.
 
 ### Examples Map
 
-| Backend Programming Language | Runtime | Package Manager | Package/Library Examples | Backend Frameworks |
+| Backend Programming Language | Runtime | Package Manager | Package/Library Examples | Frameworks |
 |---|---|---|---|---|
-| Python | Python interpreter | pip, uv, Poetry, conda | Pydantic, SQLAlchemy, psycopg, requests, bcrypt, PyJWT, python-dotenv | FastAPI, Django, Flask, Litestar |
+| Python | Python interpreter | pip, uv, Poetry, conda | Pydantic, SQLAlchemy, psycopg, requests, bcrypt, PyJWT, python-dotenv | FastAPI, Django, pytest |
 | Typescript/Javascscript | NodeJS | npm, yarn, pnpm | Prisma, Zod, bcrypt, jsonwebtoken, dotenv, pg, mongoose, axios | Express, NestJS, Fastify, Next.js |
 | Java | JVM | Maven, Gradle | Hibernate, Jackson, Lombok, JUnit, Mockito, PostgreSQL JDBC Driver | Spring Boot, Quarkus, Micronaut, Jakarta EE |
 
@@ -470,7 +489,7 @@ ORMs are a convenience and abstraction layer over SQL. It helps the backend turn
 
 ORMs are useful because they:
 
-1. Map database tables to code classes or objects
+1. They use classes/models to act as blueprints for the database tables.
 2. Help create, read, update, and delete records
 3. Reduce repetitive SQL code
 4. Make relationships between tables easier to work with
@@ -482,13 +501,54 @@ Common combinations:
 
 | Language / Framework | ORM |
 |---|---|
-| Python + FastAPI | SQLAlchemy |
+| Python + FastAPI | SQLAlchemy as ORM + Alembic for database migrations |
 | Python + Django | Django ORM |
 | TypeScript/Javascript + Express | Prisma |
 | TypeScript/Javascript + Next.js | Prisma|
 | Java + Spring Boot | Hibernate / JPA |
 
-Example:
+In a general ORM, object-oriented code maps to relational database structures like this:
+
+| Object-oriented code | Relational database |
+|---|---|
+| Class / model | Table |
+| Attribute / field | Column |
+| Object / instance | Row |
+| Object ID / primary key field | Primary key |
+| Reference to another object | Foreign key |
+
+Example mapping:
+
+```python
+class User:
+    id: int
+    name: str
+    email: str
+```
+
+This `User` class maps to a `users` table:
+
+```sql
+users
+-----
+id      INTEGER PRIMARY KEY
+name    TEXT
+email   TEXT
+```
+
+One `User` object maps to one row in the `users` table:
+
+```python
+user = User(id=123, name="Manpreet", email="manpreet@example.com")
+```
+
+```text
+id  | name     | email
+----|----------|---------------------
+123 | Manpreet | manpreet@example.com
+```
+
+Query example:
 
 Without an ORM
 
@@ -498,11 +558,11 @@ SELECT id, name, email FROM users WHERE id = 123;
 
 With an ORM:
 
-Example:
-
 ```python
 user = session.get(User, 123)
 ```
+
+Here, the ORM knows that `User` maps to the `users` table, `id`, `name`, and `email` map to columns, and `123` is the primary key of the row to load. The database returns a row, and the ORM turns that row into a `User` object.
 
 ### Embedded Database vs Server Database
 

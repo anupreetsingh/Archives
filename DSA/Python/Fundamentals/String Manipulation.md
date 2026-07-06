@@ -89,7 +89,9 @@ greeting=greeting + " Anu," + " How are you?" # Concatenation also Creates a new
 print(greeting)     # 'Hello World'
 ```
 
-## Repeating strings
+## Repetition with `*`
+
+For Strings the `*` operator creates a new string by repeating the original string n times. This is not shallow copy since strings are just one immutable object and not containers of mutable element references.
 
 ```python
 print("ha" * 3)      # 'hahaha'

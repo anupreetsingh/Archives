@@ -50,12 +50,26 @@ print(a//b)   # Floor Division : 3 , returns the Quotient as an integer(Rounded 
 a = 5
 b = 7
 
-print(a == b)  # Equal to ❓ : False
-print(a != b)  # Not equal to 🚫 : True
-print(a < b)   # Less than 👈 : True
-print(a > b)   # Greater than 👉 : False
-print(a <= b)  # Less than or equal to 👈 Or equal? : True
-print(a >= b)  # Greater than or equal to 👉 Or equal? : False
+print(a == b)  # Equal to : False
+print(a != b)  # Not equal to : True
+print(a < b)   # Less than : True
+print(a > b)   # Greater than : False
+print(a <= b)  # Less than or equal to Or equal? : True
+print(a >= b)  # Greater than or equal to Or equal? : False
+```
+
+### Equality vs Identity
+
+`==` checks whether two objects have the same **value**.
+
+`is` checks whether two variables point to the same **object in memory**.
+
+```python
+a = tuple([1, 2])
+b = tuple([1, 2])
+
+print(a == b)  # True, same value
+print(a is b)  # False, different objects in memory
 ```
 
 ## 3. Logical Operators
@@ -141,21 +155,37 @@ print(a >> 1)  # 2
 
 ## 7. Ternary Operator
 
+A ternary operator is a compact way to choose between **two values** based on a condition.
+
+It is called **ternary** because the expression has three main parts:
+
+```python
+value_if_true if condition else value_if_false
+```
+
+This is the expression form of:
+
+```python
+if a > b:
+    max_value = a
+else:
+    max_value = b
+```
+
+Example:
+
 ```python
 a = 10
 b = 3
-max_value = a if a > b else b  # Conditional expression: max_value = 10
-print(max_value)
+
+max_value = a if a > b else b
+# 10
 ```
 
 ## 8. Scope Resolution Operator
 
-```python
-global_x = 100
+Python does not have a C++-style scope resolution operator like `::`.
 
-def print_global():
-    global global_x  # Using global variable
-    print(global_x)   # Output: 100
+Python resolves plain names using the **LEGB rule** and resolves attributes using dot notation, such as `module.name`, `Class.attribute`, and `object.attribute`.
 
-print_global()
-```
+See [Scope Resolution.md](</Users/manpreetsingh/Downloads/Study/Notes/DSA/Python/Fundamentals/Scope Resolution.md>) for `global`, `nonlocal`, class attributes, and instance attributes.

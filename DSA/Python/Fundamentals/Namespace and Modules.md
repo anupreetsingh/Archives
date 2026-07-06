@@ -7,7 +7,7 @@ A **namespace** is the actual name-to-object mapping.
 ### Common namespace types
 
 - **Local namespace**: names created inside the function currently running.
-- **Enclosing namespace**: names in an outer function when functions are nested.
+- **Enclosing namespace**: names in an outer **function** when functions are nested.
 - **Global namespace**: Each Python file is a **module**, and each module has its own global namespace.
 - **Built-in namespace**: names Python provides automatically, like `print`, `len`, and `dict`.
 

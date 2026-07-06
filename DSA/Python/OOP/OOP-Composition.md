@@ -1,14 +1,14 @@
-# 🧩 Composition
+# Composition
 
 - A design principle where one class "has" or "uses" another class.
 - Instead of inheriting behavior (like inheritance), it delegates work to components (objects from other classes).
 - Encourages modularity, reusability, and flexibility.
 
-📌 **KEY IDEA: "Has-a" relationship** — Example: Car HAS an Engine (not Car IS an Engine)
+**KEY IDEA: "Has-a" relationship** — Example: Car HAS an Engine (not Car IS an Engine)
 
 ---
 
-## ✅ Basic Example
+## Basic Example
 
 ```python
 class Engine:
@@ -32,14 +32,14 @@ c.drive()
 # Car is moving!
 ```
 
-## 🎯 Benefits
+## Benefits
 
 - More flexible than inheritance
 - Swap out components easily (e.g., ElectricEngine, DieselEngine)
 - Reduces tight coupling
 - Follows "Composition over Inheritance" principle
 
-## ⚡ Flexible Example
+## Flexible Example
 
 ```python
 class ElectricEngine:
