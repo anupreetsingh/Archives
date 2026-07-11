@@ -358,7 +358,7 @@ SQL databases organize data into tables with rows and columns.
 
 They are a good fit when the data has a clear structure and relationships between different things.
 
-Examples: PostgreSQL, MySQL, SQLite, Microsoft SQL Server
+Examples: PostgreSQL, MySQL, SQLite, Amazon RDS(Relation Database Service),
 
 Example:
 

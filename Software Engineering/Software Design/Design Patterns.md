@@ -1,6 +1,6 @@
 # Design Patterns
 
-## 🟦 Singleton Pattern
+## Singleton Pattern
 
 - Ensures only ONE instance of a class exists.
 - Provides a global access point to that instance.
@@ -21,7 +21,7 @@ s2 = Singleton()
 print(s1 is s2)  # True → both point to the same object
 ```
 
-## 🟩 Observer Pattern
+## Observer Pattern
 
 - Defines "one-to-many" relationship.
 - When Subject changes → all Observers are notified.
@@ -64,7 +64,7 @@ subject.notify("New article published!")
 # 📱 SMS: New article published!
 ```
 
-## 🟥 Factory Pattern
+## Factory Pattern
 
 - Centralizes object creation to a Factory class.
 - Lets a method/class decide which concrete object to return.

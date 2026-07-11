@@ -79,3 +79,9 @@ Closely linked independent separated by ;
 Words connecting two clauses
 
 ## Parenthetical expression
+
+## Compound Nouns
+
+A compound noun is a noun made up of two or more words(one noun and the other a noun, adjective or verb) that together refer to a single concept.
+
+Example: greenhouse, record-keeping, machine learning, swimming pool, snowman, etc

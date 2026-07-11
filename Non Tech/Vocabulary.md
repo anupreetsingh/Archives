@@ -20,3 +20,15 @@
 1. Argument(Noun): A claim supported by sound reasoning and evidence , designed to persuade an audience or prove a point.
 
 1. Premise: A statement that you accept as true and use as a starting point to build an argument.
+
+1. Induce(verb, *ETY: To lead into*): Persuade someone to do something or Cause something to happen. Example: The discount offer induced me to order food I wouldn't have otherwise ordered. Poor diet can induce a feeling of fatigue.
+
+1. Pedantic(adjective): To be excessively concerned with minor details or rules. Example: Jason was so pedantic with writing the final paper that he fails to manage his time properly.
+
+1. Pydantic(Python + Pedantic): Packages used for data validation and setting management in python.
+
+1. Coerce(verb): Compel someone to act against their will by use of force, threat or undue influence. Forcible Persuasion, as they are not allowed to say No. Example: The company coerced us into signing an NDA under the threat of firing us.
+
+1. Persuade(verb): Genuinely convince someone to bring them to your side by using logic and reason. Example: He persuaded me to go to the doctor when I had been sick for over 3 days.
+
+1. Undue(adjective): Unreasonable or unnecessary.

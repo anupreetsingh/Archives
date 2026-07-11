@@ -1,5 +1,7 @@
 # Object Oriented Programming — Four Pillars
 
+These are 4 principles that make a language object oriented.
+
 ## 1. Encapsulation
 
 - Restricting access to attributes and methods inside a class. And maybe providing controlled access using getters/setters methods.

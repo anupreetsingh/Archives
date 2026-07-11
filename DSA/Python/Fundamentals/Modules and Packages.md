@@ -1,81 +1,12 @@
-# Namespaces and Modules in Python
+# Modules and Packages in Python
 
-## Namespace
-
-A **namespace** is the actual name-to-object mapping.
-
-### Common namespace types
-
-- **Local namespace**: names created inside the function currently running.
-- **Enclosing namespace**: names in an outer **function** when functions are nested.
-- **Global namespace**: Each Python file is a **module**, and each module has its own global namespace.
-- **Built-in namespace**: names Python provides automatically, like `print`, `len`, and `dict`.
-
-### LEGB rule
-
-Python resolves names using **LEGB**, searching outward and using the first matching name it finds:
-
-```text
-L -> Local
-E -> Enclosing
-G -> Global
-B -> Built-in
-```
-
-Example:
-
-```python
-value = "global"
-
-def outer():
-    value = "enclosing"
-
-    def show():
-        value = "local"
-        print(value) # Output: local
-        print(len("hello")) # Output: 5
-
-    show()
-
-outer()
-```
-
-In this example:
-
-- `value` exists in the local, enclosing, and global namespaces.
-- Python prints `"local"` because the local `value` inside `show()` shadows the enclosing and global `value`.
-- `len` and `print` are built-in names because Python provides them automatically.
-
-### Not part of Python namespaces
-
-Some things are related to names, but are not Python namespaces.
-
-#### Keywords
-
-Keyword like `if` ,`and`, `for`, `def` `class` are part of Python's grammar. They are different from Built-in names like `print` as they cannot be shadowed as variable names.
-
-```python
-if = "hello"  # SyntaxError
-print = "hello"  # allowed, but bad idea
-```
-
-#### Environment variables
-
-They are OS-level key-value settings available to a running program:
-
-```python
-import os  # os is a standard library module in Python
-
-print(os.environ["HOME"])
-```
-
-Here, `os` is added to the current module's global namespace and maps to the `os` module.
-Then `os.environ` gives access to OS-level environment variables. A `.env` file is a common way to define environment variables, but Python does not automatically load `.env` files unless a tool or library loads them.
-`"HOME"` is a key inside that environment-variable mapping.
+Better to be familiar with the broader discussion of namespaces in [Namespace and Scope Resolution](<Namespace and Scope.md>).
 
 ## Modules
 
-At runtime, a module is an object with its own namespace.
+Every `.py` file is a module.
+
+At runtime, a module is an object with its own global namespace.
 
 When you import a module, Python adds that module's name to your current module's global namespace. That name maps to the imported module object.
 

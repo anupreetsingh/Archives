@@ -17,28 +17,30 @@
         - [Push tags](#push-tags)
    - [6. Pulling from remote or other branches (Fetch and Merge)](#6-pulling-from-remote-or-other-branches-fetch-and-merge)
 
-3. [Merging](#merging)
-   - [Merge outcomes](#merge-outcomes)
-   - [Merge Conflicts](#merge-conflicts)
+3. [Current Pointer (HEAD)](#current-pointer-head)
+   - [Switch](#switch)
 
 4. [Branches](#branches)
    - [Anecdote for understanding branches](#anecdote-for-understanding-branches)
    - [Branch commands](#branch-commands)
-   - [What happens when you switch](#what-happens-when-you-switch)
+   - [Reset](#reset)
 
-5. [Tracking and Status](#tracking-and-status)
+5. [Merging](#merging)
+   - [Merge outcomes](#merge-outcomes)
+   - [Merge Conflicts](#merge-conflicts)
+
+6. [Tracking and Status](#tracking-and-status)
    - [1. Status](#1-status)
    - [2. Log](#2-log)
    - [3. Show](#3-show)
    - [4. Commit references: ^ and ~](#4-commit-references--and-)
    - [5. Reflog](#5-reflog)
 
-6. [Helpful Git Commands](#helpful-git-commands)
+7. [Helpful Git Commands](#helpful-git-commands)
    - [1. Stash](#1-stash)
    - [2. Restore](#2-restore)
    - [3. rm (Remove files)](#3-rm-remove-files)
-   - [4. Reset](#4-reset)
-   - [5. git diff](#5-git-diff)
+   - [4. git diff](#4-git-diff)
 
 ---
 
@@ -205,36 +207,218 @@ git pull origin main        # fetch origin and merge origin/main into current br
 git pull --rebase           # fetch + rebase current branch on top of upstream
 ```
 
-## Merging
+## Current Pointer (HEAD)
 
-Merging means combining the commits of two branches so one branch includes the other’s history. It can most commonly be carried out using these commands, which differ in how the final history turns out:
+**HEAD** is the pointer to the commit you are currently on. Most of the time, `HEAD` points to a branch name, and the branch name points to a commit:
 
-| Method | Command | Result |
-|--------|--------|--------|
-| **Merge** | `git merge other-branch` | One of the [Merge Outcomes](#merge-outcomes) depending on the relation between branches|
-| **Squash** | `git merge --squash other-branch` | Combines all changes from the other branch into one set of changes, applies them to the current branch’s working tree and stages them.<br> Does not create a commit.<br> You need to run `git commit` to create the single squash commit. |
-| **Rebase** | `git rebase <target-branch>` (while on curr-branch)  | curr-branch = The branch that gets moved.<br>The target-branch = The new base for the replayed commits of curr-branch <br> It takes all the commits from curr-branch and replays(same metadata, new commit) them onto tip of the target-branch as the new base for the curr-branch, so history stays linear and no merge commit is created.  <br>**Flags (full commands):**<br>• `git rebase --abort` — Cancels the rebase and restores your branch to its state before the rebase; use when you want to give up.<br>• `git rebase --continue` — Resumes the rebase after you’ve resolved conflicts and staged the files; use when you’re ready to finish.<br>• `git rebase --skip` — Drops the current commit being replayed and continues; use when that commit is redundant or you no longer want it.<br>• `git rebase -i <target-upstream>` — Opens an editor to pick, reorder, squash, or edit commits before they’re replayed on the target-upstream commit ; use when you want to clean up or rearrange history.<br>• `git rebase --update-refs <target-branch>` — After replaying commits, automatically moves any local branch pointers that pointed to the old commits so they point to the rewritten commits instead; useful when you have stacked branches.|
-| **Cherry-pick** | `git cherry-pick <commit-hash>` or `git cherry-pick <commit1> <commit2>...` (while on target-branch) | Applies one or more specific commits (by hash) from another branch onto the current branch, creating new commits with the same changes. Use when you want only selected commits, not a full merge or rebase.<br>**Flags (full commands):**<br>• `git cherry-pick --abort` — Cancels the cherry-pick and restores the branch to its state before the operation.<br>• `git cherry-pick --continue` — Resumes after resolving conflicts and staging the files.<br>• `git cherry-pick --skip` — Skips the current commit and continues with the rest.<br>• `git cherry-pick -n` (or `--no-commit`) — Applies the changes without committing; lets you stage and commit manually (e.g. to squash several cherry-picked commits into one). |
+```text
+HEAD -> main -> commit A
+```
+
+In that normal attached state, making a commit moves the current branch pointer forward, and `HEAD` follows because it is attached to that branch.
+
+**Detached HEAD:** Normally HEAD points to a branch name (e.g. `main`), and that branch points to a commit. So, detached HEAD means HEAD points directly to a commit, not to a branch:
+
+```text
+HEAD -> commit A
+main -> commit B
+```
+
+If you make new commits while in detached HEAD, they are not on any branch. Once you switch away (e.g. back to `main`), that new commit may become unreachable unless you have its hash or the reflog. Git may eventually remove it during garbage collection.
+
+### Switch
+
+When you run `git switch <branch>` or `git switch --detach <commit-hash>`, Git changes where `HEAD` points:
+
+1. **HEAD** moves to the target branch (or directly to the commit, if detached).
+2. **The index (staging area)** is updated to match the target commit.
+3. **The working directory** is updated so your files on disk match that commit.
+
+So after a switch, your project folder reflects the snapshot of the branch or commit you switched to. Any uncommitted changes in the way are either carried over (if possible), or Git will refuse the switch and ask you to commit or stash first.
+
+---
+
+## Branches
+
+To understand the concept of branches, remember that each commit is recognized by its unique hash code. <br>
+Each successive commit is linked to its previous commit by a parent–child relationship. Now, just to make it easier to traverse, we use named pointers to point to the most recent commits on a branch.
+
+**Branch name**: A pointer that moves to the latest commit on that branch when you commit. Creating a branch just creates a new pointer.
+
+The current branch is the branch that `HEAD` is attached to. When you commit while `HEAD` is attached to a branch, Git creates the new commit and moves that branch pointer forward to it.
+
+### Anecdote for understanding branches
+
+- Say you are on `main` at commit A, so `HEAD` is attached to `main`, and `main` points to A.
+
+- You create a new-branch. Creating a branch just means the pointer `new-branch` now points to A; you have not switched yet.
+
+- Say you commit right now, you would be committing to `main` branch, so that would add a commit B to `main` with parent A. It causes `main` to move to B, and `HEAD` follows because it is attached to `main`.
+
+- After that you switch to `new-branch`, which still points at A. `HEAD` is now attached to `new-branch`, and `main` keeps on pointing to commit B.
+
+- The next commit you make will be commit C on `new-branch` also with parent A. This is how separate branches are linked using branch pointers.
+
+### Branch commands
+
+Creating a branch and switching to it
+
+```bash
+git branch new-branch   # create a new branch at current commit
+git switch new-branch   # switch to new-branch
+git switch -c new-branch   # create and switch to new-branch
+git switch --detach <commit>   # Switch to a specific commit, <commit> could a hash or something like HEAD~2
+```
+
+Deleting a branch
+
+```bash
+git branch -d branch-name   # delete if merged
+git branch -D branch-name   # force delete even if not merged
+git push origin --delete branch-name   # delete on remote
+```
+
+### Reset
+
+Moving the current branch pointer (and optionally the index and working tree) to another commit.
+
+| Option | Effect |
+|--------|--------|
+| `git reset <commit>` (default = `--mixed`) | Move the current branch pointer to the commit and HEAD follows with it; Staging area reset to commit; working tree remains as is |
+| `git reset --soft <commit>` | Move current branch pointer to commit; keep index and working tree (changes stay staged) as is. |
+| `git reset --hard <commit>` | Move current branch pointer to commit; reset index and working tree (all local changes lost) to the commit. |
+
+Example: `git reset --soft HEAD~1` undoes the last commit but keeps changes staged.
+
+---
+
+## Combining(Merge, Squash, Rebase, Cherry-Pick)
+
+You can combine one or more commits in a variety of different ways and each decides how the history of the involved branches turns out:
+
+1. **Merge**
+
+   - **Command:** `git merge incoming-branch` while on `curr-branch`
+   - **Intent:** Bring the commits from `incoming-branch` into `curr-branch` while preserving the branch history.
+   - **Result:** One of the [Merge Outcomes](#merge-outcomes), depending on the relation between branches.
+
+2. **Squash**
+
+   - **Command:** `git merge --squash incoming-branch`
+   - **Intent:** Bring the changes from `incoming-branch` into `curr-branch` as one combined set of staged changes, without preserving each incoming commit separately.
+   - **Result:**
+     - Combines all changes from the incoming branch into one set of changes.
+     - Applies those changes to the current branch's working tree and stages them.
+     - Does not create a commit.
+     - You need to run `git commit` to create the single squash commit.
+
+3. **Rebase**
+
+   - **Command:** `git rebase <target-branch>` while on `curr-branch`.
+   - **Intent:** Make the tip of `target-branch` the new base of `curr-branch` by replaying the commits of `curr-branch` that are not in `target-branch`.
+   - **Result:**
+     - `curr-branch` is the branch that gets moved.
+     - The tip of `target-branch` is meant to be the new base for the replayed commits of `curr-branch`.
+     - Git takes all the commits from `curr-branch` and replays them onto the tip of `target-branch`.
+     - The replayed commits contain the same changes, but they are new commits with new commit hashes.
+     - This makes the history of `curr-branch` linear from the tip of `target-branch` and does not create a merge commit.
+     - This gives you a linear history from the perspective of `curr-branch` since now it does not split apart from `target-branch` and `target-branch` included in `curr-branch`'s ancestry.
+   - **Flags:**
+     - `git rebase --abort` - Cancels the rebase and restores your branch to its state before the rebase; use when you want to give up.
+     - `git rebase --continue` - Resumes the rebase after you've resolved conflicts and staged the files; use when you're ready to finish.
+     - `git rebase --skip` - Drops the current commit being replayed and continues; use when that commit is redundant or you no longer want it.
+     - `git rebase -i <target-upstream>` - Opens an editor to pick, reorder, squash, or edit commits before they're replayed on the target-upstream commit; use when you want to clean up or rearrange history.
+     - `git rebase --update-refs <target-branch>` - After replaying commits, automatically moves any local branch pointers that pointed to the old commits so they point to the rewritten commits instead; useful when you have stacked branches.
+
+4. **Cherry-pick**
+
+   - **Command:** `git cherry-pick <commit-hash>` or `git cherry-pick <commit1> <commit2>...` while on `curr-branch`.
+   - **Intent:** Apply only specific commit(s) onto `curr-branch` without bringing the full branch history they came from.
+   - **Result:**
+     - Applies one or more specific commits from another branch onto the current branch.
+     - Creates new commits with the same changes.
+     - Use when you want only selected commits, not a full merge or rebase.
+   - **Flags:**
+     - `git cherry-pick --abort` - Cancels the cherry-pick and restores the branch to its state before the operation.
+     - `git cherry-pick --continue` - Resumes after resolving conflicts and staging the files.
+     - `git cherry-pick --skip` - Skips the current commit and continues with the rest.
+     - `git cherry-pick -n` or `git cherry-pick --no-commit` - Applies the changes without committing; lets you stage and commit manually, such as when you want to squash several cherry-picked commits into one.
 
 ### Merge outcomes
 
 Executing a merge could go one of three ways:
 
-| Outcome | Meaning |
-|--------|--------|
-| **Fast forward** | - In case there is no separate line of history which means technically the other branch is just a few commits ahead of the current branch and the current branch has no commits that aren't on the other branch.  <br> - The current branch pointer just moves forward to the tip of the other branch.<br>- This doesn't create any kind of new commit in log history |
-| **Three-way Merge, no conflict** | - There are two separate lines of history meaning current branch has commits that do not exist on the other branch. <br>- Git performs a 3 way merge commit with two parents and a base(the common ancestor commit between two branches) and writes an automatic merge commit message|
-| **Three-way Merge with conflict** | - Same as above but Git can’t auto-merge;<br> - Merge needs to be resolved as discussed in [Merge Conflict](#merge-conflicts) |
+1. **Fast forward**
+
+- There is no separate line of history.
+- The incoming branch is ahead of the current branch, and the current branch has no commits that are missing from the incoming branch.
+- Git only moves the current branch pointer forward to the tip of the incoming branch.
+- This does not create a new commit in the log history.
+
+2. **Three-way merge, no conflict**
+
+- There are two separate lines of history.
+- The current branch has commits that do not exist on the incoming branch, and the incoming branch has commits that do not exist on the current branch.
+- Both branches have moved ahead from the common base ancestor, so their histories have split apart.
+- Git uses the current branch tip, the incoming branch tip, and the base to perform a three-way merge.
+- Git creates a merge commit and writes an automatic merge commit message.
+- In this case, both branches have changes, but they do not change the same part of the same file compared to the base version.
+  - Example:
+
+    ```text
+    Base version:
+    line 1: title
+    line 2: description
+
+    Current branch changes line 1:
+    line 1: better title
+    line 2: description
+
+    Incoming branch changes line 2:
+    line 1: title
+    line 2: better description
+    ```
+
+3. **Three-way merge with conflict**
+
+- Same as a regular three-way merge, but Git cannot auto-merge every change.
+- You need to manually resolve the conflicting changes as discussed in [Merge Conflict](#merge-conflicts).
 
 ### Merge Conflicts
 
-A conflict happens when two branches with different lines of history change the same part of the same file and Git can’t decide which version to keep. Conflicts can be from merge, squash or rebase.
+A conflict happens when two branches with different lines of history change the same part of the same file compared to the base version, and Git cannot decide which version to keep. Conflicts can happen during merge, squash, rebase, or cherry-pick operations.
 
-**Anecdote to understand cause of conflicts**
+**Example to understand cause of conflicts**
 
-- You make commits on a feature branch; meanwhile, others commit on main. The histories split: each branch has new commits that the other doesn’t.
-- You try to merge the feature branch into main. Git looks at both branch tips. When the same lines in the same file were changed differently on each branch, Git cannot decide which version to pick automatically since the choice is not linear as it was in the case of fast-forward where git could just choose the latest commit. Now we are dealing with separate lines of history and none of the tips could be said to be an update of the other.
-- Git writes conflict markers around those overlapping sections of each of these conflict files. You then manually have to deal with the conflict as described below.
+```text
+Base version:
+line 1: title
+line 2: description
+
+Current branch changes line 1:
+line 1: better title
+line 2: description
+
+Incoming branch also changes line 1:
+line 1: alternate title
+line 2: description
+```
+
+- Both branches moved ahead from the same base version.
+- Both branches changed `line 1`, but they changed it in different ways.
+- Neither branch tip is simply a newer version of the other, so Git cannot pick one automatically.
+- Git writes conflict markers around the overlapping change:
+
+  ```text
+  <<<<<<< HEAD
+  line 1: better title
+  =======
+  line 1: alternate title
+  >>>>>>> incoming-branch
+  line 2: description
+  ```
+
+- You then manually choose or rewrite the final version as described below.
 
 **How to handle conflicts**:
 
@@ -262,7 +446,7 @@ A conflict happens when two branches with different lines of history change the 
    ```bash
    git restore --theirs <file>
    git add <file>
-   ````
+   ```
 
    - **Resolve manually** (next step) if you need to decide for each section of conflict in a file.
 
@@ -286,60 +470,6 @@ You can stage the resolved files: `git add <file>` (or `git add .` if all are re
    - **Rebase conflict:** Stage the resolved files, then run `git rebase --continue` — do **not** run `git commit`. In a rebase, Git creates the commit for you when you continue; using `git commit` would add an extra unwanted commit.
 
 6. In case the conflict is too much to handle, `git merge --abort` or `git rebase --abort`: all conflict markers are removed and files are restored to the state of the current branch before the merge or rebase started.
-
----
-
-## Branches
-
-To understand the concept of branches, remember that each commit is recognized by its unique hash code. <br>
-Each successive commit is linked to its previous commit by a parent–child relationship. Now, just to make it easier to traverse, we use named pointers to point to the most recent commits on a branch.
-
-**HEAD**: A pointer to the commit you are currently on (and usually to the current branch). It moves to whichever commit you checkout or switch to.
-
-**Branch name**: A pointer that moves to the latest commit on that branch when you commit. Creating a branch just creates a new pointer.
-
-**Detached HEAD:** Normally HEAD points to a branch name (e.g. `main`), and that branch points to a commit. So, Detached HEAD means HEAD points directly to a commit, not to a branch. <br> If you make new commits while in detached HEAD, they are not on any branch. Once you switch away (e.g. back to `main`), that new commit may become unreachable unless you have its hash or the reflog. Git may eventually remove it during garbage collection.
-
-### Anecdote for understanding branches
-
-- Say you are on `main` at commit A, so HEAD also points to A.
-
-- You create a new-branch. Creating a branch just means the pointer `new-branch` now points to A; you have not switched yet.
-
-- Say you commit right now, you would be committing to `main` branch, so that would add a commit B to `main` with parent A. It causes `main` and `HEAD` to move to B.
-
-- After that you switch to `new-branch` which still points at A and hence `HEAD` also points to A.  `main` keeps on pointing to commit B.
-
-- The next commit you make will be commit C on `new-branch` also with parent A. This is how separate branches are linked using branch pointers.
-
-### Branch commands
-
-Creating a branch and switching to it
-
-```bash
-git branch new-branch   # create a new branch at current commit
-git switch new-branch   # switch to new-branch
-git switch -c new-branch   # create and switch to new-branch
-git switch --detach <commit>   # Switch to a specific commit, <commit> could a hash or something like HEAD~2
-```
-
-Deleting a branch
-
-```bash
-git branch -d branch-name   # delete if merged
-git branch -D branch-name   # force delete even if not merged
-git push origin --delete branch-name   # delete on remote
-```
-
-### What happens when you switch
-
-When you run `git switch <branch>` or `git switch --detach <commit-hash>`, Git does three things:
-
-1. **HEAD** moves to the target branch (or directly to the commit, if detached).
-2. **The index (staging area)** is updated to match the target commit.
-3. **The working directory** is updated so your files on disk match that commit.
-
-So after a switch, your project folder reflects the snapshot of the branch or commit you switched to. Any uncommitted changes in the way are either carried over (if possible), or Git will refuse the switch and ask you to commit or stash first.
 
 ---
 
@@ -451,19 +581,7 @@ git rm --cached <file>       # remove the file from Git's index/staging area, bu
                              # Needs to be followed with an addition to .igitignore for the file to be completely ignored and not pop up as untracked from now on
 ```
 
-### 4. Reset
-
-Moving the current branch pointer(and optionally the index and working tree) to another commit
-
-| Option | Effect |
-|--------|--------|
-| `git reset <commit>` (` default = `--mixed`) | Move the branch pointer to the commit and HEAD follows with it; Staging area reset to commit; working tree remains as is |
-| `git reset --soft <commit>` | Move branch pointer to commit; keep index and working tree (changes stay staged) as is. |
-| `git reset --hard <commit>` | Move branch to commit; reset index and working tree (all local changes lost) to the commmit. |
-
-Example: `git reset --soft HEAD~1` undoes the last commit but keeps changes staged.
-
-### 5. `git diff`
+### 4. `git diff`
 
 Show differences between trees (working tree, index, commits):
 
@@ -478,4 +596,4 @@ Show differences between trees (working tree, index, commits):
 
 ---
 
-*Guide covers: one-time setup, repo workflow (fork → clone → stage → commit → push → pull), merge conflicts, status/log/reflog, branches, and essential commands (stash, restore, rm, reset, diff).*
+*Guide covers: one-time setup, repo workflow (fork → clone → stage → commit → push → pull), merge conflicts, current pointer/HEAD behavior, branches, reset, status/log/reflog, and essential commands (stash, restore, rm, diff).*
