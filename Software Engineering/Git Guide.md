@@ -1,49 +1,5 @@
 # Git Docs: Everything to know about GIT
 
----
-
-## Index
-
-1. [One Time Setup per machine](#one-time-setup-per-machine)
-
-2. [New Repo Workflow: Fork → Clone → Stage → Commit → Push → Pull](#new-repo-workflow-fork--clone--stage--commit--push--pull)
-   - [1. Fork](#1-fork)
-   - [2. Clone](#2-clone)
-        - [Adding Remote](#adding-remote)
-   - [3. Staging](#3-staging)
-   - [4. Commit](#4-commit)
-        - [Tag](#tag)
-   - [5. Pushing](#5-pushing)
-        - [Push tags](#push-tags)
-   - [6. Pulling from remote or other branches (Fetch and Merge)](#6-pulling-from-remote-or-other-branches-fetch-and-merge)
-
-3. [Current Pointer (HEAD)](#current-pointer-head)
-   - [Switch](#switch)
-
-4. [Branches](#branches)
-   - [Anecdote for understanding branches](#anecdote-for-understanding-branches)
-   - [Branch commands](#branch-commands)
-   - [Reset](#reset)
-
-5. [Merging](#merging)
-   - [Merge outcomes](#merge-outcomes)
-   - [Merge Conflicts](#merge-conflicts)
-
-6. [Tracking and Status](#tracking-and-status)
-   - [1. Status](#1-status)
-   - [2. Log](#2-log)
-   - [3. Show](#3-show)
-   - [4. Commit references: ^ and ~](#4-commit-references--and-)
-   - [5. Reflog](#5-reflog)
-
-7. [Helpful Git Commands](#helpful-git-commands)
-   - [1. Stash](#1-stash)
-   - [2. Restore](#2-restore)
-   - [3. rm (Remove files)](#3-rm-remove-files)
-   - [4. git diff](#4-git-diff)
-
----
-
 ## One Time Setup per machine
 
 - **Set your identity** (required for commits):
@@ -207,24 +163,24 @@ git pull origin main        # fetch origin and merge origin/main into current br
 git pull --rebase           # fetch + rebase current branch on top of upstream
 ```
 
-## Current Pointer (HEAD)
+## HEAD (Current Pointer)
 
-**HEAD** is the pointer to the commit you are currently on. Most of the time, `HEAD` points to a branch name, and the branch name points to a commit:
+**HEAD** is the pointer to the commit you are currently on. Most of the time, `HEAD` is attached to a branch name, and the branch name resolves to a commit hash:
 
 ```text
 HEAD -> main -> commit A
 ```
 
-In that normal attached state, making a commit moves the current branch pointer forward, and `HEAD` follows because it is attached to that branch.
+In that normal attached state, `HEAD` pointer follows branch name pointer so actions like making a commit moves the current branch pointer forward, and `HEAD` along with it.
 
-**Detached HEAD:** Normally HEAD points to a branch name (e.g. `main`), and that branch points to a commit. So, detached HEAD means HEAD points directly to a commit, not to a branch:
+**Detached HEAD:** means HEAD points directly to a commit, not to a branch:
 
 ```text
 HEAD -> commit A
 main -> commit B
 ```
 
-If you make new commits while in detached HEAD, they are not on any branch. Once you switch away (e.g. back to `main`), that new commit may become unreachable unless you have its hash or the reflog. Git may eventually remove it during garbage collection.
+If you make new commits while in detached HEAD, they are not on any branch. Once you switch away (e.g. back to `main`), that new commit may become unreachable unless you have its hash, you tagged it or can locate it in the reflog. Git may eventually remove such unreachable commits during garbage collection.
 
 ### Switch
 
@@ -236,8 +192,6 @@ When you run `git switch <branch>` or `git switch --detach <commit-hash>`, Git c
 
 So after a switch, your project folder reflects the snapshot of the branch or commit you switched to. Any uncommitted changes in the way are either carried over (if possible), or Git will refuse the switch and ask you to commit or stash first.
 
----
-
 ## Branches
 
 To understand the concept of branches, remember that each commit is recognized by its unique hash code. <br>
@@ -247,7 +201,7 @@ Each successive commit is linked to its previous commit by a parent–child rela
 
 The current branch is the branch that `HEAD` is attached to. When you commit while `HEAD` is attached to a branch, Git creates the new commit and moves that branch pointer forward to it.
 
-### Anecdote for understanding branches
+### Example of how branch pointers move
 
 - Say you are on `main` at commit A, so `HEAD` is attached to `main`, and `main` points to A.
 
@@ -280,7 +234,7 @@ git push origin --delete branch-name   # delete on remote
 
 ### Reset
 
-Moving the current branch pointer (and optionally the index and working tree) to another commit.
+Reset and move the current branch pointer (and optionally the index and working tree) to another commit.
 
 | Option | Effect |
 |--------|--------|
@@ -288,107 +242,122 @@ Moving the current branch pointer (and optionally the index and working tree) to
 | `git reset --soft <commit>` | Move current branch pointer to commit; keep index and working tree (changes stay staged) as is. |
 | `git reset --hard <commit>` | Move current branch pointer to commit; reset index and working tree (all local changes lost) to the commit. |
 
-Example: `git reset --soft HEAD~1` undoes the last commit but keeps changes staged.
+Example: `git reset --soft HEAD~2` moves the branch pointer to HEAD~2 but keeps changes from the previous tip staged.
 
----
+## Merge
 
-## Combining(Merge, Squash, Rebase, Cherry-Pick)
+If two branches share a common ancestor commit in their history, Git can combine the changes from those branches using a merge operation.
 
-You can combine one or more commits in a variety of different ways and each decides how the history of the involved branches turns out:
+- **Command:** Run `git merge <incoming-branch>` while `HEAD` is on the `<current-branch>`.
+- **Intent:** Bring in and apply all combined changes from the `<incoming-branch>` that are introduced in commits not part of the `<current branch>` while preserving the relationship between the two branch histories.
 
-1. **Merge**
+Executing a merge goes in 4 directions depending on whether the branch histories have split:
 
-   - **Command:** `git merge incoming-branch` while on `curr-branch`
-   - **Intent:** Bring the commits from `incoming-branch` into `curr-branch` while preserving the branch history.
-   - **Result:** One of the [Merge Outcomes](#merge-outcomes), depending on the relation between branches.
+### No split history
 
-2. **Squash**
+- The two branch histories have not split into two separate lines.
+- One branch is simply ahead of the other branch.
 
-   - **Command:** `git merge --squash incoming-branch`
-   - **Intent:** Bring the changes from `incoming-branch` into `curr-branch` as one combined set of staged changes, without preserving each incoming commit separately.
-   - **Result:**
-     - Combines all changes from the incoming branch into one set of changes.
-     - Applies those changes to the current branch's working tree and stages them.
-     - Does not create a commit.
-     - You need to run `git commit` to create the single squash commit.
+#### Fast-forward merge
 
-3. **Rebase**
+Example:
 
-   - **Command:** `git rebase <target-branch>` while on `curr-branch`.
-   - **Intent:** Make the tip of `target-branch` the new base of `curr-branch` by replaying the commits of `curr-branch` that are not in `target-branch`.
-   - **Result:**
-     - `curr-branch` is the branch that gets moved.
-     - The tip of `target-branch` is meant to be the new base for the replayed commits of `curr-branch`.
-     - Git takes all the commits from `curr-branch` and replays them onto the tip of `target-branch`.
-     - The replayed commits contain the same changes, but they are new commits with new commit hashes.
-     - This makes the history of `curr-branch` linear from the tip of `target-branch` and does not create a merge commit.
-     - This gives you a linear history from the perspective of `curr-branch` since now it does not split apart from `target-branch` and `target-branch` included in `curr-branch`'s ancestry.
-   - **Flags:**
-     - `git rebase --abort` - Cancels the rebase and restores your branch to its state before the rebase; use when you want to give up.
-     - `git rebase --continue` - Resumes the rebase after you've resolved conflicts and staged the files; use when you're ready to finish.
-     - `git rebase --skip` - Drops the current commit being replayed and continues; use when that commit is redundant or you no longer want it.
-     - `git rebase -i <target-upstream>` - Opens an editor to pick, reorder, squash, or edit commits before they're replayed on the target-upstream commit; use when you want to clean up or rearrange history.
-     - `git rebase --update-refs <target-branch>` - After replaying commits, automatically moves any local branch pointers that pointed to the old commits so they point to the rewritten commits instead; useful when you have stacked branches.
+```text
+A---B main
+     \
+      C---D feature
 
-4. **Cherry-pick**
+After:
 
-   - **Command:** `git cherry-pick <commit-hash>` or `git cherry-pick <commit1> <commit2>...` while on `curr-branch`.
-   - **Intent:** Apply only specific commit(s) onto `curr-branch` without bringing the full branch history they came from.
-   - **Result:**
-     - Applies one or more specific commits from another branch onto the current branch.
-     - Creates new commits with the same changes.
-     - Use when you want only selected commits, not a full merge or rebase.
-   - **Flags:**
-     - `git cherry-pick --abort` - Cancels the cherry-pick and restores the branch to its state before the operation.
-     - `git cherry-pick --continue` - Resumes after resolving conflicts and staging the files.
-     - `git cherry-pick --skip` - Skips the current commit and continues with the rest.
-     - `git cherry-pick -n` or `git cherry-pick --no-commit` - Applies the changes without committing; lets you stage and commit manually, such as when you want to squash several cherry-picked commits into one.
+A---B
+     \
+      C---D main, feature
+```
 
-### Merge outcomes
+- Run `git merge feature` while on `main`.
+- In this example, `main` is the current branch and `feature` is the incoming branch.
+- `feature` has commits `C` and `D` that are missing from `main`.
+- Instead of creating a new commit, Git only moves the `main` pointer forward to the tip of `feature`, bringing the changes from the incoming branch into the current branch.
 
-Executing a merge could go one of three ways:
+#### Already up to date
 
-1. **Fast forward**
+Example:
 
-- There is no separate line of history.
-- The incoming branch is ahead of the current branch, and the current branch has no commits that are missing from the incoming branch.
-- Git only moves the current branch pointer forward to the tip of the incoming branch.
-- This does not create a new commit in the log history.
+```text
+A---B main
+     \
+      C---D feature
 
-2. **Three-way merge, no conflict**
+After:
+
+A---B main
+     \
+      C---D feature
+```
+
+- Run `git merge main` while on `feature`.
+- In this example, `feature` is the current branch and `main` is the incoming branch.
+- `main` has no commits that are missing from `feature` so there is no change to be brought in.
+- Git reports `Already up to date`.
+- Git does not create a new commit.
+- Git does not move either branch pointer.
+
+### Split history
+
+#### Three-way merge applies cleanly
+
+Example:
+
+```text
+A---B---C main
+ \
+  D---E feature
+
+After:
+
+A---B---C---M main
+ \         /
+  D---E feature
+```
 
 - There are two separate lines of history.
-- The current branch has commits that do not exist on the incoming branch, and the incoming branch has commits that do not exist on the current branch.
+- Run `git merge feature` while on `main`.
+- In this example, `main` is the current branch and `feature` is the incoming branch.
+- `main` has commits `B` and `C` that do not exist on `feature`.
+- `feature` has commits `D` and `E` that do not exist on `main`.
 - Both branches have moved ahead from the common base ancestor, so their histories have split apart.
-- Git uses the current branch tip, the incoming branch tip, and the base to perform a three-way merge.
-- Git creates a merge commit and writes an automatic merge commit message.
-- In this case, both branches have changes, but they do not change the same part of the same file compared to the base version.
-  - Example:
+- Git uses three snapshots to perform the merge: the tip of `main`, the tip of `feature`, and their common base ancestor.
+- Git creates a merge commit with 2 parents: the old tip of `main` and the tip of `feature`.
+- Git writes an automatic merge commit message.
+- The `main` pointer moves to the new merge commit.
+- The `feature` pointer stays where it was.
 
-    ```text
-    Base version:
-    line 1: title
-    line 2: description
+**Why no Conflict?**
 
-    Current branch changes line 1:
-    line 1: better title
-    line 2: description
+In this case, both branches have their own changes in separate commits exclusive to the branches, but they do not change the same part of the same file compared to the base ancestors version.
 
-    Incoming branch changes line 2:
-    line 1: title
-    line 2: better description
-    ```
+File-content example:
 
-3. **Three-way merge with conflict**
+```text
+Base version:
+line 1: title
+line 2: description
 
-- Same as a regular three-way merge, but Git cannot auto-merge every change.
-- You need to manually resolve the conflicting changes as discussed in [Merge Conflict](#merge-conflicts).
+main changes line 1:
+line 1: better title
+line 2: description
 
-### Merge Conflicts
+feature changes line 2:
+line 1: title
+line 2: better description
+```
 
-A conflict happens when two branches with different lines of history change the same part of the same file compared to the base version, and Git cannot decide which version to keep. Conflicts can happen during merge, squash, rebase, or cherry-pick operations.
+#### Three-way merge raises conflict
 
-**Example to understand cause of conflicts**
+- Git tries to do a regular three-way merge, but both branches changed the same part of the same file compared to the base ancestor's version.
+- Git cannot automatically decide which branch's change to favor, so it marks that part of the file as conflicted.
+
+Example:
 
 ```text
 Base version:
@@ -407,46 +376,364 @@ line 2: description
 - Both branches moved ahead from the same base version.
 - Both branches changed `line 1`, but they changed it in different ways.
 - Neither branch tip is simply a newer version of the other, so Git cannot pick one automatically.
-- Git writes conflict markers around the overlapping change:
+- You need to manually resolve the conflicting changes as discussed in [Resolving Conflicts](#resolving-conflicts).
 
-  ```text
-  <<<<<<< HEAD
-  line 1: better title
-  =======
-  line 1: alternate title
-  >>>>>>> incoming-branch
-  line 2: description
-  ```
+### Squash merge
 
-- You then manually choose or rewrite the final version as described below.
+- **Command:** `git merge --squash <incoming-branch>` while on the `<current-branch>`.
+- **Intent:** Bring the changes from `<incoming-branch>` into the current branch's working tree and staging area as one combined set, without bringing in any commits.
+- **Result:**
+  - Combines all changes from the incoming branch into one set of changes.
+  - Applies those changes to the current branch's working tree and stages them.
+  - Does not create a commit.
+  - Can produce conflicts by the same mechanism as a regular merge: Git compares the merge base, the current branch, and the incoming branch. If both sides changed the same part differently, Git pauses and the conflict needs to be dealt with as discussed in [Resolving Conflicts](#resolving-conflicts).
+  - You need to run `git commit` to create the single squash commit.
 
-**How to handle conflicts**:
+After you commit the staged squash result, the `<current-branch>` has one new normal commit containing the combined changes.
 
-1. You are on curr-branch and try to merge other-branch into it. You can preemtively tell Git to prefer one side for conflicting regions by using `-X ours` (prefer current branch) or `-X theirs` (prefer the branch being merged):
+## Patch Replay
+
+A **diff** is the comparison between two snapshots. It describes what lines/files were added, removed, or changed between those snapshots.
+
+A **patch** is a diff represented as something Git can try to apply somewhere else.
+
+Because a commit stores a snapshot, Git can compare that commit's snapshot with its parent's snapshot and produce a **diff introduced by that commit** and that diff could then be applied somewhere else as a **diff-patch introduced by the commit**.
+
+**cherry-pick** and **rebase** are patch replay operations that apply diff-patches introduced by individual commits onto a different starting commit, creating new commit objects from the results.
+
+In everyday language, "replaying commits" is simpler way of saying "replaying the diff-patch introduced by that commit."
+
+### Cherry-pick
+
+A cherry-pick applies the diff-patch of one or more selected commits onto the current branch or HEAD pointer.
+
+- **Command:** `git cherry-pick <selected-commit>` while on the `<current branch>`.
+- **Intent:** Take the diff patch introduced by one specific commit and replay that patch onto the tip of `<current branch>`.
+
+Cherry-pick has no concern with `<selected-commit>` and `<current-branch>` having a common base ancestor. It works regardless. Just to prove that point our example discusses the case of not having a common ancestor because the mechanism of cherry-picking would be the same.
+
+#### Applies cleanly
+
+Example:
+
+```text
+A---B---C main
+
+W---X---Y---Z---P---Q other-history
+
+After:
+
+A---B---C---Z' main
+
+W---X---Y---Z---P---Q other-history
+```
+
+- Run `git cherry-pick Z` while on `main`.
+- Git produces the diff-patch introduced by `Z` by comparing `Z` with its parent `Y`.
+- Git tries to apply that patch onto the current `HEAD`, which is at the tip of `main` i.e. `C`.
+- If the patch applies cleanly, Git creates a new commit `Z'` on `main`.
+- `Z'` contains the same change introduced in `Z`, but it is a new commit with a different hash.
+- The `main` pointer moves to `Z'`.
+- The `other-history` pointer stays at `Q`.
+- Changes from commits `W`, `X`, `Y`, `P`, and `Q` are not brought into `main` just because `Z` was cherry-picked.
+
+**Why no Conflict?**
+
+In this case, the diff-patch introduced by `Z` fits cleanly onto the file state at `C`. This is because `C` was in a state that the diff-patch expects it to be in to introduce that change.
+
+File-content example:
+
+```text
+Y = parent of cherry-picked commit:
+line 1: title
+line 2: description
+
+Z = commit being cherry-picked:
+line 1: title
+line 2: better description
+
+C = current HEAD on main:
+line 1: better title
+line 2: description
+
+Z' = new commit created on main:
+line 1: better title
+line 2: better description
+```
+
+The diff-patch introduced by `Z` is effectively:
+
+```diff
+-line 2: description
++line 2: better description
+```
+
+When Git applies that patch onto `C`, it can still find `line 2: description`, so the patch applies cleanly. Git keeps the unrelated change already present in `C` on line 1 and adds the cherry-picked change on line 2.
+
+#### Raises conflict
+
+Cherry-pick tries to apply the diff-patch introduced by `Z` onto `C` but `C` is not in the state that the diff-patch of `Z` expected it to be.
+
+Example:
+
+```text
+Y = parent of cherry-picked commit:
+line 1: title
+line 2: description
+
+Z = commit being cherry-picked:
+line 1: title
+line 2: better description
+
+C = current HEAD on main:
+line 1: title
+line 2: alternate description
+```
+
+The diff-patch introduced by `Z` expects to replace:
+
+```diff
+-line 2: description
++line 2: better description
+```
+
+But the `C` already has `line 2: alternate description`, so Git cannot confidently apply the patch. Git pauses the cherry-pick and marks that area of the file as conflicted.
+
+You need to manually resolve the conflicting changes as discussed in [Resolving Conflicts](#resolving-conflicts).
+
+#### Multiple commits
+
+```bash
+git cherry-pick <commit1> <commit2> <commit3>
+```
+
+Git applies them in the order listed. Each selected commit is still handled separately: Git computes a diff-patch for that commit, applies that patch, and normally creates one new commit for each cleanly applied diff-patch.
+
+You can also cherry-pick a range of commits:
+
+```bash
+git cherry-pick B^..D
+```
+
+This includes commits `B`, `C`, and `D`. The `^` is used because ranges like `B..D` exclude `B`, while `B^..D` starts from `B`'s parent and therefore includes `B`. Git still replays the commits one at a time, with a separate diff patch for each commit.
+
+#### No Commit
+
+By default, a clean cherry-pick creates a new commit immediately after applying the selected commit's diff-patch.
+
+`git cherry-pick -n <commit>` or `git cherry-pick --no-commit <commit>` applies the diff-patch to your working tree and staging area without creating a commit.
+
+This is useful when you want to cherry-pick multiple commits but combine their changes into one manual commit.
+
+### Rebase
+
+Rebase means putting the current branch onto a new base ancestor.
+
+- **Command:** `git rebase <target-branch>` while on `<curr-branch>`.
+- **Intent:** Make `<curr-branch>` rebase onto the tip of `<target-branch>` by replaying the commits from `<curr-branch>` that are missing from `<target-branch>`. Usually done to get a linear history where `<target-branch>` ends up being included in `<curr-branch>` ancestry.
+
+#### Applies cleanly
+
+Example:
+
+```text
+A---B---C main
+     \
+      D---E feature
+
+After:
+
+A---B---C main
+         \
+          D'---E' feature
+```
+
+- Run `git rebase main` while on `feature`.
+- Git figures out the commits on `feature` that are missing from `main`: `D` and `E`.
+- Git applies the diff-patch introduced by `D` onto the tip of `main`, i.e. `C`.
+- If the patch applies cleanly, Git creates a new commit `D'` on top of `C`.
+- `D'` contains the same change introduced by `D`, but it is a new commit with a different hash.
+- Git then applies the diff-patch introduced by `E` onto `D'`.
+- If that patch applies cleanly, Git creates a new commit `E'` on top of `D'`.
+- `E'` contains the same change introduced by `E`, but it is a new commit with a different hash. This process continues until the tip of the feature branch which in this case is just `E`.
+- After the replay succeeds, the `feature` branch pointer moves from `E` to `E'`.
+- The `main` branch pointer stays at `C`.
+- The original commits `D` and `E` are not moved but are unreachable using a branch reference.
+- Hence, `main` has become part of the linear history of `feature`.
+
+**Why no Conflict?**
+
+In this case, each diff-patch introduced by the commits on `feature` that were missing from `main` fits cleanly onto the new base.
+
+File-content example for replaying `D`:
+
+```text
+B = parent of D:
+line 1: title
+line 2: description
+
+D = first feature commit being replayed:
+line 1: title
+line 2: better description
+
+C = tip of target branch main:
+line 1: better title
+line 2: description
+
+D' = rewritten commit created on top of C:
+line 1: better title
+line 2: better description
+```
+
+The diff-patch introduced by `D` is effectively:
+
+```diff
+-line 2: description
++line 2: better description
+```
+
+When Git applies that patch onto `C`, it can still find `line 2: description`, so the patch applies cleanly. Git keeps the change already present in `C` on line 1 and adds the replayed change from `D` on line 2.
+
+#### Raises conflict
+
+Rebase tries to replay each commit from `feature` missing from `target-branch` at the tip of `main`. If one replayed commit introduces a diff-patch that does not fit cleanly onto the new base, Git pauses at that commit and marks a conflict.
+
+Example:
+
+```text
+B = parent of D:
+line 1: title
+line 2: description
+
+D = first feature commit being replayed:
+line 1: title
+line 2: better description
+
+C = tip of target branch main:
+line 1: title
+line 2: alternate description
+```
+
+The diff-patch introduced by `D` expects to replace:
+
+```diff
+-line 2: description
++line 2: better description
+```
+
+But `C` already has `line 2: alternate description`, so Git cannot confidently apply the patch. Git pauses while replaying commit `D`; `D'` has not been created yet.
+
+You need to manually resolve the conflicting changes as discussed in [Resolving Conflicts](#resolving-conflicts).
+
+If you resolve the conflict and continue, Git creates `D'` and then tries to replay the next commit from `feature`, i.e. `E`. A rebase conflict is the same kind of patch-replay problem as a cherry-pick conflict, but rebase has more possible pause points because it replays multiple commits from a branch instead of replaying just one selected commit.
+
+#### Interactive Rebase
+
+Interactive rebase lets you edit the list of commits before Git replays them.
+
+Run `git rebase -i <target-branch>` while on `<curr-branch>`.
+
+Git opens an editor with the commits in `<curr-branch>` missing from `<target-branch>` that are going to be replayed. From there you can choose actions like:
+
+- `pick` - keep the commit as-is.
+- `reword` - keep the commit's changes but edit its commit message.
+- `squash` - combine the commit into the previous commit.
+- `drop` - remove the commit from the replay.
+
+Use interactive rebase when you want to clean up local commit history before sharing it.
+
+#### Update Refs
+
+- **Command:** `git rebase --update-refs <target-branch>` while on `<curr-branch>`.
+- **Intent:** Rebase `<curr-branch>` onto `<target-branch>` and also update any related local branch pointers that point directly to one of the commits being replayed.
+
+Example:
+
+```text
+Before:
+
+A---B---C main
+     \
+      D---E feature
+           \
+            F topic
+
+After:
+
+A---B---C main
+         \
+          D'---E' feature
+                \
+                 F' topic
+```
+
+- Run `git rebase --update-refs main` while on `topic`.
+- Git rebases `topic` onto `main`, so it rewrites `D`, `E`, and `F` as `D'`, `E'`, and `F'`. Since `feature` pointed to one of the rewritten commits, Git also updates `feature` from `E` to `E'`; `topic` moves from `F` to `F'`, and `main` stays at `C`.
+
+## Resolving Conflicts
+
+A conflict means Git cannot automatically produce one final file from the versions involved in the current operation. No matter whether the conflict came from a merge, squash merge, cherry-pick, or rebase, the handling pattern is the same:
+
+1. Inspect which files are conflicted.
+2. Decide what final content each conflicted file should contain.
+3. Stage the resolved files.
+4. Continue or finish the original Git operation.
+
+When Git marks a file as conflicted, it writes conflict markers around the unresolved section:
+
+```text
+ <<<<<<< HEAD
+ line 1: better title
+ =======
+ line 1: alternate title
+ >>>>>>> incoming-branch
+ line 2: description
+```
+
+You then manually choose or rewrite the final version as described below.
+
+### `ours` and `theirs`
+
+The meaning of `ours` and `theirs` depends on the operation:
+
+| Operation | `ours` means | `theirs` means |
+|-----------|--------------|----------------|
+| merge | current branch | branch being merged in |
+| squash merge | current branch | branch being squashed in |
+| cherry-pick | current branch | commit being cherry-picked |
+| rebase | target branch plus commits already replayed | commit currently being replayed |
+
+During a rebase conflict, `ours` can feel backwards because Git has temporarily moved onto the target branch and is replaying your branch's commits onto it.
+
+### How to handle conflicts
+
+1. If you already know which side should win for conflicting regions, you can start the operation with a strategy option:
 
    ```bash
-   git merge other-branch            # No Flag for merge strategy
-   git merge -X ours other-branch    # Merge Strategy: prefer curr-branch (ours)version in conflicts
-   git merge -X theirs other-branch  # Merge strategy prefer other-branch(theirs) version in conflicts
+   git merge -X ours other-branch
+   git merge -X theirs other-branch
+   git merge --squash -X ours other-branch
+   git cherry-pick -X theirs <commit>
+   git rebase -X theirs main
    ```
 
-`-X` is used to set merge strategy preemptively if you are sure which branch's version you would prefer for each case of conflict during this merge.
+   `-X ours` and `-X theirs` tell Git how to auto-resolve conflicting regions when possible. The meaning of `ours` and `theirs` follows the table above, so be especially careful with rebase.
 
-2. In case you didn't use `-X`, If Git reports a conflict, run `git status` to see which files are conflicted. For each file you can:
+2. If Git reports a conflict, run `git status` to see which files are conflicted. For each file you can:
 
-    - **Take our version** (curr-branch):
+   - **Take our version**:
 
-   ```bash
-   git restore --ours <file>
-   git add <file>
-   ```
+     ```bash
+     git restore --ours <file>
+     git add <file>
+     ```
 
-   - **Take their version** (other-branch):
+   - **Take their version**:
 
-   ```bash
-   git restore --theirs <file>
-   git add <file>
-   ```
+     ```bash
+     git restore --theirs <file>
+     git add <file>
+     ```
 
    - **Resolve manually** (next step) if you need to decide for each section of conflict in a file.
 
@@ -460,18 +747,26 @@ line 2: description
    >>>>>>> other-branch
    ```
 
-   Edit the file to remove the markers(<<<====>>>) and keep whatever content you want.
+   Edit the file to remove the markers (`<<<<<<<`, `=======`, `>>>>>>>`) and keep whatever content you want.
 
-4. Once you are sure that you handled the conflict in each file that appeared in the `git status` after the mergem. <br>
-You can stage the resolved files: `git add <file>` (or `git add .` if all are resolved). But be aware that even if the conflict is not resolved, git is not going to alert you and can commit broken code. <br>One easy way to avoid this is to search for the conflict markers using VS codes find(⌘⇧F) across the entire directory
+4. Once you are sure that you handled the conflict in each file that appeared in the `git status` after the merge, rebase, squash, or cherry-pick, you can stage the resolved files: `git add <file>` (or `git add .` if all are resolved). But be aware that even if the conflict is not resolved correctly, Git is not going to alert you and can commit broken code. One easy way to avoid this is to search for the conflict markers using VS Code's find across the entire directory.
 
 5. Finish the resolution:
    - **Merge and Squash conflict:** Stage the resolved files, then run `git commit` (Git will use the default merge message).
-   - **Rebase conflict:** Stage the resolved files, then run `git rebase --continue` — do **not** run `git commit`. In a rebase, Git creates the commit for you when you continue; using `git commit` would add an extra unwanted commit.
+   - **Rebase conflict:** Stage the resolved files, then run `git rebase --continue` - do **not** run `git commit`. In a rebase, Git creates the commit for you when you continue; using `git commit` would add an extra unwanted commit.
+   - **Cherry-pick conflict:** Stage the resolved files, then run `git cherry-pick --continue`.
+   - **Skip current replayed commit:** During a rebase or multi-commit cherry-pick, use `git rebase --skip` or `git cherry-pick --skip` if the current commit is redundant or you no longer want to apply it.
 
-6. In case the conflict is too much to handle, `git merge --abort` or `git rebase --abort`: all conflict markers are removed and files are restored to the state of the current branch before the merge or rebase started.
+6. In case the conflict is too much to handle, use the matching abort command:
 
----
+   ```bash
+   git merge --abort          # abort a regular merge
+   git rebase --abort         # abort a rebase
+   git cherry-pick --abort    # abort a cherry-pick
+   git reset --merge          # abort a conflicted squash merge
+   ```
+
+   For merge, rebase, cherry-pick, and conflicted squash merge, aborting removes the conflict markers and restores files to the state before the operation started. A conflicted squash merge uses `git reset --merge` because `git merge --squash` does not create `MERGE_HEAD`, so `git merge --abort` has no merge state to abort.
 
 ## Tracking and Status
 

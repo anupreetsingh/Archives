@@ -32,3 +32,5 @@
 1. Persuade(verb): Genuinely convince someone to bring them to your side by using logic and reason. Example: He persuaded me to go to the doctor when I had been sick for over 3 days.
 
 1. Undue(adjective): Unreasonable or unnecessary.
+
+1. Telemetry(verb, ETY: Far off + measure) : Collection of data from remote points and its then transfer to a central point to analysis. Example: Amazon uses telemetry to understand how customers interact with a particular product.
