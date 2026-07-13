@@ -34,3 +34,5 @@
 1. Undue(adjective): Unreasonable or unnecessary.
 
 1. Telemetry(verb, ETY: Far off + measure) : Collection of data from remote points and its then transfer to a central point to analysis. Example: Amazon uses telemetry to understand how customers interact with a particular product.
+
+1. Augment(verb) : Make something greater or better by adding to it. Example: He started taking protein powder with his meals to augment his results.
