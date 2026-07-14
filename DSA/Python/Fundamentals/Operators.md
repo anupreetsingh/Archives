@@ -155,6 +155,23 @@ For built-in containers, the time complexity depends on the container type:
 | `str` | `O(n)` |
 | `set` | `O(1)` average |
 | `dict` | `O(1)` average, checks keys by default |
+| `range` | `O(1)`, checks using arithmetic instead of scanning |
+
+`range` is efficient for membership checks because Python can calculate whether a number is within the range bounds and fits the step pattern, instead of scanning each value.
+
+Example:
+
+```python
+nums = range(0, 10, 2)  # 0, 2, 4, 6, 8
+
+print(6 in nums)  # True
+print(7 in nums)  # False
+
+# Internally the __contains__ is doing something like 
+start <= x < stop
+and
+(x - start) % step == 0
+```
 
 For custom classes, you can define `__contains__` yourself when you want `in` and `not in` to use your own membership rules.
 

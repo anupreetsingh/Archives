@@ -135,86 +135,85 @@ In this example:
 
 ### Using variable from an outer namespace
 
-You can either just read the value of a variable from an outer scope
+You can either use the object that an outer name already refers to, or assign to that name inside the inner scope.
 
-#### Reading
+#### Using the object tied to an outer name
 
-Reading an enclosing variable is automatic.
+Reading an enclosing variable is automatic. If that variable refers to a mutable object, you can also mutate that object.
 
 ```python
 def outer():
-    count = 10
+    state = {"count": 10, "history": []}
 
     def inner():
-        print(count)
+        print(state["count"])
+        state["count"] += 1
+        state["history"].append("updated")
 
     inner()
+    print(state)
 
 outer()
-# Output: 10
+# Output:
+# 10
+# {'count': 11, 'history': ['updated']}
 ```
 
-#### Assigning
+Here, `inner()` does not assign to the plain name `state`, so Python searches the enclosing function and finds `state` in `outer()`.
 
-Here, `inner()` does not define `count`, so Python searches the enclosing function and finds it in `outer()`.
+Then `state["count"] += 1` and `state["history"].append("updated")` mutate the dictionary that `state` refers to. The name `state` still points to the same dictionary object. Only the contents of that dictionary changed.
 
-Assigning is different. If you assign to a name inside a function, Python treats that name as local to that function unless told otherwise.
+#### Rebinding the object tied to a name
 
-Example:
+Assigning to the plain name itself is different. If you assign to a name inside a function, Python treats that name as local to that function unless told otherwise with `nonlocal` or `global`.
+
+This is true for normal assignment and augmented assignment:
 
 ```python
 def outer():
     count = 10
 
-    def inner():
+    def replace():
         count = 20
         print(count)
 
-    inner()
-    print(count) 
+    def increment():
+        count += 1
+
+    replace()
+    print(count)
+    increment()
 
 outer()
 # Output:
 # 20
 # 10
-```
-
-The assignment `count = 20` creates a new local variable inside `inner()`. It does not modify `outer()`'s `count`.
-
-This can cause `UnboundLocalError`:
-
-```python
-count = 10
-
-def update():
-    print(count)
-    count = 20
-
-update()
 # UnboundLocalError
 ```
 
-Because `count = 20` appears inside `update()`, Python treats `count` as local for the whole function. So `print(count)` tries to read the local `count` before it has been assigned.
+In `replace()`, `count = 20` binds the object `20` to the name `count` that is local to the `replace()` function. It does not change the binding of `count` in `outer()`.
+
+In `increment()`, `count += 1` is assignment to the plain name `count`. For this integer example, you can think of it like `count = count + 1`. Because there is an assignment to `count` inside `increment()`, Python treats `count` as a local name for the whole `increment()` function. So the right-side `count` also means the local `count`, not the `count` from `outer()`. Since no object has been bound to the local name `count` yet, Python raises `UnboundLocalError`.
 
 ---
 
 #### `global`
 
-Use `global` when you want assignment inside a function to affect a name in the module's global namespace.
+Use `global` when you want assignment inside a function to affect a name in the module's global namespace. This also fixes the `count += 1` error for module-level names.
 
 ```python
 count = 10
 
 def update():
     global count
-    count = 20
+    count += 1
 
 update()
 print(count)
-# Output: 20
+# Output: 11
 ```
 
-Without `global`, `count = 20` would create a local variable inside `update()`.
+Without `global`, `count += 1` would make `count` local to `update()`, then try to read that local `count` before it has been assigned.
 
 Use `global` for module-level names only.
 
@@ -222,7 +221,7 @@ Use `global` for module-level names only.
 
 #### `nonlocal`
 
-Use `nonlocal` when you want assignment inside a nested function to affect a name in an enclosing function.
+Use `nonlocal` when you want assignment inside a nested function to affect a name in an enclosing function. This fixes the `count += 1` error for enclosing function names.
 
 ```python
 def outer():
@@ -230,16 +229,16 @@ def outer():
 
     def update():
         nonlocal count
-        count = 20
+        count += 1
 
     update()
     print(count)
 
 outer()
-# Output: 20
+# Output: 11
 ```
 
-Without `nonlocal`, `count = 20` would create a local variable inside `update()`.
+Without `nonlocal`, `count += 1` would make `count` local to `update()`, then try to read that local `count` before it has been assigned.
 
 `nonlocal` does not look in the global namespace. It only works with names from enclosing function scopes.
 
