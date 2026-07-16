@@ -1,4 +1,4 @@
-# 🧠 Lambda (In-line) Functions
+# Lambda (In-line) Functions
 
 ## What is a lambda function?
 
@@ -8,10 +8,12 @@ Syntax: `lambda arguments: expression`
 
 ---
 
-## ✅ Basic example
+## Basic example
 
 ```python
 add = lambda x, y: x + y
+# Here, `lambda x, y: x + y` creates a function object. That function object is then bound to the name `add`.
+
 print(add(2, 3))  # Output: 5
 
 # Equivalent to:
@@ -19,7 +21,7 @@ print(add(2, 3))  # Output: 5
 #     return x + y
 ```
 
-## ✅ Lambda as dictionary values
+## Lambda as dictionary values
 
 ```python
 ops = {
@@ -32,7 +34,7 @@ print(ops['*'](4, 5))  # Output: 20
 
 Very useful in cases like RPN calculators or interpreters.
 
-## ✅ Use with `sorted()` for custom sort keys
+## Use with `sorted()` for custom sort keys
 
 ```python
 students = [('Alice', 25), ('Bob', 19), ('Charlie', 23)]
@@ -43,7 +45,7 @@ print(sorted_by_age)
 # Output: [('Bob', 19), ('Charlie', 23), ('Alice', 25)]
 ```
 
-## ✅ Use with `map()`, `filter()`, and `reduce()`
+## Use with `map()`, `filter()`, and `reduce()`
 
 ```python
 # map() – apply function to each element
@@ -59,13 +61,13 @@ product = reduce(lambda a, b: a * b, [1, 2, 3, 4])  # 24
 
 ---
 
-## 🚫 Limitations of lambda
+## Limitations of lambda
 
 - Only one expression allowed (no statements like if/else, loops)
 - No assignment (can't use `:=` inside it)
 - Less readable when overused
 
-## 🔥 When to use lambda
+## When to use lambda
 
 - ✅ One-liner functions
 - ✅ Inline usage (like key functions)

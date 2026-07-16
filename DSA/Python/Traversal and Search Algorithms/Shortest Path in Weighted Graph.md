@@ -29,8 +29,9 @@
 1️⃣ Initialize distances (0 to source, ∞ to others)
 2️⃣ Push source into priority queue
 3️⃣ While queue not empty:
-   - → Pop smallest distance node
-   - → Relax edges (update if shorter path found)
+
+- → Pop smallest distance node
+- → Relax edges (update if shorter path found)
 4️⃣ Return distance array
 
 ```python

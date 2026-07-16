@@ -36,7 +36,7 @@ print(person.get("job", "Unknown"))  # Output: Unknown
 ## Adding or updating key-value pairs
 
 ```python
-person["age"] = 31        # Updates 'age'
+person["age"] = 31        # Updates 'age' since it was already there
 person["job"] = "Engineer"  # Adds new key 'job' and assigns value "Engineer"
 ```
 
@@ -44,6 +44,34 @@ person["job"] = "Engineer"  # Adds new key 'job' and assigns value "Engineer"
 
 ```python
 del person["city"]  # Removes the 'city' key
+```
+
+## Insertion order
+
+Modern dictionaries of the built-in `dict` type preserve insertion order like a list.
+
+This means keys stay in the order they were added. If a key is deleted, the remaining keys keep their order. If new keys are added later, they are added to the end.
+
+```python
+pages = {}
+
+pages["home"] = "Home Page"
+pages["search"] = "Search Page"
+pages["profile"] = "Profile Page"
+
+print(pages)
+# {'home': 'Home Page', 'search': 'Search Page', 'profile': 'Profile Page'}
+
+del pages["search"]
+
+print(pages)
+# {'home': 'Home Page', 'profile': 'Profile Page'}
+
+pages["settings"] = "Settings Page"
+pages["help"] = "Help Page"
+
+print(pages)
+# {'home': 'Home Page', 'profile': 'Profile Page', 'settings': 'Settings Page', 'help': 'Help Page'}
 ```
 
 ## Check if a key exists

@@ -44,6 +44,7 @@ Two things matter about this shape:
 | **Submission** | One trainee's response to one assignment. |
 | **Flag** | One structured finding on a submission: `{mistake_category, severity, excerpt, explanation}`. Machine-written, coach-verifiable. |
 | **AI Agent** | The async worker that turns (submission + rubric) into flags via an LLM call. "Agent" because it does a multi-step job — fetch rubric, chunk the doc, call the model, validate the output schema, retry on bad JSON — not just a single completion. |
+| **Human-in-the-loop review** | The review model where AI proposes structured flags, but a coach confirms or dismisses them before they affect trainee-facing feedback. Interview phrasing: **"I designed this as a human-in-the-loop review system: the AI accelerated first-pass analysis, while coaches kept final judgment and quality control."** |
 
 ---
 
@@ -82,7 +83,7 @@ One invocation = one submission analyzed. The pipeline, in order:
 4. **Validate** the response against the flag schema (Pydantic); retry with a repair prompt on malformed output.
 5. **Write** flags to DynamoDB with `status=ai_suggested`.
 
-- Coaches can mark a flag *confirmed* or *dismissed* in the dashboard — **human-in-the-loop**, so the AI drafts and the coach decides. Dismissal rates per mistake-category were the feedback signal for tuning prompts between cohorts.
+- Coaches can mark a flag *confirmed* or *dismissed* in the dashboard — **human-in-the-loop review**, so the AI drafts and the coach decides. Dismissal rates per mistake-category were the feedback signal for tuning prompts between cohorts.
 - Failure handling: SQS redrive + dead-letter queue. A failed analysis never loses the submission — the flags just stay pending and the job can be replayed. Lambda's 15-min cap is ample for one analysis (a few LLM calls with retries).
 
 ### 3.4 Frontend — React SPA

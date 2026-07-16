@@ -1,4 +1,4 @@
-# Python Loops
+# Iterating
 
 ```python
 numbers = [10, 20, 30, 40, 50]
@@ -40,7 +40,7 @@ for i in range(n):
 
 ---
 
-## 🌀 Nested Loops and Flow Control in Python
+## Nested Loops and Flow Control in Python
 
 The inner loop runs completely for every iteration of the outer loop.
 
@@ -79,7 +79,7 @@ while i < 2:  # Outer loop
 
 ---
 
-## 📦 Traversing Multiple Iterables with zip()
+## Traversing Multiple Iterables with zip()
 
 `zip()` allows parallel iteration over multiple iterables. It pairs elements from each iterable into tuples until the shortest iterable is exhausted.
 
@@ -99,7 +99,7 @@ for name, score in zip(names, scores):
 
 ---
 
-## 🔢 Enumerating an Iterable with enumerate()
+## Enumerating an Iterable with enumerate()
 
 `enumerate()` returns both the index and the element while iterating.
 

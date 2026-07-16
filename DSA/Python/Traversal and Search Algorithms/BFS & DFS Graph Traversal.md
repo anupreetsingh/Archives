@@ -20,11 +20,56 @@
 
 - Visit all reachable nodes from a start node.
 - Differ mainly in order of visiting nodes and data structure used.
+- Usually track visited nodes to avoid processing the same node again.
 
-**Representing a 2D grid as a graph:**
+## Visited State and Cycles
+
+Graphs are not always one-way structures. The same node can often be reached again through another edge.
+
+In an **undirected graph**, every edge can be followed both ways. If `A` is connected to `B`, then from `B` we can immediately go back to `A`.
+
+```text
+A --- B
+```
+
+Without a `visited` check, traversal can keep moving back and forth forever:
+
+```text
+A -> B -> A -> B -> A -> ...
+```
+
+In a **directed graph**, a cycle happens when directed edges eventually point back to an earlier node.
+
+```text
+A -> B -> C
+^         |
+|_________|
+```
+
+Without a `visited` check, traversal can loop forever:
+
+```text
+A -> B -> C -> A -> B -> C -> ...
+```
+
+So BFS and DFS usually track a `visited` state to avoid infinite loops and duplicate work.
+
+## Ways to Track Visited Nodes
+
+Common ways to store `visited`:
+
+- `set`: most common when nodes are hashable values like strings, numbers, or `(row, col)` tuples.
+- `dict`: useful when you also want to store information like parent, distance, color, or discovery state.
+- Boolean list: useful when nodes are numbered from `0` to `n - 1`.
+- 2D boolean matrix: useful for grid traversal.
+- Parent check: works only for an undirected tree, where the only backward edge is the edge to the parent. For a general graph, use `visited`.
+
+## 2D grid as a graph
 
 - Each cell (row, col) is a node.
 - Edges connect a node to its valid neighbors (up/down/left/right).
+- A grid with movement in all four directions behaves like an undirected graph, because if you can move from one cell to another, you can usually move back.
+- The example below proves the main idea once: BFS and DFS use different traversal orders, but both need `visited` to avoid revisiting cells forever.
 
 ```python
 from collections import deque
@@ -33,7 +78,7 @@ def bfs_grid(start_row, start_col, grid):
     rows, cols = len(grid), len(grid[0])
     visited = set()
     queue = deque([(start_row, start_col)])
-    visited.add((start_row, start_col))
+    visited.add((start_row, start_col))  # Mark when adding to the queue.
 
     while queue:
         r, c = queue.popleft()
@@ -51,29 +96,27 @@ def dfs_grid(r, c, grid, visited=None):
 
     if (r, c) in visited:
         return
-    visited.add((r, c))
+    visited.add((r, c))  # Mark when the DFS reaches the cell.
     print(grid[r][c], end=' ')
     for dr, dc in [(1,0), (-1,0), (0,1), (0,-1)]:
         nr, nc = r + dr, c + dc
         if 0 <= nr < rows and 0 <= nc < cols:
             dfs_grid(nr, nc, grid, visited)
 
-# 5x5 grid example
-grid_5x5 = [
-    [ 1,  2,  3,  4,  5],
-    [ 6,  7,  8,  9, 10],
-    [11, 12, 13, 14, 15],
-    [16, 17, 18, 19, 20],
-    [21, 22, 23, 24, 25]
+# 3x3 grid example
+grid_3x3 = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
 ]
 
 print("BFS traversal starting at (0,0):")
-bfs_grid(0, 0, grid_5x5)
+bfs_grid(0, 0, grid_3x3)
 print("\nDFS traversal starting at (0,0):")
-dfs_grid(0, 0, grid_5x5)
+dfs_grid(0, 0, grid_3x3)
 
 # BFS traversal starting at (0,0):
-# 1 6 2 11 7 3 16 12 8 4 21 17 13 9 5 22 18 14 10 23 19 15 24 20 25
+# 1 4 2 7 5 3 8 6 9
 # DFS traversal starting at (0,0):
-# 1 6 11 16 21 22 17 12 7 8 13 18 23 24 19 14 9 10 15 20 25 2 3 4 5
+# 1 4 7 8 5 2 3 6 9
 ```

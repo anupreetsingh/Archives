@@ -1,4 +1,4 @@
-# 📌 Recursion in Python — Notes & Examples
+# Recursion in Python — Notes & Examples
 
 ## Introduction
 
@@ -55,9 +55,9 @@ def count_paths(grid, r, c):
 
 - Recursion works by breaking a problem into smaller instances.
 - Always define:
-    - TRUE BASE CASE → smallest valid problem.
-    - PROGRESS → recursive step reduces the problem.
-    - GUARD CASES → defensive stops for invalid/unsafe cases.
+  - TRUE BASE CASE → smallest valid problem.
+  - PROGRESS → recursive step reduces the problem.
+  - GUARD CASES → defensive stops for invalid/unsafe cases.
 - If recursion recomputes the same subproblems, consider memoization or bottom-up dynamic programming.
 
 Pattern:

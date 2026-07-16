@@ -1,8 +1,10 @@
 # Hash Maps Structure
 
+It is a **non-sequence type**, specifically a **mapping type**: values are accessed by hashable keys, not by integer positions.
+
 A hash map stores **key-value pairs** and uses a key's hash value to decide where the pair should live internally.
 
-In Python, a hash map is implemented by `dict`.
+In Python, a hash map is implemented by built-in `dict` type and called a dictionary.
 
 ```python
 student_scores = {

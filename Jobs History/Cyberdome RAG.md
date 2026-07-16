@@ -45,6 +45,14 @@ The pipeline runs in three groups of layers:
 
 Each step below is one element of that flow and has two components: **What this step does** (its intent) and **Control flow (start → end)** (how and why control moves to the next element — the gateways, function calls, and objects involved). A function's or class's home file is named the first time it appears and is not repeated afterward. All UI calls go through `api.get` / `api.post` in `frontend/src/api/client.ts`, which prefixes the `/api` base — so a path written here as `/v1/search/ask` hits the backend's `/api/v1/search/ask`.
 
+#### Why we did not use LlamaIndex here
+
+LlamaIndex is commonly used as a higher-level RAG framework. In a typical setup, it helps load documents, split them into nodes/chunks, generate embeddings, write them to a vector store such as Qdrant, retrieve relevant chunks for a user question, and pass that retrieved context into an LLM. In other words, it can abstract over much of the indexing and query orchestration that this project implements directly.
+
+For this OSCAL controls path, we chose not to use LlamaIndex as the core layer because the retrieval logic needs tight, auditable control. The platform manually parses OSCAL, creates deterministic control chunks, assigns stable Qdrant point IDs, stores compliance-specific metadata, routes writes to profile-specific collections, applies explicit framework/family/control filters, builds citations only from retrieved chunks, and exposes health/model-management behavior through the product UI. Those requirements are central to a GRC/security product, so the custom pipeline keeps the behavior visible and predictable instead of hiding it behind a general RAG abstraction.
+
+The short version: LlamaIndex could have accelerated an early prototype, but here we manually built the chunking, embedding, Qdrant storage, retrieval, and LLM prompt assembly so the system remains deterministic, explainable, and easier to audit.
+
 #### Parse (precedes Layer 1)
 
 **What this step does:** Read the raw OSCAL catalog JSON once and turn it into a structured `OscalCatalog` object, so no later layer walks the raw JSON again. The result carries the whole control tree (base controls plus nested enhancements) and, on each control, its `statement`, `guidance`, `params`, and extracted `assessment_parts`.

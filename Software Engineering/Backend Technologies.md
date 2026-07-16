@@ -14,7 +14,7 @@ Popular Languages:
 
 ### Package/Library
 
-A code distribution written by someone else that can be installed and used in your project. Carry out tasks like doing calculations,talking to a database and setting up user authentication and login.
+A code distribution written by someone else that can be installed and used in your project. It usually contains functions, classes or tools that give us additional functionality like access to use-case-specific data type, calculation features, talking to a database and setting up user authentication and login.
 
 ### Package Manager
 
