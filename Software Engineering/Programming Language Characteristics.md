@@ -1,11 +1,12 @@
 # Programming Language Characteristics
 
-A reference covering four key language dimensions:
+A reference covering five key language dimensions:
 
 1. **Static vs Dynamic** typing  
 2. **Weak vs Strong** typing  
-3. **Procedural vs OOP vs Functional**  
-4. **Compiled vs Interpreted**
+3. **Duck vs Nominal vs Structural** typing
+4. **Procedural vs OOP vs Functional**  
+5. **Compiled vs Interpreted**
 
 ---
 
@@ -13,60 +14,50 @@ A reference covering four key language dimensions:
 
 ### Static typing
 
-Variable types are checked at *compile* time. Once a variable type is declared explicitly or inferred by a compiler, it cannot be assigned to a different type in the same scope because that would lead to a type error. Type errors are caught before running.
+Variable types are checked at *compile* time. Once a variable type is declared explicitly or inferred by a compiler/type checker, it cannot be assigned to a different type in the same scope because that would lead to a type error before the program runs.
   
-Examples: C++, TypeScript, Java, Rust, Go
+Type errors are caught by the compiler or a type checker before running.
 
-Example Usage
+Languages Examples: C++, TypeScript, Java, Rust, Go
 
-Explicit type declaration:
+Example:
 
 ```java
 int count = 10;
 count = "10"; // Type error: String cannot be assigned to int
-```
 
-Inferred type:
-
-```java
 var age = "24"; // inferred as String
 age = 24;        // Type error: int cannot be assigned to String
 ```
 
+Here, the errors are flagged before the program runs. The compiler/type checker rejects the assignments because "10" is not compatible with `int`, and 24 is not compatible with the inferred String type of age.
+
 ### Dynamic typing
 
-Variable types are checked at *run* time. A name is not tied to any type and can be rebound to objects of different types in the same scope. Type errors appear only when an operation is executed with an incompatible value.
+Variable types are checked at *run* time. A name is not tied to any type and can be rebound to objects of different types in the same scope over time.
 
-Examples: Python, JavaScript, Ruby
+Type errors appear only when an operation is executed with an incompatible value.
 
-Example Usage
+Languages Examples: Python, JavaScript, Ruby
 
-Name rebinding:
+Example of Name rebinding:
 
 ```python
 x = 3          # x -> int object
 x = "three"    # now x -> str object (legal in Python)
 ```
 
-Runtime type error:
+Exampel of Runtime type error:
 
 ```python
-def add(a, b):
-    return a + b
+value = "hello"
+print(value.upper())  # OK: str has upper()
 
-print(add(2, 5))        # OK: 7
-# print(add(2, "5"))   # TypeError at runtime: unsupported operand types
+value = 42
+# print(value.upper()) # AttributeError at runtime: int has no upper()
 ```
 
-Python supports *optional* static type hints. These hints do not enforce types at runtime by default, but they can help external static type checkers like **mypy** or **pyright** catch incompatible types before the program runs.
-
-```python
-def display_age(age: int) -> str:
-    return f"Age: {age}"
-
-print(display_age(24))      # OK
-print(display_age("24"))    # mypy/pyright would flag this, but Python still runs it
-```
+The name `value` is not permanently tied to one type. It can first refer to a `str` object and later be rebound to an `int` object, so an invalid method call like `value.upper()` is caught only when that line is executed at runtime.
 
 ---
 
@@ -77,6 +68,8 @@ print(display_age("24"))    # mypy/pyright would flag this, but Python still run
 A weakly typed language performs more implicit type coercion. The language may automatically convert a value from one type to another during an operation.
 
 Examples: JavaScript, PHP
+
+Special Case: Because TypeScript adds static type checking on top of JavaScript, it catches many unsafe operations at compile time, such as `"5" - 2`, while still allowing JavaScript-valid coercions like `"5" + 2` as string concatenation; after compilation, the emitted JavaScript follows JavaScript's weak runtime coercion rules.
 
 Example Usage
 
@@ -99,8 +92,10 @@ Example Usage
 No implicit coercion:
 
 ```python
-print(2 + "5") # TypeError: unsupported operand types for +: int and str
+print(2 + "5") # unsupported operand types for +: int and str
 ```
+
+Causes a TypeError at runtime because of strong typing
 
 Explicit conversion:
 
@@ -109,9 +104,21 @@ print(2 + int("5"))       # 7
 print(str(2) + "5")       # "25"
 ```
 
-**Duck typing** determines whether or not a specific operation is valid for an object. Like here the operation of + is invalid for a string and an int. Named after the idea that "if it talks like a duck and quacks like a duck, then it is a duck."
+---
 
-To illustrate we can use the example of custom objects having or missing a compatible operation:
+## 3. Duck vs Nominal vs Structural Typing
+
+This category is about **type compatibility**. It describes how a language decides whether a value is acceptable for an operation, function parameter, variable, or interface.
+
+### Duck typing
+
+Duck typing focuses on whether an object supports the operation being used, rather than whether it has a specific declared type.
+
+It is named after the idea: "if it walks like a duck and quacks like a duck, then it is a duck."
+
+Because Python and Ruby usually do not require declared parameter types, duck typing is common: an object is considered usable if it supports the operation being performed at runtime.
+
+Example:
 
 ```python
 def make_sound(obj):
@@ -125,14 +132,76 @@ class Person:
     def speak(self):
         print("hello")
 
+class Robot:
+    def move(self):
+        print("rolling")
+
 make_sound(Dog())     # OK: Dog has speak()
 make_sound(Person())  # OK: Person has speak()
-# make_sound("hello") # AttributeError: str has no speak() method/operation
+# make_sound(Robot()) # AttributeError: Robot has no speak() method
 ```
+
+The function does not require `obj` to be declared as a `Dog` or a `Person`. It only requires that `obj` supports the `.speak()` operation at runtime.
+
+### Nominal typing
+
+Nominal typing focuses on the declared or named type. A value is compatible because it belongs to a specific class, implements a specific interface, or is part of a declared inheritance relationship.
+
+Nominal typing is common in languages such as Java, C#, and C++.
+
+Example:
+
+```java
+interface Speaker {
+    void speak();
+}
+
+class Dog implements Speaker {
+    public void speak() {
+        System.out.println("woof");
+    }
+}
+
+void makeSound(Speaker obj) {
+    obj.speak();
+}
+
+makeSound(new Dog()); 
+```
+
+Here, `makeSound` requires a value whose declared type is `Speaker` or a class that implements `Speaker`. The `Dog` object is accepted because `Dog` explicitly declares that it implements the named `Speaker` interface.
+
+### Structural typing
+
+Structural typing focuses on the shape or structure of a value. A value is compatible if it has the required fields or methods, even if it was not explicitly declared as a specific named type.
+
+Structural typing is used by TypeScript and is also similar to how Go interfaces work.
+
+Example:
+
+```ts
+type Speaker = {
+    speak: () => void;
+};
+
+const dog = {
+    speak() {
+        console.log("woof");
+    },
+};
+
+function makeSound(obj: Speaker) {
+    obj.speak();
+}
+
+makeSound(dog); // OK: dog has the required speak method
+```
+
+The object `dog` does not have to explicitly declare that it is a `Speaker`. It is compatible because its structure matches the `Speaker` type.
 
 ---
 
-## 3. Procedural vs Object-Oriented (OOP) vs Functional
+## 4. Procedural vs Object-Oriented (OOP) vs Functional
 
 This category is about **programming paradigms**. A programming paradigm describes the main style a language encourages for organizing data, behavior, and program flow.
 
@@ -305,7 +374,7 @@ The paradigms are not mutually exclusive. A Python program might use procedural 
 
 ---
 
-## 4. Compiled vs Interpreted Languages
+## 5. Compiled vs Interpreted Languages
 
 ### Compiled Languages
 

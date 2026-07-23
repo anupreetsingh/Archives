@@ -36,3 +36,11 @@
 1. Telemetry(verb, ETY: Far off + measure) : Collection of data from remote points and its then transfer to a central point to analysis. Example: Amazon uses telemetry to understand how customers interact with a particular product.
 
 1. Augment(verb) : Make something greater or better by adding to it. Example: He started taking protein powder with his meals to augment his results.
+
+1. Monotony (noun, ETY: single + tone): Dullness caused by repetition or lack of variety. Example: The monotony of the routine became exhausting.
+   1. Monotonous (adjective): Describing something that has the quality of monotony. Example: His voice was monotonous.
+   2. Monotonously (adverb): Describes an action done in a monotonous way. Example: He spoke monotonously.
+
+1. Monotonicity (noun): Used in technical domains like math. It means the quality of changing in only one direction, without reversing. Example: We need to prove the monotonicity of the function.
+   1. Monotonic (adjective): Having monotonicity; only increasing, only decreasing, non-decreasing, or non-increasing. Example: The sequence is monotonic.
+   2. Monotonically (adverb): In a monotonic way. Example: The values were monotonically increasing.

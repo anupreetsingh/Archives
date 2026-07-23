@@ -35,31 +35,50 @@ Example:
 from collections import defaultdict
 
 word_counts = defaultdict(int)
+grouped_numbers = defaultdict(list)
 
 words = ["apple", "banana", "apple"]
+pairs = [("even", 2), ("odd", 3), ("even", 4)]
 
 for word in words:
     word_counts[word] += 1
 
+for key, value in pairs:
+    grouped_numbers[key].append(value)
+
 print(word_counts)
 # defaultdict(<class 'int'>, {'apple': 2, 'banana': 1})
+
+print(grouped_numbers)
+# defaultdict(<class 'list'>, {'even': [2, 4], 'odd': [3]})
 ```
 
-Since we use `defaultdict`,  the incrememnt is just cleaner and more natural but we could achieve the same thing with a normal `dict` using `.get()`:
+Here, `defaultdict(int)` makes each missing key start at `0`, so we can increment immediately. `defaultdict(list)` makes each missing key start with an empty list, so we can append immediately.
+
+To achieve the same results with normal dictionaries, we would do something like:
 
 ```python
 word_counts = {}
+grouped_numbers = {}
 
 words = ["apple", "banana", "apple"]
+pairs = [("even", 2), ("odd", 3), ("even", 4)]
 
 for word in words:
     word_counts[word] = word_counts.get(word, 0) + 1
 
+for key, value in pairs:
+    grouped_numbers[key] = grouped_numbers.get(key, []) # Get the list value, using get() to deal with missing keys
+    grouped_numbers[key].append(value) # Append to that list value
+
 print(word_counts)
 # {'apple': 2, 'banana': 1}
+
+print(grouped_numbers)
+# {'even': [2, 4], 'odd': [3]}
 ```
 
-Here, `word_counts.get(word, 0)` gets the current count for `word`. If `word` is not in the dictionary yet, it uses `0` instead.
+The normal dictionary version is more complex because we have to manually provide a starting value for each missing key before incrementing or appending.
 
 ## `Counter`
 

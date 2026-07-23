@@ -16,6 +16,106 @@ while i < len(numbers):
 
 ---
 
+## range()
+
+`range()` represents an integer sequence, usually for loop counts or indexes.
+
+Syntax:
+
+```python
+range(stop)              # default: start = 0, step = 1
+range(start, stop)       # default step = 1
+range(start, stop, step)
+```
+
+Rules:
+
+- `start` is included and `stop` is excluded.
+- `step` cannot be `0`.
+- If `step` is positive, `start < stop` to produce values.
+- If `step` is negative, `start > stop` to produce values.
+
+```python
+range(5)
+# represents: 0, 1, 2, 3, 4
+
+range(2, 6)
+# represents: 2, 3, 4, 5
+
+range(2, 10, 2)
+# represents: 2, 4, 6, 8
+
+range(5, 0, -1)
+# represents: 5, 4, 3, 2, 1
+
+range(5, 0)
+# represents: no values because default step = 1, but start > stop
+
+range(0, 5, -1)
+# represents: no values because step is negative, but start < stop
+```
+
+### Internal Behavior
+
+`range()` creates a `range` object immediately.
+
+That object is itself an iterable sequence. It can be looped over, indexed, measured with `len()`, and checked with `in`.
+
+```python
+nums = range(5)
+
+len(nums)
+# 5
+
+nums[0]
+# 0
+
+3 in nums
+# True
+```
+
+`range()` does not store every integer in memory. It stores the `start`, `stop`, and `step`, then calculates values when they are accessed or iterated over.
+
+Example:
+
+```python
+for i in range(1_000_000):
+    pass
+```
+
+Here, `range(1_000_000)` represents one million integers from `0` up to `999_999`, but Python does not store those integers in a list somewhere. Each value is produced when the range is iterated over.
+
+### Common Patterns
+
+Use `list()` when you want to materialize the values represented by a range.
+
+```python
+nums = range(5)
+
+print(nums)
+# range(0, 5)
+
+print(list(nums))
+# [0, 1, 2, 3, 4]
+
+print(list(range(5, 0)))
+# []
+```
+
+Use a `for` loop when you want to consume the values one at a time.
+
+```python
+for i in range(3):
+    print(i)
+
+# Output:
+# 0
+# 1
+# 2
+```
+
+---
+
 ## Wrap Around Logic
 
 To traverse a list starting from any index and wrap around in circular way:

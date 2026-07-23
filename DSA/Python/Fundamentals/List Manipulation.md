@@ -204,6 +204,8 @@ print(counts[6])  # 2
 
 `len()` returns the number of elements in a list.
 
+`len()` is an `O(1)` operation because the list stores its current size on the object iteself. Python does not count the elements one by one each time.
+
 ```python
 len(list)
 ```

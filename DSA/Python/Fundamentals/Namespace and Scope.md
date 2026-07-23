@@ -137,7 +137,7 @@ In this example:
 
 You can either use the object that an outer name already refers to, or assign to that name inside the inner scope.
 
-#### Using the object tied to an outer name
+#### Using object tied to an outer name
 
 Reading an enclosing variable is automatic. If that variable refers to a mutable object, you can also mutate that object.
 
@@ -162,6 +162,76 @@ outer()
 Here, `inner()` does not assign to the plain name `state`, so Python searches the enclosing function and finds `state` in `outer()`.
 
 Then `state["count"] += 1` and `state["history"].append("updated")` mutate the dictionary that `state` refers to. The name `state` still points to the same dictionary object. Only the contents of that dictionary changed.
+
+#### Function parameters are local names
+
+The most accurate way to describe Python argument passing is:
+
+```text
+Python passes object references by value.
+```
+
+When a function is called, each parameter name is created in the function's local namespace. That local name receives a copy of the reference to the same object that the caller passed.
+
+This means there are two separate names, but they can refer to the same object.
+
+Example with a mutable object:
+
+```python
+def foo(s):
+    s.add(3)
+
+x = {1, 2}
+foo(x)
+
+print(x)
+# Output: {1, 2, 3}
+```
+
+During the call, both `x` and `s` refer to the same set object:
+
+```text
+x ---\
+      v
+    {1, 2}
+      ^
+s ---/
+```
+
+So `s.add(3)` mutates the set object itself. Since `x` also refers to that same set, the change is visible after the function returns.
+
+Rebinding the parameter is different:
+
+```python
+def foo(s):
+    s = {100}
+
+x = {1, 2}
+foo(x)
+
+print(x)
+# Output: {1, 2}
+```
+
+Before rebinding, both names refer to the same set:
+
+```text
+x ---\
+      v
+    {1, 2}
+      ^
+s ---/
+```
+
+After `s = {100}`, only the local name `s` is changed:
+
+```text
+x ----> {1, 2}
+
+s ----> {100}
+```
+
+The original set was not mutated. The function only made its local parameter name `s` refer to a different set object.
 
 #### Rebinding the object tied to a name
 
@@ -378,6 +448,31 @@ s1.show_result()
 ```
 
 Here, `self.name` and `self.marks` are created inside `__init__()`, but they are accessible inside `show_name()` and `show_result()` because all three methods are working with the same object through `self`.
+
+##### Nested Functions Inside Methods
+
+A nested function inside a method can also access instance attributes through `self`, but the important part is that `self` is the enclosing-scope name.
+
+```python
+class Solution:
+    def combine(self):
+        self.combinations = []
+
+        def backtrack():
+            self.combinations.append([])
+
+        backtrack()
+        return self.combinations
+```
+
+Inside `backtrack()`, Python resolves `self.combinations` in two steps:
+
+1. Resolve the plain name `self` using LEGB.
+2. Look up the attribute `combinations` on the object that `self` refers to.
+
+So `backtrack()` can access `self.combinations` because `self` is available from the enclosing method scope.
+
+The attribute name `combinations` itself is not a variable from the enclosing scope. It is stored on the instance object and is found through attribute lookup.
 
 Instance attributes can also be created or changed in methods other than `__init__()`.
 

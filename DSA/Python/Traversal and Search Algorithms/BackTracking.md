@@ -1,6 +1,6 @@
 # Backtracking
 
-## 🌳 Decision Tree (Backtracking Context)
+## Decision Tree (Backtracking Context)
 
 - A conceptual tree representing all possible sequences of decisions.
 - **Root**: state before making any decision.
@@ -22,12 +22,12 @@ Example (permutations of [A,B,C]):
 
 Even if no TreeNode object exists, by using recursion you often explore this implicit tree for problem solving.
 
-## 🔄 Backtracking
+## Backtracking
 
 - Depth-First Search (DFS) over the decision tree/solution space.
 - General approach:
-  1. Choose an option → move deeper into the tree.
-  2. If end condition met → record the solution.
+  1. Choose an option
+  2. move deeper into the tree in dfs fashion -> If end condition met → record the solution.
   3. Undo the choice → try the next option (backtrack).
 - Core idea: "DFS + Undo Step".
 

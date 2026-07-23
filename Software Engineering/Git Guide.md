@@ -111,13 +111,27 @@ Get more context about [Branches](#branches) of commits in its section below.
 
 You could mark a specific commit (e.g. specific release, version of your software, etc) by using a tag like this:
 
-  ```bash
-  git tag v1.0.0                # lightweight tag at current commit
-  git tag v1.0.0  <commit-name> # <commit-name> could be hash or pointer name
-  git tag -a v1.0.0 -m "msg"    # annotated tag (recommended)
-  ```
+```bash
+git tag <tag-name>                # lightweight tag at current commit
+git tag <tag-name>  <commit-name> # <commit-name> could be hash or pointer name
+git tag -a <tag-name> -m "<tag-message>"    # annotated tag (recommended)
+```
 
 These tags are readily visible on github and can be used by the general user of the github repo to easily identify and access a specific commit.
+
+Managing existing tags:
+
+```bash
+git tag -d <tag-name>                         # delete local tag
+git push origin -d <tag-name>                 # delete remote tag
+
+git tag <new-tag-name> <old-tag-name>^{}      # create new tag at the commit of old tag; ^{} peels old tag to its actual commit, is especially required if old tag was annotated
+
+git tag -f <tag-name> <commit-name>           # reassign local tag to another commit
+git tag -fa <tag-name> <commit-name> -m "<tag-message>" # reassign annotated tag
+```
+
+Reassigning a pushed tag rewrites what that version name means, so only do it when you are sure other people are not depending on the old tag.
 
 ### 5. Pushing
 
@@ -126,6 +140,7 @@ Pushing usually means sending your line of commits(commit history) to a remote r
 ```bash
 git push -u origin main   # first time: set upstream and push
 git push                 # later: push to the tracking branch
+git push origin --force         # force-push current branch: overwrite remote branch with local branch
 ```
 
 `-u` sets the default upstream to `origin/main` for successive push, pull, fetch commands on the main branch. If you create a different branch locally you have to set a different upstream for that branch
@@ -135,8 +150,11 @@ git push                 # later: push to the tracking branch
 Pushing a commit does not automatically push the tag to remote, you need to push tags by:
 
 ```bash
-git push origin v1.0.0   # pushes this one tag to origin
-git push origin --tags   # pushes all tags to origin
+git push origin <tag-name>         # push this one tag to origin if it does not already exist there
+git push origin <tag-name> --force # force-push this tag: overwrite remote tag with local tag
+git push origin -d <tag-name>      # delete this tag from origin
+git push origin --tags             # push all local tags that do not already exist on origin
+git push origin --tags --force     # force-push all tags: overwrite remote tags with local tags
 ```
 
 ### 6. Pulling from remote or other branches (Fetch and Merge)
@@ -807,6 +825,8 @@ Inspect a **single commit** in detail (message, author, date, and the full diff)
 git show <commit>
 git show <commit> --stat    # summary of changed files only
 git show <commit>:<path>   # show file contents at that commit
+git show <commit>:<path> > <new-path>   # save that version as a specific file in the current working tree
+                                        # The `>` command creates or overwrites `<new-path>` in your current working directory. Stage and commit that file if you want the saved version recorded in the current branch history.
 ```
 
 Useful when you have a commit hash from `git log` and want to see exactly what changed.
@@ -861,7 +881,7 @@ Restore files in the working tree (and optionally the index) to a given state:
 |--------|--------|
 | `git restore <file>` | Restore file in working directory from the Staging Area/Index; Index ─► Working Directory |
 | `git restore --staged <file>` | Restores staged version of the file from HEAD and unstages the file since INDEX ==HEAD for that file; HEAD ─► Index; Working Directory version of the file does not change;  |
-| `git restore --source=<tree> <file>` | Restore file in the working directory from another commit(e.g. `--source=main`). |
+| `git restore --source=<commit> <file>` | Restore file in the working directory from another commit(e.g. `--source=main`). |
 
 ### 3. `rm` (Remove files)
 
@@ -880,6 +900,8 @@ git rm --cached <file>       # remove the file from Git's index/staging area, bu
 
 Show differences between trees (working tree, index, commits):
 
+`git diff` compares the two snapshots you give it directly. It does **not** automatically compare each snapshot to their common ancestor.
+
 | Command | Compares |
 |--------|----------|
 | `git diff` | Working tree vs index (unstaged changes). |
@@ -890,5 +912,3 @@ Show differences between trees (working tree, index, commits):
 | `git diff --name-status` | Only file names and status (Added/Modified/Deleted). |
 
 ---
-
-*Guide covers: one-time setup, repo workflow (fork → clone → stage → commit → push → pull), merge conflicts, current pointer/HEAD behavior, branches, reset, status/log/reflog, and essential commands (stash, restore, rm, diff).*

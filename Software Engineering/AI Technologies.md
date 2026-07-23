@@ -242,7 +242,7 @@ Common uses:
 
 **LlamaIndex** is a framework for connecting LLMs to external data sources.
 
-It is especially useful for retrieval-augmented generation because it helps load documents, split them into chunks, create indexes, retrieve relevant context, and send that context to an LLM.
+It is especially useful for RAG because it helps load documents, split them into chunks, create indexes, retrieve relevant context, and send that context to an LLM.
 
 Use LlamaIndex when building:
 

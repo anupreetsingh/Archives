@@ -22,7 +22,76 @@
 - Differ mainly in order of visiting nodes and data structure used.
 - Usually track visited nodes to avoid processing the same node again.
 
-## Visited State and Cycles
+### Time and Space Complexity
+
+For basic graph traversal, BFS and DFS have the same Big-O time and space complexity.
+
+Graphs are commonly implemented or represented in a few different ways. The traversal complexity depends on which representation is used.
+
+#### Adjacency List
+
+An **adjacency list** stores the graph as each node with a list of its direct neighbors.
+
+Example:
+
+```python
+graph = {
+    "A": ["B", "C"],
+    "B": ["A"],
+    "C": ["A"],
+}
+```
+
+For both BFS and DFS:
+
+```text
+Time:  O(V + E)
+Space: O(V)
+```
+
+Where:
+
+- `V` = number of vertices/nodes.
+- `E` = number of edges.
+
+The time is `O(V + E)` because each reachable node is visited once, and each edge from those nodes is checked once while scanning neighbors.
+
+The space is `O(V)` because of the `visited` structure. BFS can also hold up to `O(V)` nodes in the queue, and DFS can use up to `O(V)` space in the recursion call stack or explicit stack.
+
+#### Adjacency Matrix
+
+An **adjacency matrix** stores the graph as a `V x V` table. Each row and column represents a node. A value like `1` means an edge exists, and `0` means no edge exists.
+
+Example:
+
+```python
+graph = [
+    # A  B  C
+    [0, 1, 1],  # A
+    [1, 0, 0],  # B
+    [1, 0, 0],  # C
+]
+```
+
+For an adjacency matrix, checking all possible neighbors of one node takes `O(V)`, so traversing all nodes takes:
+
+```text
+Time:  O(V^2)
+Space: O(V)
+```
+
+#### 2D Grid
+
+A **2D grid** as graph means that if the grid has `R` rows and `C` columns, each cell is treated like a node:
+
+```text
+Time:  O(R * C)
+Space: O(R * C)
+```
+
+Each cell is visited at most once, and each cell has only a constant number of neighbors, usually up, down, left, and right.
+
+### Tracking Visited State
 
 Graphs are not always one-way structures. The same node can often be reached again through another edge.
 
@@ -54,9 +123,7 @@ A -> B -> C -> A -> B -> C -> ...
 
 So BFS and DFS usually track a `visited` state to avoid infinite loops and duplicate work.
 
-## Ways to Track Visited Nodes
-
-Common ways to store `visited`:
+**Common ways to store `visited`**:
 
 - `set`: most common when nodes are hashable values like strings, numbers, or `(row, col)` tuples.
 - `dict`: useful when you also want to store information like parent, distance, color, or discovery state.
@@ -64,59 +131,90 @@ Common ways to store `visited`:
 - 2D boolean matrix: useful for grid traversal.
 - Parent check: works only for an undirected tree, where the only backward edge is the edge to the parent. For a general graph, use `visited`.
 
-## 2D grid as a graph
+## DAG (Directed Acyclic Graph)
 
-- Each cell (row, col) is a node.
-- Edges connect a node to its valid neighbors (up/down/left/right).
-- A grid with movement in all four directions behaves like an undirected graph, because if you can move from one cell to another, you can usually move back.
-- The example below proves the main idea once: BFS and DFS use different traversal orders, but both need `visited` to avoid revisiting cells forever.
+A **DAG** is a directed graph with no cycles.
 
-```python
-from collections import deque
+- **Directed** means edges have a one-way direction.
+- **Acyclic** means there is no path that eventually comes back to the same node.
 
-def bfs_grid(start_row, start_col, grid):
-    rows, cols = len(grid), len(grid[0])
-    visited = set()
-    queue = deque([(start_row, start_col)])
-    visited.add((start_row, start_col))  # Mark when adding to the queue.
+But there can be multiple paths leading to the same node.
 
-    while queue:
-        r, c = queue.popleft()
-        print(grid[r][c], end=' ')
-        for dr, dc in [(1,0), (-1,0), (0,1), (0,-1)]:
-            nr, nc = r + dr, c + dc
-            if 0 <= nr < rows and 0 <= nc < cols and (nr, nc) not in visited:
-                queue.append((nr, nc))
-                visited.add((nr, nc))
+Example:
 
-def dfs_grid(r, c, grid, visited=None):
-    if visited is None:
-        visited = set()
-    rows, cols = len(grid), len(grid[0])
-
-    if (r, c) in visited:
-        return
-    visited.add((r, c))  # Mark when the DFS reaches the cell.
-    print(grid[r][c], end=' ')
-    for dr, dc in [(1,0), (-1,0), (0,1), (0,-1)]:
-        nr, nc = r + dr, c + dc
-        if 0 <= nr < rows and 0 <= nc < cols:
-            dfs_grid(nr, nc, grid, visited)
-
-# 3x3 grid example
-grid_3x3 = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-]
-
-print("BFS traversal starting at (0,0):")
-bfs_grid(0, 0, grid_3x3)
-print("\nDFS traversal starting at (0,0):")
-dfs_grid(0, 0, grid_3x3)
-
-# BFS traversal starting at (0,0):
-# 1 4 2 7 5 3 8 6 9
-# DFS traversal starting at (0,0):
-# 1 4 7 8 5 2 3 6 9
+```text
+0 -> 1
+|    |
+v    v
+2 -> 3
 ```
+
+A DAG is useful when something must happen before something else:
+
+- Course prerequisites.
+- Task scheduling.
+- Build systems.
+- Dependency graphs.
+
+### Topological Sort
+
+A **topological sort** is an ordering of nodes in a DAG where every node appears before the nodes that depend on it.
+
+If there is an edge:
+
+```text
+A -> B
+```
+
+Then `A` must come before `B` in the topological order.
+
+For this graph:
+
+```text
+0 -> 1
+|    |
+v    v
+2 -> 3
+```
+
+One valid topological order is:
+
+```text
+0, 1, 2, 3
+```
+
+Another valid topological order is:
+
+```text
+0, 2, 1, 3
+```
+
+Both are valid because:
+
+- `0` comes before `1`.
+- `0` comes before `2`.
+- `1` comes before `3`.
+- `2` comes before `3`.
+
+Topological sort is only possible for a **DAG**. If the graph has a cycle, there is no valid topological order.
+
+### DFS vs Kahn's Algorithm
+
+There are two common ways to find a topological order in a DAG:
+
+- **DFS-based topological sort**: When the graph is modeled as each node pointing to its prerequisites, DFS adds each node only after all of its prerequisites have been visited. Useful when the problem naturally fits recursion, postorder traversal, or DFS-based cycle detection.
+- **Kahn's Algorithm**: When the graph is modeled as each prerequisite pointing to the nodes that depend on it, the algorithm repeatedly processes nodes with an in-degree of `0`. An in-degree of `0` means the node has no remaining prerequisites, so it can be safely added to the ordering. Useful the problem is about prerequisites, dependency counts, or repeatedly choosing nodes with no remaining prerequisites.
+
+> **LeetCode # 210**: Course Schedule II, is the classic course-prerequisite problem for topological sorting. The submission for that problem shows how to find the topological order using both DFS topological sort and Kahn's Algorithm.
+
+Both have the same complexity:
+
+```text
+Time:  O(V + E)
+Space: O(V)
+```
+
+Where:
+
+- `V` = number of vertices/nodes.
+- `E` = number of edges.
