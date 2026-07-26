@@ -39,3 +39,7 @@ But I believe there was one recurring limitation  of "resources and compute" acr
 **Question - Tell us briefly about one or more research areas you're excited about right now, and why.**
 
 Keeping in mind the context I gave about my prior research and professional experience in the previous answer, I would want to work on things like figuring out how far decode-time methods can scale, whether constraint mechanisms can be made cheap enough for production inference, and whether they can incorporate richer policies than just lexical constraints. This excites me because I think decode time interventions offer hard guarantees on model outputs that serves as complementary safety artifact to fine-tuning's probabilistic measures. This is why my top choices are "ML Systems and performance" and a close second being "AI safety and alignment". Another area could be working on developing/improving the infrastructure underneath related empirical research itself.
+
+- For small to mid size companies, use the line: Instead of being a small cog in a massive legacy wheel, I would prefer immediate ownership and visibility of impact in a greenfield project environment.
+
+- I like the mentorship and clear paths to increased ownership.

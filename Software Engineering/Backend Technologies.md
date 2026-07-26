@@ -125,7 +125,7 @@ API's could be formed in accordance with different conventions. Some common ones
 
 2. GraphQL: Lets the client ask for exactly the data it needs, usually through one endpoint. Instead of exposing many resource-based URL paths like REST, GraphQL exposes a schema that describes the available data and relationships.
 
-3. gRPC(Google Remote Procedure Call): A framework for calling functions on another service as if they were local functions. It uses strongly defined service contracts and is often used for fast communication between backend services or microservices.
+3. RPC(Remote Procedure Call): A general approach where one service calls a function or procedure on another service as if it were local. RPC systems usually rely on strongly defined service contracts and are often used for fast communication between backend services or microservices. Examples: gRPC, Apache Thrift.
 
 ### Data Validation
 

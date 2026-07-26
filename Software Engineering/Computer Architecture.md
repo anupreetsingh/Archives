@@ -32,7 +32,7 @@ Chrome Process
 
 - A physical unit inside the CPU that executes instructions.
 - The OS Scheduler maps threads to cores.
-- Only one thread executes on a CPU core at any intant of time.
+- Only one thread executes on a CPU core at any instant of time.
 
 #### Single Core CPU
 
@@ -64,6 +64,96 @@ flowchart LR
 > Not to be confused with a Clock Cycle
 
 **Clock Cycle** is one tick of the CPU's clock. One machine cycle can take several clock cycles and clock cycles differ for different CPUs depending on their frequency (Old Intel: 5MHz, Modern Intel: 3-5GHz).
+
+### Race Conditions
+
+A **race condition** is a software or system flaw where two or more threads, from the same or different processes, try to access and change the same shared data, and the final result depends on the unpredictable order in which they run.
+
+The threads do not need to execute in parallel at the exact same instant. Even on a single CPU core, their steps can interleave during concurrency.
+
+Example:
+
+```python
+tickets_left = 1
+
+def reserve_ticket(user):
+    global tickets_left
+
+    if tickets_left > 0:         # 1. check shared data
+        tickets_left -= 1        # 2. update shared data
+        print(f"{user} got a ticket")
+
+# Thread A calls reserve_ticket("A")
+# Thread B calls reserve_ticket("B")
+```
+
+Possible interleaving:
+
+```text
+Initial tickets_left = 1
+
+Thread A checks tickets_left > 0 and passes
+Thread B checks tickets_left > 0 and passes
+Thread A subtracts 1 and prints "A got a ticket"
+Thread B subtracts 1 and prints "B got a ticket"
+
+Two users were told they got a ticket, even though only one ticket existed.
+```
+
+The bug is not that the ticket count is wrong by itself. The bug is that `check availability -> reserve ticket -> confirm reservation` was not protected as one indivisible operation.
+
+A **critical section** is the part of code that accesses shared data and must be protected so another concurrent thread cannot interrupt it halfway through.
+
+In the ticket example, the critical section is:
+
+```python
+if tickets_left > 0:
+    tickets_left -= 1
+    print(f"{user} got a ticket")
+```
+
+Meaning If one thread is already inside this block, then another thread should not be allowed to enter that same critical section until the first thread finishes it.
+
+#### Locks
+
+A **lock** is a synchronization tool that allows only one thread at a time to enter a protected critical section.
+
+```python
+from threading import Lock
+
+tickets_left = 1
+tickets_lock = Lock()
+
+def reserve_ticket(user):
+    global tickets_left
+
+    with tickets_lock:
+        if tickets_left > 0:          # Check shared data
+            tickets_left -= 1         # Update shared data
+            print(f"{user} got a ticket")  # Confirm the reservation
+```
+
+The lock does not make the code faster. It makes the shared-state update correct by forcing the check and write to happen without another thread entering the same protected block.
+
+#### Deadlocks
+
+A **deadlock** happens when concurrent tasks wait on each other forever.
+
+Example:
+
+```text
+Thread A holds Lock 1 and waits for Lock 2.
+Thread B holds Lock 2 and waits for Lock 1.
+
+Neither thread can continue.
+```
+
+Common ways to reduce deadlocks:
+
+- Acquire locks in a consistent order.
+- Keep locked sections small.
+- Avoid holding a lock while doing slow I/O.
+- Use higher-level tools like queues when ownership transfer is clearer than shared mutation.
 
 ## Memory
 

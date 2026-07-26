@@ -1,7 +1,7 @@
 # Software Design Techniques
 
 Software design techniques are ways of organizing code and relationships between
-objects. They help control coupling, reuse behavior, and make software easier to
+**objects**. They help control coupling, reuse behavior, and make software easier to
 change.
 
 They are different from:

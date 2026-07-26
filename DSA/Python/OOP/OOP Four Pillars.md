@@ -160,34 +160,3 @@ for a in animals:
 
 # → Same interface (speak), different behavior at runtime.
 ```
-
----
-
-## Summary of Polymorphism
-
-POLYMORPHISM → "Many forms" — one name, many behaviors.
-
-- **OVERLOADING (Compile-time)**
-  - Same method name, different parameters
-  - Chosen at compile-time
-  - Not truly supported in Python (simulated)
-- **OVERRIDING (Run-time)**
-  - Same method name, same parameters in subclass
-  - Chosen at runtime based on object type
-  - Fully supported in Python
-
-Quick Comparison Table:
-
-| Type | Binding Time | Same Parameters? | Python Support |
-|------|--------------|------------------|----------------|
-| Overloading | Compile-time | No | ⚠️ Simulated |
-| Overriding | Run-time | Yes | ✔️ Yes |
-
----
-
-## ✅ Summary
-
-- **Encapsulation** → Hide internal details, provide methods.
-- **Abstraction** → Focus on WHAT, not HOW.
-- **Inheritance** → Reuse and extend existing code.
-- **Polymorphism** → One interface, multiple implementations.

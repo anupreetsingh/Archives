@@ -87,3 +87,5 @@ A compound noun is a noun made up of two or more words(one noun and the other a 
 Example: greenhouse, record-keeping, machine learning, swimming pool, snowman, etc
 
 ## Parts of speech
+
+gerund -  A word with the suffix "ing" that serves as a noun in a sentence. Example: *Swimming* is good exercise, I enjoy *reading* as a hobby
