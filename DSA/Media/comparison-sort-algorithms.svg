@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="780" viewBox="0 0 1440 780" role="img" aria-labelledby="title desc">
+  <title id="title">Comparison Sort Complexity</title>
+  <desc id="desc">Comparison sorting algorithms compared by best, average, and worst case for both time and space complexity.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+    .group { fill: #e2e8f0; }
+    .subhead { fill: #f1f5f9; }
+    .title { fill: #0f172a; font: 700 34px Arial, sans-serif; }
+    .header-text { fill: #0f172a; font: 700 17px Arial, sans-serif; }
+    .subhead-text { fill: #334155; font: 700 13px Arial, sans-serif; }
+    .cell-text { fill: #1e293b; font: 600 18px Arial, sans-serif; }
+    .algo { fill: #0f172a; font: 700 21px Arial, sans-serif; }
+    .chip-good { fill: #dcfce7; stroke: #86efac; stroke-width: 1; }
+    .chip-mid { fill: #dbeafe; stroke: #93c5fd; stroke-width: 1; }
+    .chip-warn { fill: #fef3c7; stroke: #fcd34d; stroke-width: 1; }
+    .chip-bad { fill: #fee2e2; stroke: #fca5a5; stroke-width: 1; }
+    .chip-text { fill: #0f172a; font: 700 15px Arial, sans-serif; }
+    .chip-small { fill: #0f172a; font: 700 13px Arial, sans-serif; }
+    .line { stroke: #cbd5e1; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="1440" height="780"/>
+
+  <text class="title" x="48" y="62">Comparison Sort Algorithms</text>
+
+  <rect class="panel" x="40" y="100" width="1360" height="650" rx="10"/>
+
+  <rect class="group" x="40" y="100" width="1360" height="42" rx="10"/>
+  <rect class="group" x="40" y="128" width="1360" height="14"/>
+  <rect class="subhead" x="40" y="142" width="1360" height="34"/>
+
+  <text class="header-text" x="62" y="127">Algorithm</text>
+  <text class="header-text" x="260" y="127">Input</text>
+  <text class="header-text" x="565" y="127">Time Complexity</text>
+  <text class="header-text" x="1040" y="127">Space Complexity</text>
+
+  <text class="subhead-text" x="522" y="164">Best</text>
+  <text class="subhead-text" x="680" y="164">Average</text>
+  <text class="subhead-text" x="845" y="164">Worst</text>
+  <text class="subhead-text" x="1002" y="164">Best</text>
+  <text class="subhead-text" x="1160" y="164">Average</text>
+  <text class="subhead-text" x="1320" y="164">Worst</text>
+
+  <line class="line" x1="235" y1="100" x2="235" y2="750"/>
+  <line class="line" x1="500" y1="100" x2="500" y2="750"/>
+  <line class="line" x1="980" y1="100" x2="980" y2="750"/>
+  <line class="line" x1="40" y1="176" x2="1400" y2="176"/>
+  <line class="line" x1="40" y1="247" x2="1400" y2="247"/>
+  <line class="line" x1="40" y1="318" x2="1400" y2="318"/>
+  <line class="line" x1="40" y1="389" x2="1400" y2="389"/>
+  <line class="line" x1="40" y1="460" x2="1400" y2="460"/>
+  <line class="line" x1="40" y1="531" x2="1400" y2="531"/>
+  <line class="line" x1="40" y1="602" x2="1400" y2="602"/>
+  <line class="line" x1="40" y1="673" x2="1400" y2="673"/>
+  <line class="line" x1="650" y1="142" x2="650" y2="750"/>
+  <line class="line" x1="815" y1="142" x2="815" y2="750"/>
+  <line class="line" x1="1130" y1="142" x2="1130" y2="750"/>
+  <line class="line" x1="1295" y1="142" x2="1295" y2="750"/>
+
+  <text class="algo" x="62" y="220">Bubble Sort</text>
+  <text class="cell-text" x="260" y="220">Any list</text>
+  <rect class="chip-warn" x="520" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="546" y="224">O(n^2)</text>
+  <rect class="chip-warn" x="680" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="706" y="224">O(n^2)</text>
+  <rect class="chip-warn" x="845" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="871" y="224">O(n^2)</text>
+  <rect class="chip-good" x="1000" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="224">O(1)</text>
+  <rect class="chip-good" x="1150" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="224">O(1)</text>
+  <rect class="chip-good" x="1300" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="224">O(1)</text>
+
+  <text class="algo" x="62" y="291">Selection Sort</text>
+  <text class="cell-text" x="260" y="291">Any list</text>
+  <rect class="chip-warn" x="520" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="546" y="295">O(n^2)</text>
+  <rect class="chip-warn" x="680" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="706" y="295">O(n^2)</text>
+  <rect class="chip-warn" x="845" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="871" y="295">O(n^2)</text>
+  <rect class="chip-good" x="1000" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="295">O(1)</text>
+  <rect class="chip-good" x="1150" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="295">O(1)</text>
+  <rect class="chip-good" x="1300" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="295">O(1)</text>
+
+  <text class="algo" x="62" y="362">Insertion Sort</text>
+  <text class="cell-text" x="260" y="362">Any list</text>
+  <rect class="chip-good" x="520" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="366">O(n)</text>
+  <rect class="chip-warn" x="680" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="706" y="366">O(n^2)</text>
+  <rect class="chip-warn" x="845" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="871" y="366">O(n^2)</text>
+  <rect class="chip-good" x="1000" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="366">O(1)</text>
+  <rect class="chip-good" x="1150" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="366">O(1)</text>
+  <rect class="chip-good" x="1300" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="366">O(1)</text>
+
+  <text class="algo" x="62" y="433">Merge Sort</text>
+  <text class="cell-text" x="260" y="433">Any list</text>
+  <rect class="chip-mid" x="510" y="411" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="530" y="437">O(n log n)</text>
+  <rect class="chip-mid" x="670" y="411" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="690" y="437">O(n log n)</text>
+  <rect class="chip-mid" x="835" y="411" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="855" y="437">O(n log n)</text>
+  <rect class="chip-mid" x="1000" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="437">O(n)</text>
+  <rect class="chip-mid" x="1150" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="437">O(n)</text>
+  <rect class="chip-mid" x="1300" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="437">O(n)</text>
+
+  <text class="algo" x="62" y="504">Quick Sort</text>
+  <text class="cell-text" x="260" y="504">Any list</text>
+  <rect class="chip-mid" x="510" y="482" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="530" y="508">O(n log n)</text>
+  <rect class="chip-mid" x="670" y="482" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="690" y="508">O(n log n)</text>
+  <rect class="chip-bad" x="845" y="482" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="871" y="508">O(n^2)</text>
+  <rect class="chip-mid" x="1000" y="482" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="508">O(n)</text>
+  <rect class="chip-mid" x="1150" y="482" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="508">O(n)</text>
+  <rect class="chip-mid" x="1300" y="482" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="508">O(n)</text>
+
+  <text class="algo" x="62" y="575">Heap Sort</text>
+  <text class="cell-text" x="260" y="575">Any list</text>
+  <rect class="chip-mid" x="510" y="553" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="530" y="579">O(n log n)</text>
+  <rect class="chip-mid" x="670" y="553" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="690" y="579">O(n log n)</text>
+  <rect class="chip-mid" x="835" y="553" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="855" y="579">O(n log n)</text>
+  <rect class="chip-good" x="1000" y="553" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="579">O(1)</text>
+  <rect class="chip-good" x="1150" y="553" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="579">O(1)</text>
+  <rect class="chip-good" x="1300" y="553" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="579">O(1)</text>
+
+  <text class="algo" x="62" y="646">Tim Sort</text>
+  <text class="cell-text" x="260" y="646">Real-world lists</text>
+  <rect class="chip-good" x="520" y="624" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="650">O(n)</text>
+  <rect class="chip-mid" x="670" y="624" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="690" y="650">O(n log n)</text>
+  <rect class="chip-mid" x="835" y="624" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="855" y="650">O(n log n)</text>
+  <rect class="chip-mid" x="1000" y="624" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="650">O(n)</text>
+  <rect class="chip-mid" x="1150" y="624" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="650">O(n)</text>
+  <rect class="chip-mid" x="1300" y="624" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="650">O(n)</text>
+
+  <text class="algo" x="62" y="717">Shell Sort</text>
+  <text class="cell-text" x="260" y="717">Gap sequence</text>
+  <rect class="chip-mid" x="510" y="695" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="530" y="721">O(n log n)</text>
+  <rect class="chip-warn" x="670" y="695" width="112" height="40" rx="20"/>
+  <text class="chip-small" x="693" y="721">O(n^3/2)</text>
+  <rect class="chip-bad" x="845" y="695" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="871" y="721">O(n^2)</text>
+  <rect class="chip-good" x="1000" y="695" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="721">O(1)</text>
+  <rect class="chip-good" x="1150" y="695" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1180" y="721">O(1)</text>
+  <rect class="chip-good" x="1300" y="695" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1330" y="721">O(1)</text>
+</svg>

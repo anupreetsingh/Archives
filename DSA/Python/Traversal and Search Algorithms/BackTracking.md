@@ -50,24 +50,3 @@ def backtrack(path, choices, target_sum):
         backtrack(path, choices, target_sum)  # Explore deeper
         path.pop()               # Undo choice (backtrack)
 ```
-
-## Comparison: Normal Tree Recursion
-
-Normal Tree recursion: traverses a fixed tree structure. Stops recursion when:
-
-- **Base case:** reached a null node (end of a branch).
-
-```python
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
-
-def inorder(node):
-    if not node:                  # Base case: no node to process
-        return
-    inorder(node.left)            # Traverse left subtree
-    print(node.val)               # Process current node
-    inorder(node.right)           # Traverse right subtree
-```

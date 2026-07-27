@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="430" viewBox="0 0 1280 430" role="img" aria-labelledby="title desc">
+  <title id="title">Tree Search Complexity</title>
+  <desc id="desc">BFS, DFS, and BST search compared by best, average, and worst case for both time and space complexity.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+    .group { fill: #e2e8f0; }
+    .subhead { fill: #f1f5f9; }
+    .title { fill: #0f172a; font: 700 34px Arial, sans-serif; }
+    .header-text { fill: #0f172a; font: 700 17px Arial, sans-serif; }
+    .subhead-text { fill: #334155; font: 700 13px Arial, sans-serif; }
+    .cell-text { fill: #1e293b; font: 600 18px Arial, sans-serif; }
+    .algo { fill: #0f172a; font: 700 21px Arial, sans-serif; }
+    .chip-good { fill: #dcfce7; stroke: #86efac; stroke-width: 1; }
+    .chip-mid { fill: #dbeafe; stroke: #93c5fd; stroke-width: 1; }
+    .chip-warn { fill: #fef3c7; stroke: #fcd34d; stroke-width: 1; }
+    .chip-text { fill: #0f172a; font: 700 16px Arial, sans-serif; }
+    .line { stroke: #cbd5e1; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="1280" height="430"/>
+
+  <text class="title" x="48" y="62">Tree Search Algorithms</text>
+
+  <rect class="panel" x="40" y="100" width="1200" height="290" rx="10"/>
+
+  <rect class="group" x="40" y="100" width="1200" height="42" rx="10"/>
+  <rect class="group" x="40" y="128" width="1200" height="14"/>
+  <rect class="subhead" x="40" y="142" width="1200" height="34"/>
+
+  <text class="header-text" x="62" y="127">Algorithm</text>
+  <text class="header-text" x="236" y="127">Input</text>
+  <text class="header-text" x="475" y="127">Time Complexity</text>
+  <text class="header-text" x="870" y="127">Space Complexity</text>
+
+  <text class="subhead-text" x="392" y="164">Best</text>
+  <text class="subhead-text" x="512" y="164">Average</text>
+  <text class="subhead-text" x="652" y="164">Worst</text>
+  <text class="subhead-text" x="790" y="164">Best</text>
+  <text class="subhead-text" x="910" y="164">Average</text>
+  <text class="subhead-text" x="1050" y="164">Worst</text>
+
+  <line class="line" x1="215" y1="100" x2="215" y2="390"/>
+  <line class="line" x1="360" y1="100" x2="360" y2="390"/>
+  <line class="line" x1="760" y1="100" x2="760" y2="390"/>
+  <line class="line" x1="40" y1="176" x2="1240" y2="176"/>
+  <line class="line" x1="40" y1="247" x2="1240" y2="247"/>
+  <line class="line" x1="40" y1="318" x2="1240" y2="318"/>
+  <line class="line" x1="490" y1="142" x2="490" y2="390"/>
+  <line class="line" x1="630" y1="142" x2="630" y2="390"/>
+  <line class="line" x1="890" y1="142" x2="890" y2="390"/>
+  <line class="line" x1="1030" y1="142" x2="1030" y2="390"/>
+
+  <text class="algo" x="62" y="220">BFS</text>
+  <text class="cell-text" x="236" y="220">Any tree</text>
+
+  <rect class="chip-good" x="386" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="412" y="224">O(1)</text>
+  <rect class="chip-warn" x="515" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="541" y="224">O(N)</text>
+  <rect class="chip-warn" x="646" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="672" y="224">O(N)</text>
+
+  <rect class="chip-good" x="784" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="810" y="224">O(1)</text>
+  <rect class="chip-mid" x="913" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="941" y="224">O(w)</text>
+  <rect class="chip-mid" x="1044" y="198" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="1072" y="224">O(w)</text>
+
+  <text class="algo" x="62" y="291">DFS</text>
+  <text class="cell-text" x="236" y="291">Any tree</text>
+
+  <rect class="chip-good" x="386" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="412" y="295">O(1)</text>
+  <rect class="chip-warn" x="515" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="541" y="295">O(N)</text>
+  <rect class="chip-warn" x="646" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="672" y="295">O(N)</text>
+
+  <rect class="chip-good" x="784" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="810" y="295">O(1)</text>
+  <rect class="chip-mid" x="913" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="941" y="295">O(h)</text>
+  <rect class="chip-mid" x="1044" y="269" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="1072" y="295">O(h)</text>
+
+  <text class="algo" x="62" y="362">BST Search</text>
+  <text class="cell-text" x="236" y="362">BST</text>
+
+  <rect class="chip-good" x="386" y="340" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="412" y="366">O(1)</text>
+  <rect class="chip-mid" x="505" y="340" width="102" height="40" rx="20"/>
+  <text class="chip-text" x="524" y="366">O(log N)</text>
+  <rect class="chip-warn" x="646" y="340" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="672" y="366">O(N)</text>
+
+  <rect class="chip-good" x="784" y="340" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="810" y="366">O(1)</text>
+  <rect class="chip-good" x="913" y="340" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="939" y="366">O(1)</text>
+  <rect class="chip-good" x="1044" y="340" width="82" height="40" rx="20"/>
+  <text class="chip-text" x="1070" y="366">O(1)</text>
+</svg>

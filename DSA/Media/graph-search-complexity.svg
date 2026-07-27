@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="500" viewBox="0 0 1440 500" role="img" aria-labelledby="title desc">
+  <title id="title">Graph Search Complexity</title>
+  <desc id="desc">BFS, DFS, Dijkstra, and Bellman-Ford compared by best, average, and worst case for both time and space complexity.</desc>
+  <style>
+    .bg { fill: #f8fafc; }
+    .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+    .group { fill: #e2e8f0; }
+    .subhead { fill: #f1f5f9; }
+    .title { fill: #0f172a; font: 700 34px Arial, sans-serif; }
+    .header-text { fill: #0f172a; font: 700 17px Arial, sans-serif; }
+    .subhead-text { fill: #334155; font: 700 13px Arial, sans-serif; }
+    .cell-text { fill: #1e293b; font: 600 18px Arial, sans-serif; }
+    .algo { fill: #0f172a; font: 700 21px Arial, sans-serif; }
+    .chip-good { fill: #dcfce7; stroke: #86efac; stroke-width: 1; }
+    .chip-mid { fill: #dbeafe; stroke: #93c5fd; stroke-width: 1; }
+    .chip-warn { fill: #fef3c7; stroke: #fcd34d; stroke-width: 1; }
+    .chip-bad { fill: #fee2e2; stroke: #fca5a5; stroke-width: 1; }
+    .chip-text { fill: #0f172a; font: 700 15px Arial, sans-serif; }
+    .chip-small { fill: #0f172a; font: 700 13px Arial, sans-serif; }
+    .line { stroke: #cbd5e1; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="1440" height="500"/>
+
+  <text class="title" x="48" y="62">Graph Search Algorithms</text>
+
+  <rect class="panel" x="40" y="100" width="1360" height="370" rx="10"/>
+
+  <rect class="group" x="40" y="100" width="1360" height="42" rx="10"/>
+  <rect class="group" x="40" y="128" width="1360" height="14"/>
+  <rect class="subhead" x="40" y="142" width="1360" height="34"/>
+
+  <text class="header-text" x="62" y="127">Algorithm</text>
+  <text class="header-text" x="260" y="127">Input</text>
+  <text class="header-text" x="565" y="127">Time Complexity</text>
+  <text class="header-text" x="1040" y="127">Space Complexity</text>
+
+  <text class="subhead-text" x="522" y="164">Best</text>
+  <text class="subhead-text" x="680" y="164">Average</text>
+  <text class="subhead-text" x="845" y="164">Worst</text>
+  <text class="subhead-text" x="1002" y="164">Best</text>
+  <text class="subhead-text" x="1160" y="164">Average</text>
+  <text class="subhead-text" x="1320" y="164">Worst</text>
+
+  <line class="line" x1="235" y1="100" x2="235" y2="470"/>
+  <line class="line" x1="500" y1="100" x2="500" y2="470"/>
+  <line class="line" x1="980" y1="100" x2="980" y2="470"/>
+  <line class="line" x1="40" y1="176" x2="1400" y2="176"/>
+  <line class="line" x1="40" y1="247" x2="1400" y2="247"/>
+  <line class="line" x1="40" y1="318" x2="1400" y2="318"/>
+  <line class="line" x1="40" y1="389" x2="1400" y2="389"/>
+  <line class="line" x1="650" y1="142" x2="650" y2="470"/>
+  <line class="line" x1="815" y1="142" x2="815" y2="470"/>
+  <line class="line" x1="1130" y1="142" x2="1130" y2="470"/>
+  <line class="line" x1="1295" y1="142" x2="1295" y2="470"/>
+
+  <text class="algo" x="62" y="220">BFS</text>
+  <text class="cell-text" x="260" y="220">Graph</text>
+  <rect class="chip-good" x="520" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="224">O(1)</text>
+  <rect class="chip-warn" x="665" y="198" width="122" height="40" rx="20"/>
+  <text class="chip-small" x="689" y="224">O(V + E)</text>
+  <rect class="chip-warn" x="830" y="198" width="122" height="40" rx="20"/>
+  <text class="chip-small" x="854" y="224">O(V + E)</text>
+  <rect class="chip-good" x="1000" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="224">O(1)</text>
+  <rect class="chip-mid" x="1150" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1181" y="224">O(V)</text>
+  <rect class="chip-mid" x="1300" y="198" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1331" y="224">O(V)</text>
+
+  <text class="algo" x="62" y="291">DFS</text>
+  <text class="cell-text" x="260" y="291">Graph</text>
+  <rect class="chip-good" x="520" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="295">O(1)</text>
+  <rect class="chip-warn" x="665" y="269" width="122" height="40" rx="20"/>
+  <text class="chip-small" x="689" y="295">O(V + E)</text>
+  <rect class="chip-warn" x="830" y="269" width="122" height="40" rx="20"/>
+  <text class="chip-small" x="854" y="295">O(V + E)</text>
+  <rect class="chip-good" x="1000" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1030" y="295">O(1)</text>
+  <rect class="chip-mid" x="1150" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1181" y="295">O(V)</text>
+  <rect class="chip-mid" x="1300" y="269" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1331" y="295">O(V)</text>
+
+  <text class="algo" x="62" y="362">Dijkstra</text>
+  <text class="cell-text" x="260" y="362">Non-negative weights</text>
+  <rect class="chip-good" x="520" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="366">O(1)</text>
+  <rect class="chip-mid" x="655" y="340" width="145" height="40" rx="20"/>
+  <text class="chip-small" x="672" y="366">O((V+E) log V)</text>
+  <rect class="chip-mid" x="820" y="340" width="145" height="40" rx="20"/>
+  <text class="chip-small" x="837" y="366">O((V+E) log V)</text>
+  <rect class="chip-mid" x="1000" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1031" y="366">O(V)</text>
+  <rect class="chip-mid" x="1150" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1181" y="366">O(V)</text>
+  <rect class="chip-mid" x="1300" y="340" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1331" y="366">O(V)</text>
+
+  <text class="algo" x="62" y="433">Bellman-Ford</text>
+  <text class="cell-text" x="260" y="433">Weighted graph</text>
+  <rect class="chip-good" x="520" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="550" y="437">O(1)</text>
+  <rect class="chip-bad" x="665" y="411" width="122" height="40" rx="20"/>
+  <text class="chip-text" x="702" y="437">O(VE)</text>
+  <rect class="chip-bad" x="830" y="411" width="122" height="40" rx="20"/>
+  <text class="chip-text" x="867" y="437">O(VE)</text>
+  <rect class="chip-mid" x="1000" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1031" y="437">O(V)</text>
+  <rect class="chip-mid" x="1150" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1181" y="437">O(V)</text>
+  <rect class="chip-mid" x="1300" y="411" width="92" height="40" rx="20"/>
+  <text class="chip-text" x="1331" y="437">O(V)</text>
+</svg>
