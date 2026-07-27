@@ -1,5 +1,63 @@
 # Index Calculation in Lists and Matrices
 
+## Middle Index
+
+This section discusses a heuristic for finding the middle point of an array.
+
+For an array of size `n`, there are two useful "middles":
+
+- lower middle = last element of the left half
+- upper middle = first element of the right half
+
+For even `n`, they are different and equally important since there is no true middle.
+For odd `n`, they collapse into the same element: the true middle.
+
+### What `// 2` Gives You
+
+**0-indexed:**
+
+```text
+last index = n - 1
+
+(n - 1) // 2 gives: 
+- even n: lower middle 
+- odd n: True middle 
+
+n // 2 gives:
+- even n: Upper middle
+- odd n: True middle
+```
+
+**1-indexed:**
+
+```text
+last_index = size = n
+
+n // 2 gives:
+- even n: lower middle
+- odd n: element just before the true middle
+```
+
+### Formulas for Getting the Middle Index
+
+These formulas give the lower middle and upper middle, which are different for even `n` and automatically converge to the same element( the true middle) for odd `n`.
+
+**0-indexed:**
+
+```text
+lower_middle = (n - 1) // 2
+upper_middle = n // 2
+```
+
+**1-indexed:**
+
+```text
+lower_middle = (n + 1) // 2
+upper_middle = n // 2 + 1
+```
+
+Use either formula for the corresponding indexed array, depending on whether you need the lower middle or upper middle when `n` is even.
+
 ## Negative Indexing
 
 In sequence types such as lists, strings, and tuples, negative indexing is a shortcut for referring to the nth element from the end of the sequence.

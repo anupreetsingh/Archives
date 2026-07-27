@@ -519,15 +519,16 @@ Assemble in given Order:
 
 ### Chicken Chickpea Salad-
 
-- Option 1: Add Grilled chicken + Chickpeas + Spinach + Red Bell Pepper + Red Cabbage.
-- Option 2: Add Grilled Chicken / salmon / Tofu + kale + chickpeas + Cucumber + Tomato.
+- Option 1: Add Grilled Chicken / salmon / Tofu + Spinach / Kale + chickpeas + Red Bell Pepper / Cucumber + Red Cabbage / Tomato.
 - Drizzle with Yogurt Sauce(made from Chipotle or Schezwan)
 
-### Tofu  Chickpea Salad-
+### Sweetpotato Chickpea Bowl-
 
-- Add Grilled Tofu
+- Add Grilled Tofu / Chicken / Salmon
 - Add Cooked Sweet potato + Kale
-- Add Boiled Corn + Beans
+- Add Corn + Beans
+- Add Quinoa
+- Add Crumbled Feta cheese(Optional)
 - Drizzle with Garlic Yogurt Sauce
 
 ### Carrot Salad-

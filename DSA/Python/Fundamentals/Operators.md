@@ -64,6 +64,16 @@ print(a <= b)  # Less than or equal to Or equal? : True
 print(a >= b)  # Greater than or equal to Or equal? : False
 ```
 
+Comparison operators can be chained. Python reads `a == b == c` as `a == b and b == c`.
+
+```python
+a = 5
+b = 5
+c = 5
+
+print(a == b == c)  # True, because a == b and b == c
+```
+
 Under the hood, comparison operators call special dunder methods on objects:
 
 | Operator | Dunder method |
@@ -283,6 +293,16 @@ x /= 4   # Divide and assign ➗ : x = 3.0
 x %= 2   # Modulus and assign 🧮 : x = 1.0
 x //= 2  # Floor-divide and assign
 x **= 3  # Exponentiate and assign
+```
+
+Assignment can also be stacked when multiple variables should reference the same value.
+
+```python
+a = b = c = 10
+
+print(a)  # 10
+print(b)  # 10
+print(c)  # 10
 ```
 
 Bitwise operators also have assignment versions:

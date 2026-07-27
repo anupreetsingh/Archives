@@ -43,7 +43,7 @@ def backtrack(path, choices, target_sum):
         return
     if sum(path) > target_sum:    # Failure: prune this branch (no solution)
         return
-    for c in choices:
+    for c in choices: # The for loop lets you go over choices at the current level in decision tree
         if c in path:
             continue
         path.append(c)            # Choose

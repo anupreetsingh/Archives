@@ -63,10 +63,10 @@ def merge_sort(arr):
 
     #In this approach, In case of odd split, we make it right heavy. For instance in case of 5 elements, left sublist will have 2 and right will have 3
     mid = len(arr) // 2 # floor division gives you the integer part of the quotient
-    left = merge_sort(arr[:mid])# right heavy, so middle excluded here
-    right = merge_sort(arr[mid:])# rigth heavy, so middle included here
+    left_sorted = merge_sort(arr[:mid])# right heavy, so middle excluded here
+    right_sorted = merge_sort(arr[mid:])# right heavy, so middle included here
 
-    return merge(left, right)
+    return merge(left_sorted, right_sorted)
 
 # Helper function for carrying out the merge of 2 sorted lists
 def merge(left, right): #Remember both left and right lists are sorted in themselves
@@ -130,36 +130,30 @@ For a node at Index `i`:
 - Parent is at index `(i-1)//2`
 
 **Leaf And Non-Leaf Nodes:**
-if there are n nodes, the indexes go upto `n-1`, so for `2i+1>=n`, node `i` has no children because the child will be out of bounds. Solving for `i`:
+if there are n nodes, the indexes go upto `n-1`, so for `2i+1 >= n`, node `i` has no children because the child will be out of bounds. Solving for `i`:
 
-- `i>(n-1)//2` will all be nodes that don't have children because their children's index will be out of bounds
-- Leaf Nodes range from `n//2` to `n-1`
-
-### The main function that sorts the array
+- `i > (n-1) // 2` will all be nodes that don't have children because their children's index will be out of bounds
+- Leaf Nodes range from `n // 2` to `n - 1`
 
 ```python
 def heap_sort(arr):
     n = len(arr)
 
     # Step 1: Build a max heap (rearrange array)
-    for i in range(n//2-1, -1, -1): #We start from the last non leaf node, and decrement downwards to the root
-        heapify(arr, n, i) #Calling heapify() on each node to ensure the subtree rooted at that node satisfies the max-heap property.
+    for i in range(n // 2 - 1, -1, -1): # We start from the last non leaf node, and decrement downwards to the root
+        heapify(arr, n, i) # Calling heapify() on each node to ensure the subtree rooted at that node satisfies the max-heap property.
 
     # Step 2: Extract elements one by one
-    for i in range(n-1, 0, -1):
+    for i in range(n - 1, 0, -1):
         arr[i], arr[0] = arr[0], arr[i]  # Swap
         heapify(arr, i, 0)
-```
 
-### heapify helper function
 
-`heapify` is a helper function that makes sure the tree with root `i` (and all its subtrees through the recursive calls) follow the Max Heap property.
-
-```python
+# `heapify` is a helper function that makes sure the tree with root `i` (and all its subtrees through the recursive calls) follow the Max Heap property.
 def heapify(arr, n, i):
-    largest = i #In the beginning we suppose the root of the subtree will be the largest
-    left = 2 * i + 1 #left child of the current root in the current subtree
-    right = 2 * i + 2 #Right child of the current root in the current subtree
+    largest = i # In the beginning we suppose the root of the subtree will be the largest
+    left = 2 * i + 1 # Left child of the current root in the current subtree
+    right = 2 * i + 2 # Right child of the current root in the current subtree
 
     # Check if left child is larger than root
     if left < n and arr[left] > arr[largest]:
@@ -170,7 +164,7 @@ def heapify(arr, n, i):
         largest = right
 
     # Swap and continue heapifying if needed
-    if largest != i: #if i(the root of the subtree) was not the largest, we make the largest the new root
+    if largest != i: # if i(the root of the subtree) was not the largest, we make the largest the new root
         arr[i], arr[largest] = arr[largest], arr[i]
         heapify(arr, n, largest)
 

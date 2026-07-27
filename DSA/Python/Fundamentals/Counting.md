@@ -678,7 +678,7 @@ Choosing where the `k` stars go in the stars-bar layout determines the which sel
 So:
 
 ```text
-total = (n + k - 1)Ck
+total = C(n + k - 1, k) = (n + k - 1)! / ((n - 1)! * k!)
 ```
 
 Equivalently, choosing where the `n - 1` bars go gives:
