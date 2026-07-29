@@ -56,6 +56,80 @@ print(value)  # Output: 2
 
 The `if` block and `for` loop have their indented code blocks, but they do not create separate scopes. Since this code runs at module level, `x`, `i`, and `value` all belong to the module's global scope.
 
+## When Python Classifies Names
+
+Python needs to know whether a plain name belongs to the local, enclosing, or global level before it can resolve that name correctly.
+
+People often say Python is interpreted, but CPython still has a compilation step. Python source code is first compiled into **bytecode**, and that bytecode is stored inside a **code object**. Then the Python Virtual Machine(PVM) executes that bytecode from top to bottom. That execution step is what people usually mean when they say Python is interpreted.
+
+A code object stores the compiled bytecode plus metadata about that block of code. Part of that metadata records how names are handled, such as which names are local, enclosing or global.
+
+### Modules
+
+Before a module runs, Python compiles the module source into a code object. During compilation, Python also compiles nested function bodies and class bodies into their own code objects and records how plain names should be treated inside each one.
+
+Then Python executes the module code from top to bottom. Names assigned at the top level become names in that module's global namespace.
+
+```python
+def a():
+    x = 10
+    return x
+```
+
+When the module code reaches `def a():`, Python binds the name `a` in the module's global namespace. The body of `a()` does not run yet, but the code object for `a()` has already been compiled and its names have already been classified.
+
+### Functions
+
+During compilation, Python analyzes the function body and records which names are local, which names come from enclosing function scopes, and which names should be treated as global.
+
+When Python later executes the `def` statement, it creates a function object from that already-compiled code object and binds the function name in the surrounding namespace. The function body itself does not run yet. Later, when the function is called, Python uses the function's code object and executes the body from top to bottom.
+
+This is why assignment affects the whole function scope, even if the assignment appears after a read:
+
+```python
+def outer():
+    count = 10
+
+    def increment():
+        count += 1
+
+    increment()
+
+outer()
+# UnboundLocalError
+```
+
+Since `increment()` assigns to `count`, Python classifies `count` as local to `increment()` before `increment()` runs. When execution reaches `count += 1`, Python tries to read the local `count` before any local value has been bound.
+
+### Classes
+
+Class bodies are also compiled into code objects, but a `class` statement behaves differently from a `def` statement. When Python executes a `class` statement, it executes the class body immediately. That execution builds the class namespace. Names assigned directly in the class body become class attributes.
+
+```python
+class Student:
+    school = "ABC"
+
+    def show(self):
+        print(self.school)
+```
+
+While the class body runs, `school` and `show` are added to the class namespace. After the class body finishes, Python uses that namespace to create the `Student` class object.
+
+Class bodies do not behave exactly like function bodies for plain-name assignment. Assignment in a class body creates or updates a name in the class namespace, but it does not make earlier reads of that same name behave like unbound local variable reads.
+
+```python
+x = 10
+
+class Example:
+    print(x)
+    x = 20
+
+# Output:
+# 10
+```
+
+Here, `print(x)` can find the global `x` because the class attribute `x` has not been created yet. This is different from a function, where assigning to `x` anywhere in the function would make `x` local for the whole function.
+
 ## Name Lookup Patterns
 
 Name lookup means how Python decides which object a name refers to.
@@ -261,9 +335,14 @@ outer()
 # UnboundLocalError
 ```
 
-In `replace()`, `count = 20` binds the object `20` to the name `count` that is local to the `replace()` function. It does not change the binding of `count` in `outer()`.
+Python determines how names are classified in a function before the function body runs: local, free/nonlocal, global, or built-in lookup. If a function is just referencing / accessing a name then it uses LEGB for resolution of the name. If the function is using an assignment there are two scenarios
 
-In `increment()`, `count += 1` is assignment to the plain name `count`. For this integer example, you can think of it like `count = count + 1`. Because there is an assignment to `count` inside `increment()`, Python treats `count` as a local name for the whole `increment()` function. So the right-side `count` also means the local `count`, not the `count` from `outer()`. Since no object has been bound to the local name `count` yet, Python raises `UnboundLocalError`.
+1. Using nonlocal or global: tells it that the name beind rebound is an enclosing or global name
+2. Otherwise it assumes that it is a local name being bound or rebound in successive steps from top to bottom of the local scope.
+
+In `replace()`, `count = 20` is a normal assignment. So it binds the name `count` to `20` as a local name, then when `print(count)` refers `count` resolves to a local name
+
+In `increment()`, `count += 1` is equivalent to `count = count + 1` so it is an assignment. Before the function begins execution just seeing this assignment to the name `count`, python has determined that count is a local name but when execution reaches this line it tries to actually bind a value to local `count` it sees that value being bound is also `count` but count is local and hasn't been bound yet(going from top to bottom) so it gives an `unboundLocalError` which implies a name that is local is being referred / accessed before it has been bound to an object in the line of the execution.
 
 ---
 

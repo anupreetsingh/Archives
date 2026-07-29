@@ -40,7 +40,7 @@ n // 2 gives:
 
 ### Formulas for Getting the Middle Index
 
-These formulas give the lower middle and upper middle, which are different for even `n` and automatically converge to the same element( the true middle) for odd `n`.
+These formulas give the lower middle and upper middle, which are different for even `n` and automatically converge to the same element(the true middle) for odd `n`.
 
 **0-indexed:**
 
