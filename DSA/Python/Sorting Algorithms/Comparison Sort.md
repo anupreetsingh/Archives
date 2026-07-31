@@ -2,174 +2,273 @@
 
 ## Bubble Sort
 
-Each iteration forms a bubble from start to one lesser element at the end, and successive swaps push the largest element in the bubble to the end, placing it in its correct position.
+It is called bubble sort because each pass makes the extreme value in the unsorted prefix subarray "bubble up" toward the end through adjacent swaps.
+
+In this version, we bubble up the maximum value to the end of the unsorted section.
+
+- Time Complexity: O(n^2), because the algorithm repeatedly scans the unsorted section with adjacent comparisons.
+- Space Complexity: O(1), because sorting happens in place.
 
 ```python
-def bubble_sort(arr):
-    n = len(arr)
+def bubble_sort(nums):
+    n = len(nums)
+
     for i in range(n):
-        for j in range(0, n-i-1):
-            #if the current element in the bubble is greater than next element swap them
-            if arr[j] > arr[j+1]:
-                arr[j], arr[j+1] = arr[j+1], arr[j]#Simultaneous assignment using tuple unpacking(RHS forms a tuple and then the values are assigned to LHS)
-    return arr
+        for j in range(n - 1 - i):
+            if nums[j] > nums[j + 1]:  # Successive swaps bubble up the max element
+                nums[j], nums[j + 1] = nums[j + 1], nums[j]
+
+    return nums
 ```
 
 ## Selection Sort
 
-Repeatedly iterates through the list exploring sections smaller by one element from the beginning to the end and selecting the smallest value of that section to put it in front.
+Selection sort repeatedly scans the unsorted section, selects one extreme value from it, and moves that value into its final sorted position. That extreme value can be either the minimum or maximum, depending on the implementation.
 
-Think of this as making a bubble but shortening the size of the bubble from the left instead of the right like we do in bubble sort, that is why we wanna select the smallest element instead of the largest one like we do in bubble sort.
+In this version, we select the maximum value from the unsorted prefix and move it to the end of that prefix. After the swap, that position becomes part of the sorted section.
+
+- Time Complexity: O(n^2), because each pass scans the remaining unsorted section.
+- Space Complexity: O(1), because sorting happens in place.
 
 ```python
-def selection_sort(arr):
-    n = len(arr)
+def selection_sort(nums):
+    n = len(nums)
+
     for i in range(n):
-        min_idx = i
-        for j in range(i+1, n):
-            if arr[j] < arr[min_idx]:
-                min_idx = j
-        arr[i], arr[min_idx] = arr[min_idx], arr[i] #In place swap, so no additional memory used
-    return arr
+        max_idx = 0
+        end = n - 1 - i
+
+        for j in range(end + 1):
+            if nums[j] > nums[max_idx]:
+                max_idx = j  # Update index of the max element in the unsorted section
+
+        nums[max_idx], nums[end] = nums[end], nums[max_idx]  # Move max to end of unsorted section
+
+    return nums
 ```
 
 ## Insertion Sort
 
-In each iteration we select a "key" element, then for that iteration we insert that element in the correct position inside the sublist behind that element.
+Insertion sort repeatedly takes the next unsorted value and inserts it into its correct position inside the sorted prefix behind it.
+
+In this version, each pass selects a key value, shifts larger values in the sorted prefix one position to the right, and places the key in the gap that remains.
+
+- Time Complexity: O(n^2), because each key may need to scan and shift across the sorted prefix.
+- Space Complexity: O(1), because sorting happens in place.
 
 ```python
-def insertion_sort(arr):
-    n = len(arr)
+def insertion_sort(nums):
+    n = len(nums)
+
     for i in range(1, n):
-        key = arr[i]
+        key = nums[i]
         j = i - 1
-        #Loop breaks if it reaches end of the list while decrementing indexes(moving right to left in the sublist) OR the current element is no longer greater than the key which means we found the spot to insert the "key" element
-        while j >= 0 and arr[j] > key:
-            arr[j + 1] = arr[j]  # Shift element to the right
-            j -= 1 #decrementing counter for traversing leftward sublist
-        arr[j + 1] = key  # Inserting key at its correct position
-    return arr
+        while j >= 0 and key < nums[j]:
+            nums[j + 1] = nums[j] # Shift Larger element forward
+        nums[j + 1] = key
+
+    return nums
 ```
 
 ## Merge Sort
 
-An algorithm that splits the list at the middle into smaller sublists, then makes recursive calls on the left and right halves, then uses a helper function to merge the sorted left and right halves.
+Merge sort repeatedly splits the array into smaller halves until each subarray has at most one element, then merges sorted subarrays back together into larger sorted arrays.
+
+It is called merge sort because the important work happens during merging: two already-sorted arrays are combined by interleaving their elements in sorted order, instead of simply placing one array after the other.
+
+- Time Complexity: O(n log n), because there are log n levels for splitting(going down the tree) and then merging(coming up) and n elements at each level
+- Space Complexity: O(n), because merging creates new arrays to store the sorted result.
 
 ```python
-def merge_sort(arr):
-    # Recursion Base Case:
-    if len(arr) <= 1:
-        return arr
+def merge_sort(nums):
+    n = len(nums)
+    # Recursion Base case
+    if n <= 1:
+        return nums
 
-    #In this approach, In case of odd split, we make it right heavy. For instance in case of 5 elements, left sublist will have 2 and right will have 3
-    mid = len(arr) // 2 # floor division gives you the integer part of the quotient
-    left_sorted = merge_sort(arr[:mid])# right heavy, so middle excluded here
-    right_sorted = merge_sort(arr[mid:])# right heavy, so middle included here
+    # Recursive calls to sort left and right halves
+    left_arr = merge_sort(nums[: n // 2]) # Up to, but excluding upper middle
+    right_arr = merge_sort(nums[n // 2 :]) # From upper middle to end
+    # Merging left and right halves
+    return merge(left_arr, right_arr)
 
-    return merge(left_sorted, right_sorted)
-
-# Helper function for carrying out the merge of 2 sorted lists
-def merge(left, right): #Remember both left and right lists are sorted in themselves
-    result = []
-    i = j = 0
-
-    # Compare and merge
-    while i < len(left) and j < len(right):
-        if left[i] <= right[j]:
-            result.append(left[i])
-            i += 1
+# Helper function that performs merging of two sorted subarrays
+def merge(left_arr, right_arr):
+    l, r = 0, 0
+    res = []
+    i = 0
+    while l < len(left_arr) and r < len(right_arr):
+        if left_arr[l] <= right_arr[r]:
+            res.append(left_arr[l])
+            l += 1
         else:
-            result.append(right[j])
-            j += 1
+            res.append(right_arr[r])
+            r += 1
+        i += 1
 
-    # Append remaining elements
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
-
+    res.extend(left_arr[l:])
+    res.extend(right_arr[r:])
+    return res
 ```
 
 ## Quick Sort
 
-An algorithm that selects a pivot and makes recursive calls at each step forming 2 new sub-lists to store lesser and greater elements than the pivot using list comprehension.
+Recursively splitting arrays around a pivot element selected from the array until we get single element subarrays and then join(solder) them together to get the final sorted array.
+
+It is called Quick sort because it is usually quick in practice and quick to write using list comprehension.
+
+Quick sort can use either 2-way partitioning or 3-way partitioning around the pivot. 3-way partitioning is better when the array has many duplicates because all values equal to the pivot are grouped in the middle and do not need to be recursively sorted again.
+
+### List Comprehension Implementation
+
+For the list-comprehension implementation:
+
+- Average Time Complexity: O(n log n), because balanced pivots create log n levels and each level partitions n values.
+- Worst Time Complexity: O(n^2), because repeatedly choosing the smallest or largest value as the pivot creates n levels.
+- Average Space Complexity: O(n), because the extra lists across a balanced recursion path hold a shrinking fraction of the array at each level.
+- Worst Space Complexity: O(n^2), because highly unbalanced pivots can keep many large copied subarrays alive across the recursion path.
 
 ```python
-def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
+def quick_sort(nums):
+    if len(nums) <= 1:
+        return nums
 
-    # Choose pivot (typically the last element)
-    pivot = arr[-1]
-    left = [x for x in arr[:-1] if x < pivot]
-    middle=[pivot]+[x for x in arr[:-1] if x==pivot] #using Middle instead of just pivot ensures that if the pivot element appears multiple times in the array we don't have call quick_sort on that element multiple times, so it is a little more efficient
-    right = [x for x in arr[:-1] if x > pivot]
+    pivot = nums[-1]  # Selecting the last element as pivot
 
-    # Recursively sort left and right partitions
-    return quick_sort(left) + middle + quick_sort(right)
+    # Three-way partition around the pivot
+    lesser_sub = [x for x in nums if x < pivot]
+    equal_sub = [x for x in nums if x == pivot]
+    greater_sub = [x for x in nums if x > pivot]
 
-# Example
-arr = [8, 4, 7, 3, 1, 5, 2, 6]
-print("Sorted array:", quick_sort(arr))
+    # Solder sorted partitions together; no recursive call is needed for equal_sub
+    return quick_sort(lesser_sub) + equal_sub + quick_sort(greater_sub)
+```
+
+### In-place 3-way partitioning Implementation
+
+- Average Time Complexity: O(n log n), because balanced pivots create log n recursive levels and each level partitions n values in place.
+- Worst Time Complexity: O(n^2), because repeatedly choosing the smallest or largest value as the pivot creates n recursive levels.
+- Average Space Complexity: O(log n), because balanced recursion uses log n stack frames.
+- Worst Space Complexity: O(n), because highly unbalanced pivots can create n stack frames.
+
+```python
+def quick_sort(nums):
+    if len(nums) <= 1:
+        return nums
+
+    # Helper function to recursively 3-way partition around a pivot in place
+    def split(l, r):
+        # Recursion base case: invalid and single-element subarrays return immediately
+        if l >= r:
+            return
+
+        LT, GT = l, r
+        E = l
+        pivot = nums[r]
+
+        while E <= GT:
+            if nums[E] < pivot:
+                nums[E], nums[LT] = nums[LT], nums[E]
+                E += 1
+                LT += 1
+            elif nums[E] == pivot:
+                E += 1
+            else:
+                nums[E], nums[GT] = nums[GT], nums[E]
+                GT -= 1
+
+        split(l, LT - 1)
+        split(GT + 1, r)
+
+    split(0, len(nums) - 1)
+    return nums
 ```
 
 ## Heap Sort
 
-Heap sort works in 2 steps:
+Heap sort repeatedly treats the array as a heap: first it builds a heap from the values, then it repeatedly removes the heap root into the next final sorted position.
 
-- **Step 1:** by first rearranging the array and making a Max Heap by calling heapify on all non leaf nodes starting from the last non leaf node and moving towards the root,
-- **Step 2:** Then it repetitively takes the root of the max heap swaps it with the last element, making the last element the largest in the array, and calls heapify on the root of the sub-array excluding the most recently swapped element.
+It is called heap sort because it uses the heap data structure to sort the list. The important work happens through the heap property: each parent is the extreme value of its local subtree compared to its children.
 
-### Heap as an Array
+For a max heap, the main heap property is that each parent is greater than or equal to its children, so the largest value is always at the root. Heap sort repeatedly moves that root value to the end of the list, shrinks the active heap, and restores the heap property.
 
-A binary Heap stored as complete binary trees using 0 indexed array, the indexing rule for accessing each node is:
+### `heapq` module Implementation
 
-For a node at Index `i`:
-
-- Left Child is at index `2i+1`, Since nodes double at each level in a binary tree, and children of a node appear consecutively in the array
-- Right Child is at index `2i+2`
-- Parent is at index `(i-1)//2`
-
-**Leaf And Non-Leaf Nodes:**
-if there are n nodes, the indexes go upto `n-1`, so for `2i+1 >= n`, node `i` has no children because the child will be out of bounds. Solving for `i`:
-
-- `i > (n-1) // 2` will all be nodes that don't have children because their children's index will be out of bounds
-- Leaf Nodes range from `n // 2` to `n - 1`
+- Time Complexity: O(n log n), because heapifying takes O(n), then each of the n pops takes O(log n).
+- Space Complexity: O(n), because this version builds a result array while popping values out of the heap.
 
 ```python
-def heap_sort(arr):
-    n = len(arr)
+import heapq
 
-    # Step 1: Build a max heap (rearrange array)
-    for i in range(n // 2 - 1, -1, -1): # We start from the last non leaf node, and decrement downwards to the root
-        heapify(arr, n, i) # Calling heapify() on each node to ensure the subtree rooted at that node satisfies the max-heap property.
+def heap_sort_heapq(nums):
+    heapq.heapify(nums)  # Turns nums into a min heap in place
 
-    # Step 2: Extract elements one by one
-    for i in range(n - 1, 0, -1):
-        arr[i], arr[0] = arr[0], arr[i]  # Swap
-        heapify(arr, i, 0)
+    res = []
+    while nums:
+        res.append(heapq.heappop(nums))  # heappop returns the smallest value and shrinks nums
+
+    return res
+```
+
+### In-place max_heap Implementation
+
+- Time Complexity: O(n log n), because building the heap takes O(n), then each of the n extractions may sift a value down log n levels.
+- Space Complexity: O(1), because sorting happens in place.
+
+A binary heap is stored as a complete binary tree inside a 0-indexed array. For a node at index `i`:
+
+- Left child is at index `2 * i + 1`
+- Right child is at index `2 * i + 2`
+- Parent is at index `(i - 1) // 2`
+
+Leaf nodes do not need to be heapified because the heap property only relates a node to its children. Since leaves have no children, each leaf already satisfies the heap property for its own subtree. If a small or large value is sitting in a leaf, it will be handled when one of its ancestors is heapified.
+
+For `n` nodes in a 0-indexed array heap:
+
+- Leaf nodes range from `n // 2` to `n - 1` (from upper middle to end)
+- Non-leaf nodes range from `0` to `n // 2 - 1` (from start to element before upper middle)
+- The last non-leaf node is at index `n // 2 - 1`
+
+The two phases of constructing the max heap and sorting the array both rely on the same `sift_down` assumption: the child subtrees below the current index are already heaps.
+
+That is why, during heap construction, `sift_down(n, i)` is called on non-leaf nodes from the bottom up. This ensures that the child subtrees have already been heapified and therefore follow the heap property. In this case, we call `sift_down(n, i)` with `i` going from `n // 2 - 1` down to `0`. The total work is still `O(n)` because most nodes near the lower levels swap down only `0` or `1` level. Only a small number of upper-level nodes can swap down up to `log n` levels, which is the depth of the tree.
+
+During the sorting phase, `sift_down(end, 0)` is called on the root of the active heap `n` times. After the root is swapped with the end of the active heap, the reduced heap size is passed into `sift_down`, so `sift_down` acts only on the smaller heap currently under consideration. Since the heap gets smaller after each extraction, the cost of the calls is more precisely like `log n + log(n - 1) + log(n - 2) + ... + log 1`, which is `log(n!)`. Because `n! <= n^n`, we get `log(n!) <= log(n^n) = n log n`. Therefore, even though each successive heap is smaller, the total sorting phase is still bounded by `O(n log n)`.
+
+```python
+def heap_sort(nums):
+    n = len(nums)
+    def sift_down(end_idx, i):
+        while True:
+            largest = i
+            left_child = 2 * i + 1
+            right_child = 2 * i + 2
+
+            # Check both children within bounds to determine the which is greater
+            if left_child <= end_idx and nums[left_child] > nums[largest]:
+                largest = left_child
+
+            if right_child <= end_idx and nums[right_child] > nums[largest]:
+                largest = right_child
+
+            # Parent is the largest, subtree satifies heap property
+            if largest == i:
+                return 
+            
+            # Swap the parent with largest child
+            nums[largest], nums[i] = nums[i], nums[largest]
+            # Updating parent's current index to check if we sift in next iteration
+            i = largest 
 
 
-# `heapify` is a helper function that makes sure the tree with root `i` (and all its subtrees through the recursive calls) follow the Max Heap property.
-def heapify(arr, n, i):
-    largest = i # In the beginning we suppose the root of the subtree will be the largest
-    left = 2 * i + 1 # Left child of the current root in the current subtree
-    right = 2 * i + 2 # Right child of the current root in the current subtree
+    # Heapify all non-leaf nodes within the main array
+    for i in range(n // 2 - 1, -1, -1):
+        sift_down(n - 1, i)
 
-    # Check if left child is larger than root
-    if left < n and arr[left] > arr[largest]:
-        largest = left
-
-    # Check if right child is larger than current largest
-    if right < n and arr[right] > arr[largest]:
-        largest = right
-
-    # Swap and continue heapifying if needed
-    if largest != i: # if i(the root of the subtree) was not the largest, we make the largest the new root
-        arr[i], arr[largest] = arr[largest], arr[i]
-        heapify(arr, n, largest)
-
-# Example
-arr = [8, 4, 7, 3, 1, 5, 2, 6, 10]
-heap_sort(arr)
-print("Sorted array:", arr)
+    # Repeatedly move the max value to the end and then call sift_down on first idx and a smaller active heap excluding the max_value
+    for last in range(n - 1, 0, -1):
+        nums[0], nums[last] = nums[last], nums[0]
+        sift_down(last - 1, 0)
+    
+    return nums
 ```

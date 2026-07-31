@@ -58,11 +58,19 @@ The `if` block and `for` loop have their indented code blocks, but they do not c
 
 ## When Python Classifies Names
 
-Python needs to know whether a plain name belongs to the local, enclosing, or global level before it can resolve that name correctly.
+Python needs to decide how a plain name should be resolved before the program actually runs. In particular, it needs to know whether that name belongs to the local scope, an enclosing function scope, or the global/built-in lookup path.
 
-People often say Python is interpreted, but CPython still has a compilation step. Python source code is first compiled into **bytecode**, and that bytecode is stored inside a **code object**. Then the Python Virtual Machine(PVM) executes that bytecode from top to bottom. That execution step is what people usually mean when they say Python is interpreted.
+People often say Python is interpreted, but CPython still has a compilation step. Python source code is first compiled into **bytecode**, and that bytecode is stored inside a **code object**. The Python Virtual Machine, or **PVM**, then executes that bytecode from top to bottom. This execution phase is what people usually mean when they say Python is interpreted.
 
-A code object stores the compiled bytecode plus metadata about that block of code. Part of that metadata records how names are handled, such as which names are local, enclosing or global.
+A **code object** stores the compiled bytecode plus metadata about that block of code. Some of that metadata describes how names are handled. For example, it records whether a name should be loaded from the function's local namespace, from an enclosing function scope, or through a global lookup.
+
+This compile-time name classification is part of Python's **static code analysis**.
+
+For example, if a name is assigned anywhere inside a function body, and there is no `global` or `nonlocal` declaration for it, Python treats that name as local to that function.
+
+If a name is referenced but not assigned inside that function, Python does not immediately check whether the name actually exists. Instead, the compiler records the lookup strategy for that name as part of the code object. Depending on the surrounding code, the name may be looked up in an enclosing function scope, or through the global namespace and then the built-in namespace.
+
+Whether the name actually exists at the moment it is used is checked later, at runtime, as the bytecode executes from top to bottom.
 
 ### Modules
 
