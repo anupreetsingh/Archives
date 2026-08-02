@@ -27,7 +27,7 @@ int(value, base)
 
 `value` is the thing being converted.
 
-`base` is used with strings and tells Python what base the string-like `value` is written in. `base=10` is the default.
+`base` is used when converting a string to an integer. It tells Python which number system the string is written in. `base=10` is the default.
 
 Example:
 
@@ -175,11 +175,11 @@ print(oct(number))  # "0o52", octal
 print(hex(number))  # "0x2a", hexadecimal
 ```
 
-The result is a string with a 2 letter prefix representing the kind of number system this string represents.
+The result is a string with a 2 letter prefix representing the number system of the string. But there is no padding before the number.
 
-#### Using format
+#### Using `format()`
 
-Use `format()` or an f-string when you want digits without the prefix:
+Use `format()` when you want digits without the prefix. See [Format Function](#format-function) for the broader formatting rules.
 
 ```python
 number = 42
@@ -193,32 +193,135 @@ print(f"{number:o}")        # "52"
 print(f"{number:x}")        # "2a"
 ```
 
-Use a width when you want the result to take up a minimum number of characters:
+## Format Function
 
-Format pattern:
+`format()` converts a value into a formatted string.
+
+Form:
+
+```python
+format(value, format_spec)
+```
+
+`value` is the object being formatted.
+
+`format_spec` is a string that describes how the result should look. Different value types support different formatting options. For example, integers can use binary, octal, decimal, and hexadecimal output, while floats can control decimal places.
+
+### Format Specification
+
+Common pattern:
 
 ```python
 format(value, "<fill><align><width><type>")
 ```
 
+The full format specification can include more options, but these are the pieces that come up most often:
+
+- `fill`: character used for padding
+- `align`: where the value sits inside the padded space
+- `width`: minimum number of characters in the result
+- `type`: output style, such as binary, decimal, hexadecimal, fixed decimal, or percent
+
+Alignment options:
+
+```python
+print(format("py", ">5"))   # "   py", right aligned
+print(format("py", "<5"))   # "py   ", left aligned
+print(format("py", "^5"))   # " py  ", centered
+print(format("py", "*^6"))  # "**py**", centered with custom fill
+```
+
+### Formatting Integers
+
+Integers support numeric presentation types.
+
+```python
+number = 42
+
+print(format(number, "d"))    # "42", decimal
+print(format(number, "b"))    # "101010", binary
+print(format(number, "o"))    # "52", octal
+print(format(number, "x"))    # "2a", lowercase hexadecimal
+print(format(number, "X"))    # "2A", uppercase hexadecimal
+```
+
+Use a width when you want the result to take up a minimum number of characters:
+
 ```python
 number = 5
 
-print(format(number, "08b"))  # "00000101", width is 8
-print(format(number, "04x"))  # "0005", width is 4
+print(format(number, "8d"))   # "       5", width is 8
+print(format(number, "08d"))  # "00000005", zero padded to width 8
+print(format(number, "08b"))  # "00000101", binary padded to width 8
 ```
 
 Use alignment when you want to control which side gets padded:
 
 ```python
-print(format(number, ">8b"))   # "     101", right aligned
-print(format(number, "<8b"))   # "101     ", left aligned
+number = 5
+
+print(format(number, ">8d"))   # "       5", right aligned
+print(format(number, "<8d"))   # "5       ", left aligned
+print(format(number, "^8d"))   # "   5    ", centered
 ```
 
 Use a fill character before the alignment symbol when you want something other than spaces:
 
 ```python
-print(format(number, "*>8b"))  # "*****101"
+print(format(number, "*>8d"))  # "*******5"
+```
+
+### Formatting Floats
+
+Floats support precision. With `f`, precision means the number of digits after the decimal point.
+
+```python
+price = 12.5
+ratio = 0.875
+
+print(format(price, ".2f"))   # "12.50"
+print(format(price, "8.2f"))  # "   12.50"
+print(format(ratio, ".1%"))   # "87.5%"
+print(format(1234.5, ","))    # "1,234.5"
+```
+
+### Formatting Strings
+
+For strings, formatting is mostly about width, alignment, and fill characters.
+
+```python
+word = "cat"
+
+print(format(word, ">6"))   # "   cat"
+print(format(word, "<6"))   # "cat   "
+print(format(word, "^6"))   # " cat  "
+print(format(word, ".2"))   # "ca", maximum string length is 2
+```
+
+### `format()` and F-Strings
+
+F-strings use the same format specification rules after the colon.
+
+```python
+number = 5
+price = 12.5
+
+print(format(number, "08b"))  # "00000101"
+print(f"{number:08b}")        # "00000101"
+
+print(format(price, ".2f"))   # "12.50"
+print(f"{price:.2f}")         # "12.50"
+```
+
+### `format()` vs `.zfill()`
+
+`.zfill()` is a string method that only left-pads with zeros. `format()` is more general because it can format different value types and can control padding, alignment, width, precision, separators, signs, and numeric bases.
+
+```python
+print("42".zfill(5))          # "00042"
+print(format("42", "0>5"))    # "00042"
+print(format("42", "*>5"))    # "***42"
+print(format(42, "08b"))      # "00101010"
 ```
 
 ## Boolean Conversion

@@ -4,9 +4,9 @@ Dynamic Programming (DP) is a method to solve complex problems by breaking them 
 
 **Conditions for a DP solution:**
 
-1️⃣ **Overlapping Subproblems** → Same subproblems are solved multiple times. Example: Fibonacci → `fib(4)` requires `fib(3) + fib(2)`, and `fib(3)` also requires `fib(2)`.
+1. **Overlapping Subproblems** → Same subproblems are solved multiple times. Example: Fibonacci → `fib(4)` requires `fib(3) + fib(2)`, and `fib(3)` also requires `fib(2)`.
 
-2️⃣ **Optimal Substructure** → The optimal solution to a big problem can be built from optimal solutions of its smaller subproblems. Example: Shortest path in a graph = min(shortest paths of sub-routes).
+2. **Optimal Substructure** → The optimal solution to a big problem can be built from optimal solutions of its smaller subproblems. Example: Shortest path in a graph = min(shortest paths of sub-routes).
 
 **Key Idea:**
 

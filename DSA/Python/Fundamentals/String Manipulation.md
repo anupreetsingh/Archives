@@ -71,6 +71,18 @@ print(text.count("l"))     # 3 (number of occurrences)
 # .index() is like find() but raises ValueError if not found
 ```
 
+### 8. `.zfill()` → Left-pads a string with zeros
+
+`.zfill(width)` returns a new string padded with leading zeros until the string reaches `width` characters.
+
+```python
+print("42".zfill(5))    # "00042"
+print("123".zfill(2))   # "123", already at least 2 characters
+print("-42".zfill(5))   # "-0042", sign stays at the front
+```
+
+Use `.zfill()` when the fill character is specifically zero. Use `format()` or an f-string when you need different fill characters, alignment, numeric formatting, or base conversion.
+
 ---
 
 ## f-strings (formatted strings)
