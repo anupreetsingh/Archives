@@ -387,17 +387,17 @@ evens = [x for x in nums if x % 2 == 0]
 
 #### Nested List Comprehension
 
-A nested, or stacked, list comprehension has more than one `for` loop.
+A nested, or stacked, list comprehension can either flatten a nested iterable into one list or preserve the nested structure.
+
+##### Flat List
 
 ```python
 [expression for outer_item in outer_iterable for inner_item in inner_iterable]
 ```
 
-Example:
+This pattern uses multiple `for` clauses in one comprehension. The `for` clauses are written in the same order as normal nested loops.
 
 ```python
-
-# Example 1: Flattening the nested List
 matrix = [[1, 2], [3, 4], [5, 6]]
 
 flat = [num for row in matrix for num in row]
@@ -406,15 +406,24 @@ flat = [num for row in matrix for num in row]
 # `for num in row` is the inner loop
 # [1, 2, 3, 4, 5, 6]
 
-# The `for` clauses are written in the same order as normal nested loops.
-
 # Equivalent to:
 flat = []
 for row in matrix:
     for num in row:
         flat.append(num)
+```
 
-# Example 2: Doubling the nested list
+##### Nested List
+
+```python
+[[inner_expression for inner_item in inner_iterable] for outer_item in outer_iterable]
+```
+
+This pattern puts one list comprehension inside another list comprehension. The inner comprehension builds each nested list, and the outer comprehension collects those lists.
+
+```python
+matrix = [[1, 2], [3, 4], [5, 6]]
+
 doubled = [[num * 2 for num in row] for row in matrix]
 # `[num * 2 for num in row]` is the outer expression
 # `num * 2` is the inner expression

@@ -21,11 +21,11 @@ Two main strategies:
 
 ---
 
-## 📦 Dynamic Programming (Memoization — Top-Down)
+## Dynamic Programming (Memoization — Top-Down)
 
-- Use recursion and a dictionary (cache) to store results.
-- Start from the main problem and break into smaller subproblems.
-- Cache ensures repeated calls are avoided.
+- Start with the final problem and recursively break it into smaller subproblems, caching each answer as it is computed.
+- Use a dictionary, array, or `@cache` to store results.
+- The cache prevents repeated computation of the same subproblems.
 
 ```python
 def fib_memo(n, memo={}):
@@ -38,11 +38,11 @@ def fib_memo(n, memo={}):
     return memo[n]
 ```
 
-## 📊 Dynamic Programming (Tabulation — Bottom-Up)
+## Dynamic Programming (Tabulation — Bottom-Up)
 
-- Iteratively build the solution from the smallest subproblems.
-- Use a table (list) to store values up to n.
-- More memory-predictable than memoization.
+- Start with the smallest subproblems and iteratively build up to the final answer.
+- Use a table, such as a list or array, to store values for subproblems.
+- Often has more predictable memory usage than memoization because the table size and fill order are explicit.
 
 ```python
 def fib_tab(n):

@@ -168,14 +168,103 @@ When `expensive_operation()` runs, the `@timer` decorator records the start time
 
 ### Common General-Purpose Decorators
 
-- `@timer`: Measures how long a function takes to run.
-- `@debug`: Prints useful information when a function is called, such as arguments and return value.
-- `@retry`: Runs a function again if it fails, usually for temporary errors.
-- `@validate`: Checks inputs before allowing the function to run.
-- `@login_required`: Allows access only if the user is logged in.
-- `@permission_required`: Allows access only if the user has a specific permission.
-- `@functools.cache`: Stores results so repeated calls with the same arguments are faster. Very useful in recursion.
-- `@functools.lru_cache`: Stores recent results, with an optional limit on how many results to remember.
+Most decorator names are not built into Python directly. Some come from the standard library, some come from frameworks or third-party libraries, and some are custom decorators you define yourself.
+
+- `from functools import cache`
+  `@cache`: Stores results so repeated calls with the same arguments are faster. Very useful in recursion.
+
+- `from functools import lru_cache`
+  `@lru_cache(maxsize=128)`: Stores recent results, with an optional limit on how many results to remember.
+
+- Install with `python -m pip install codetiming`, then use `from codetiming import Timer`
+  `@Timer(name="expensive_operation", text="{name} took {:.4f} seconds")`: Prints or logs how long a function takes to run. This is a third-party decorator.
+
+- Define `timer` yourself, or import it from your own helper module if you created one.
+  `@timer`: Measures how long a function takes to run. Python does not provide this decorator directly.
+
+- Define `debug` yourself, or import it from your own helper module if you created one.
+  `@debug`: Prints useful information when a function is called, such as arguments and return value. Python does not provide this decorator directly.
+
+- `from tenacity import retry`
+  `@retry`: Runs a function again if it fails, usually for temporary errors such as network requests or database calls. `tenacity` is a common third-party library for this.
+
+- `from pydantic import validate_call`
+  `@validate_call`: Checks function arguments against type hints before allowing the function to run. This is a practical library version of a validation decorator.
+
+- `from django.contrib.auth.decorators import login_required`
+  `@login_required`: Allows access only if the user is logged in. This is commonly used on Django views.
+
+- `from django.contrib.auth.decorators import permission_required`
+  `@permission_required("app.permission_name")`: Allows access only if the user has a specific permission. This is commonly used on Django views.
+
+Example with standard-library caching:
+
+```python
+from functools import cache, lru_cache
+
+
+@cache
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+@lru_cache(maxsize=128)
+def get_user(user_id):
+    print(f"Fetching user {user_id}")
+    return {"id": user_id}
+```
+
+Example with a third-party timer decorator:
+
+```python
+from codetiming import Timer
+
+
+@Timer(name="expensive_operation", text="{name} took {:.4f} seconds")
+def expensive_operation():
+    total = 0
+    for number in range(1_000_000):
+        total += number
+    return total
+```
+
+Example with custom decorators:
+
+```python
+from functools import wraps
+from time import perf_counter
+
+
+def timer(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = perf_counter()
+        result = func(*args, **kwargs)
+        end = perf_counter()
+        print(f"{func.__name__} took {end - start:.4f} seconds")
+        return result
+
+    return wrapper
+
+
+def debug(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args={args}, kwargs={kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned {result}")
+        return result
+
+    return wrapper
+
+
+@timer
+@debug
+def add(a, b):
+    return a + b
+```
 
 ## Layer 2: Framework Usage
 
