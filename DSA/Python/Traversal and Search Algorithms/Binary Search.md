@@ -1,45 +1,135 @@
 # Binary Search
 
-When you see an ordered list, think Binary Search. At each iteration, binary search halves the search range by comparing the target with the middle element.
+Binary search is used when you have a **monotonic** search space. Using this knowledge of monotonicity in the search space we can disregard half search search space at each step thus taking log n steps instead of n steps across the space.
 
-**Important distinction:**
+## Monotonic
 
-- When searching for the **index of a particular element**, we use the condition `while low <= high`. Why? Because we want to keep checking even when `low == high` — the last single element might still be the target.
+**Monotonic** means going in one direction. Different search spaces can be monotonic in different sense:
 
-- When checking whether a certain **condition** holds in the array (e.g., "find the minimum element", "check feasibility", etc.), we often use `while low < high`. Here we're not looking for exact equality but for the boundary where the condition flips, so once `low == high` we've already converged on the answer.
+### Sorted Monotonicity
 
-This difference is subtle but crucial in practice.
+A sorted array of `n` elements is monotonic because its elements move in only one direction when going left to right
 
-## Example 1: Search for a target element (`<=` case)
+    - Non decreasing sorted: each element stays the same or increases.
+    - Non increasing sorted: each element stays the same or decreases.
+
+Usually, in such a case we leverage knowledge of this monotonic nature to look for a **target** element.
+
+Example:
 
 ```python
-def binary_search(arr, target):
-    low, high = 0, len(arr)-1  # first and last index in array
-    while low <= high:         # <= because we are checking for an exact element
-        mid = (low + high) // 2
-        if arr[mid] == target:
+def binary_search(nums, target):
+    left = 0
+    right = len(nums) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+
+        if nums[mid] == target:
             return mid
-        elif arr[mid] < target:
-            low = mid + 1
+        elif nums[mid] < target:
+            left = mid + 1
         else:
-            high = mid - 1
-    return -1  # In case the target is not in the list
+            right = mid - 1
+
+    return -1
 ```
 
-## Example 2: Find the minimum element in a rotated sorted array (`<` case)
+We use knowledge of the monotonic nature of the array(being non-decreasin) to say that if `nums[mid] < target`, the target can only be on the right side. If `nums[mid] > target`, the target can only be on the left side.
 
-Find the minimum element in a rotated (left rotation/right rotation) sorted array.
+### Partially Sorted Monotonicity
+
+We can even have piecewise / partial sorted monotonicity, where we are only sure about one half of the array being monotonic to conduct binary search.
+
+Example: finding the greatest peak in a mountain array.
 
 ```python
-def find_min_rotated(arr):
-    low, high = 0, len(arr)-1
-    while low < high:          # < because we are converging to a boundary
-        mid = (low + high) // 2
-        if arr[mid] > arr[high]:
-            # Minimum must be in the right half
-            low = mid + 1
-        else:
-            # Minimum is at mid or in the left half
-            high = mid
-    return arr[low]  # low == high → converged to the minimum element
+nums = [0, 1, 2, 4, 7, 9, 8, 6, 3, 1]
+
+def peak_index(nums):
+    left = 0
+    right = len(nums) - 1
+
+    while left < right:
+        mid = (left + right) // 2
+
+        if nums[mid] < nums[mid + 1]: # Increasing slope 
+            left = mid + 1 # Peak must be to right
+        else: # Not increasing slope(same or descending)
+            right = mid # mid could be peak
+
+    return left
 ```
+
+If `nums[mid] < nums[mid + 1]`, we are on the increasing slope, so the peak must be to the right. Otherwise, `mid` may already be the peak, so we keep it and search left.
+
+### Binary Monotonicity
+
+A boolean array of `n` elements is monotonic if it changes value at most once when going left to right.
+    - False to True (False False False False True True)
+    - True to False (True True True False False False False)
+
+This array doesn't have to be a literal array but could also be a theoretical search space.
+
+Usually in such a case, In such a case we are looking the **boundary** where the two booleans change.
+
+Example:
+Searching across a boolean answer space, where values change only once from False to True.
+
+False False False True True True
+
+if `x` is feasible, then we are sure every larger value must also be feasible.
+
+Written using `while <` :
+
+```python
+def first_feasible(l, r, feasible):
+    while l < r:
+        mid = (l + r) // 2
+        if feasible(mid): # Every thing above and including mid is feasible
+            r = mid # Search left half including mid for boundary
+        else: # mid is not feasible
+            l = mid + 1 # Search right half, excluding mid for boundary
+    return l
+```
+
+Written using `while <=` :
+
+```python
+def first_feasible(l, r, feasible):
+    ans = None
+    while l <= r:
+        mid = (l + r) // 2
+        if feasible(mid): # Every thing above and including mid is feasible
+            ans = mid # Store this feasible value
+            r = mid - 1 
+        else: # mid is not feasible
+            l = mid + 1 # Search right half, excluding mid for boundary
+    return ans
+```
+
+## Heuristic for Loop Design
+
+Not all algorithms can be written in both loop designs but depending on the scenario there is a heuristic for using the type of invariant in the while loop depending on the inner logic.
+
+### while l <= r
+
+Stop when range is empty: `l > r`.
+
+Used when `mid` is discarded from the next interval: `l = mid + 1` or `r = mid - 1`.
+
+Since `mid` is discarded from the next interval, it is common to handle the possible solution at `mid` before moving the bounds:
+
+- In a **target search**, check whether `mid` is the solution and exit if it is.
+- In a **boundary search**, store `mid` as the current best answer when it satisfies the condition, then continue searching for the actual boundary.
+
+### while l < r
+
+Stop when one candidate remains: `l == r`.
+
+Used when `mid` may still be the answer, so it can be kept in the next interval: `r = mid` or `l = mid + 1`.
+
+Commonly used when you are sure there is at least one possible answer inside `[l, r]`, especially in case of **N**
+
+**Avoid** `l = mid` and `r = mid - 1` to converge, because eventually  when `l` and `r` are adjacent, `mid = (l + r) // 2` floors the division and l stays at mid, stuck in an infinite loop.
+For example, if `l = 3` and `r = 4`, then `mid = 3`, `l` stays `3`, and the loop can repeat forever.

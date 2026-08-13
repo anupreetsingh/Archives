@@ -314,6 +314,8 @@ Examples Include:
 - Google App Engine
 - Azure App Service
 
+Platform engineering focuses on making infrastructure usable at scale. It takes the lower-level systems, services, and primitives built by infrastructure engineering and exposes them through higher-level abstractions, self-service workflows, and standardized interfaces so application teams can use them without needing to manage the underlying complexity directly.
+
 ### SaaS(Software as a Service)
 
 When a company provides a backend and an API that outside applications can use.

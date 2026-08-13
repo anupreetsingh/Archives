@@ -20,11 +20,33 @@ parts = csv_line.split(",")
 print(parts)        # ['a', 'b', 'c']
 ```
 
-### 2. `.join()` → Joins list elements into a string with a separator
+### 2. `.join()` → Joins string elements of an iterable into one string
+
+Syntax: `"<separator>".join(iterable)`
+
+`.join()` combines the string elements of an iterable into one string, placing the separator between each element.
 
 ```python
 joined = "-".join(["2025", "07", "16"])
 print(joined)       # '2025-07-16'
+```
+
+If any element in the iterable is not a string, Python raises a `TypeError`.
+
+```python
+values = ["2025", 7, 16]
+
+joined = "-".join(values)
+print(joined)       # TypeError
+```
+
+To avoid this, convert each element to a string first:
+
+```python
+values = ["2025", 7, 16]
+
+joined = "-".join(str(value) for value in values)
+print(joined)       # '2025-7-16'
 ```
 
 ### 3. `.replace()` → Replaces occurrences of a substring

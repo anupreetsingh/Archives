@@ -145,13 +145,13 @@ The short version: LlamaIndex could have accelerated an early prototype, but her
 - the **vector** from Layer 3
 - the **payload**, the chunk's metadata plus its `text` (`control_id`, `family`, `catalog_uuid`, `chunk_type`, `text`, `catalog_version`, …) — this is what makes filtered retrieval possible later
 
-3. Points are upserted in batches of 100. *Which* collection they land in depends on the active **embedding profile**: an `EmbeddingProfile` (built by `build_profiles()` in `core/ai/embedding_profiles.py`) pairs a provider + model with its own collection, because vectors from different models have different dimensions and cannot share a collection. `VectorStoreService` holds one embedder/indexer bundle per profile, and `_select(profile)` routes the write — the **default** profile reuses the legacy `oscal_controls` collection (so upgrading needs no re-index), while every other profile gets a namespaced `oscal_controls__{profile}` (e.g. `oscal_controls__openai_text_embedding_3_small`). This is why `EmbeddingClient` accepts `provider`/`model` overrides: one `Settings` instance yields a distinct embedder per profile.
+3. Points are upserted in batches of 100. *Which* collection they land in depends on the active **embedding profile**. In this system, an embedding profile means one embedding provider/model configuration plus that model's matching vector index. `EmbeddingProfile` (built by `build_profiles()` in `core/ai/embedding_profiles.py`) implements that by pairing a provider + model with its own vector index, backed by a dedicated Qdrant collection. Vectors from different models have different dimensions and embedding-space geometry, so they cannot share one index. `VectorStoreService` holds one embedder/indexer bundle per profile, and `_select(profile)` routes the write — the **default** profile reuses the legacy `oscal_controls` collection (so upgrading needs no re-index), while every other profile gets a namespaced `oscal_controls__{profile}` (e.g. `oscal_controls__openai_text_embedding_3_small`). This is why `EmbeddingClient` accepts `provider`/`model` overrides: one `Settings` instance yields a distinct embedder per profile.
 
 4. As a result, Qdrant now holds each chunk as a searchable vector plus structured payload. The payload is what lets Layer 5 narrow a search to only points whose metadata matches a framework, family, or control ID rather than scanning every point.
 
 #### Layer 5: Search / retrieval
 
-**What this step does:** On each request, embed the user's query with the same profile used at index time and return the nearest control chunks from Qdrant — the retrieval half of the online query phase.
+**What this step does:** On each request, embed the user's query with the same model used to build that model's vector index, search the matching Qdrant collection, and fall back across the ordered embedding profiles when the first profile does not return relevant controls. This is the retrieval half of the online query phase.
 
 **Control flow (start → end):**
 
@@ -159,15 +159,17 @@ The short version: LlamaIndex could have accelerated an early prototype, but her
 
 2. `search_controls()` reads the query from `q` and optional `framework`/`family`/`control` filters, packs them into a `SearchFilters` object (`core/ai/vector_store.py`), and calls `VectorStoreService.search()` with `q`, `filters`, `top_k`, and the requested `profile`. The service instance is reused across requests via the `_get_vector_service()` dependency, which caches it on `app.state`.
 
-3. `search()` calls `_select(profile)` to pick that profile's embedder and collection, then calls `EmbeddingClient.embed_texts()` to turn the query into a vector — using the same model that produced the stored vectors, so cosine comparison is meaningful.
+3. `search()` resolves the requested profile into an ordered retrieval chain. The selected or default profile is tried first; lower-priority profiles act as fallbacks when the current profile is unavailable, empty, or returns no hits that meet the relevance threshold.
 
-4. `_build_filter()` converts the `SearchFilters` into a Qdrant `Filter` of `FieldCondition` objects: `framework`→`catalog_uuid`, `family`→`family`, `control`→`control_id`. When filters are present, Qdrant restricts the search to matching points instead of scanning the whole collection.
+4. For each profile in that chain, `search()` calls `_select(profile)` to pick that profile's embedder and vector index, then calls `EmbeddingClient.embed_texts()` to turn the original text query into a vector for that model. The query is re-embedded for each fallback profile; vectors are never reused across profiles because each embedding model has its own dimensionality and geometry.
 
-5. `search()` calls `QdrantClient.query_points()` (qdrant-client 1.7+ replaced `.search()`) with the query vector, filter, and `top_k`, against the profile's collection.
+5. `_build_filter()` converts the `SearchFilters` into a Qdrant `Filter` of `FieldCondition` objects: `framework`→`catalog_uuid`, `family`→`family`, `control`→`control_id`. When filters are present, Qdrant restricts the search to matching points instead of scanning the whole collection.
 
-6. Each returned hit is mapped by `_hit_to_result()` into a `ControlSearchResult` — `control_id`, `family`, `chunk_type`, `text`, `catalog_version`, plus the similarity `score` — drawn from the payload stored in Layer 4.
+6. `search()` calls `QdrantClient.query_points()` (qdrant-client 1.7+ replaced `.search()`) with the query vector, filter, and `top_k`, against that model's vector index. If the returned hits are relevant, the cascade stops and those hits become the retrieval result. If not, the same text query is embedded with the next profile's model and searched against that model's vector index.
 
-7. `search_controls()` wraps the list in a `ControlSearchResponse` (query, results, total) and returns it. The API hands back plain text plus metadata, never raw vectors.
+7. Each returned hit is mapped by `_hit_to_result()` into a `ControlSearchResult` — `control_id`, `family`, `chunk_type`, `text`, `catalog_version`, plus the similarity `score` — drawn from the payload stored in Layer 4.
+
+8. `search_controls()` wraps the list in a `ControlSearchResponse` (query, results, total) and returns it. The API hands back plain text plus metadata, never raw vectors. If every embedding profile in the fallback chain is exhausted without relevant hits, the response contains no results.
 
 #### Layer 6: Inference (LLM)
 
@@ -177,7 +179,7 @@ The short version: LlamaIndex could have accelerated an early prototype, but her
 
 1. **API gateway:** `POST /api/v1/search/ask` (body validated against the `AskRequest` model) routes to `ask()` in `core/routes/vector_search.py`, which calls `VectorStoreService.ask()` with the question, filters, `top_k`, an optional `model` override, and `profile`.
 
-2. `ask()` first runs Layer 5's `search()` to retrieve chunks, and builds the `citations` list directly from those retrieved chunks — never from LLM output — so a citation can only reference a control that was actually retrieved. If nothing is retrieved, it returns early with an `"Insufficient evidence: …"` `GroundedAnswer` and makes no LLM call.
+2. `ask()` first runs Layer 5's `search()` to retrieve chunks, including the embedding-profile fallback chain, and builds the `citations` list directly from those retrieved chunks — never from LLM output — so a citation can only reference a control that was actually retrieved. If fallback is exhausted and nothing is retrieved, it returns early with an `"Insufficient evidence: …"` `GroundedAnswer` and makes no LLM call.
 
 3. Otherwise it assembles the prompt: `_build_control_context()` concatenates the chunk texts into a bounded context string, and `_build_rag_messages()` combines that with `_RAG_SYSTEM_PROMPT` / `_RAG_USER_TEMPLATE` (all in `core/ai/vector_store.py`). The system prompt enforces grounding rules, including citing a fine-grained ID like `[AC-2.3_obj.a]` only when that exact string appears in the context.
 

@@ -1,4 +1,4 @@
-# Iterating
+# Iterable
 
 ```python
 numbers = [10, 20, 30, 40, 50]
@@ -16,7 +16,12 @@ while i < len(numbers):
 
 ---
 
-## range()
+## Lazy vs Eager Iterables
+
+lazy iterable  → produces values only when needed
+eager iterable → already stores or computes its values immediately. Example: Strings, lists, tuples, dictionary, set.
+
+### range()
 
 `range()` represents an integer sequence, usually for loop counts or indexes.
 
@@ -55,39 +60,22 @@ range(0, 5, -1)
 # represents: no values because step is negative, but start < stop
 ```
 
-### Internal Behavior
+**Internal Behavior**
 
-`range()` creates a `range` object immediately.
+`range()` creates a `range` object. Instead of storing every integer in memory, it stores only the `start`, `stop`, and `step` values. Python then calculates each number when it is accessed or iterated over.
 
-That object is itself an iterable sequence. It can be looped over, indexed, measured with `len()`, and checked with `in`.
-
-```python
-nums = range(5)
-
-len(nums)
-# 5
-
-nums[0]
-# 0
-
-3 in nums
-# True
-```
-
-`range()` does not store every integer in memory. It stores the `start`, `stop`, and `step`, then calculates values when they are accessed or iterated over.
-
-Example:
+Because a `range` object stores metadata about the sequence, Python can use arithmetic to check membership in **O(1)** time for integers.
 
 ```python
 for i in range(1_000_000):
     pass
+
+print(3478 in range(1, 10000, 6))   # False, O(1)
 ```
 
-Here, `range(1_000_000)` represents one million integers from `0` up to `999_999`, but Python does not store those integers in a list somewhere. Each value is produced when the range is iterated over.
+Here, `range(1_000_000)` represents one million integers from `0` up to `999_999`, but Python does not store those integers in a list. Each value is produced only when the range is iterated over.
 
-### Common Patterns
-
-Use `list()` when you want to materialize the values represented by a range.
+To create and store an actual list of the elements represented by a range, use `list()`:
 
 ```python
 nums = range(5)
@@ -102,21 +90,83 @@ print(list(range(5, 0)))
 # []
 ```
 
-Use a `for` loop when you want to consume the values one at a time.
+### Generator Expression
+
+A generator is a lazy iterator that produces values one at a time. Unlike `range`, a generator is consumed after one full iteration.
+
+Generator expressions use parentheses:
 
 ```python
-for i in range(3):
-    print(i)
+nums = (x * 2 for x in range(5))
 
-# Output:
-# 0
-# 1
-# 2
+print(nums)
+# <generator object <genexpr> at ...>
+
+print(list(nums))
+# [0, 2, 4, 6, 8]
+# The generator expression is converted to a list
+
+print(list(nums))
+# []
+# This second `list(nums)` is empty because the generator has already been consumed.
+
+nums = tuple(x * 2 for x in range(5))
+print(nums)
+# (0, 2, 4, 6, 8)
+# Builds a tuple using a generator expression. Since there is no inherent tuple comprehension in python like there is for lists and dictionary.
+
+print([x * 2 for x in range(5)])
+# [0, 2, 4, 6, 8] 
+# Uses a list comprehension to build a list. 
+# The written structure for the command and the final result are the same for lists created using both generator expression and the list comprehension but form by different mechanisms.
 ```
 
----
+## Sequence and Non-Sequence Types
 
-## Wrap Around Logic
+Iterables can also be classified as **sequence** or **non-sequence** types.
+
+A **sequence** is an ordered iterable whose elements can be accessed by index. Example: list, tuple, str and range.
+
+Examples:
+
+```python
+items = ["a", "b", "c"]
+
+print(items[0])   # a
+print(items[1])   # b
+```
+
+Common sequence types include:
+
+```python
+
+```
+
+A **non-sequence** iterable does not support indexed access. Some non-sequence types may preserve insertion order, but they are still not sequences because you cannot access elements by position using an index.
+
+Examples:
+
+```python
+data = {"name": "Ana", "age": 24}
+items = {"a", "b", "c"}
+
+print(data[0])    # KeyError
+print(items[0])   # TypeError
+```
+
+Common non-sequence iterable types include:
+
+```python
+dict
+set
+generator
+map
+filter
+```
+
+## Iterating Methods
+
+### Wrap Around Logic
 
 To traverse a list starting from any index and wrap around in circular way:
 
@@ -138,9 +188,7 @@ for i in range(n):
 # 30
 ```
 
----
-
-## Nested Loops and Flow Control in Python
+### Nested Loops and Flow Control in Python
 
 The inner loop runs completely for every iteration of the outer loop.
 
@@ -177,9 +225,7 @@ while i < 2:  # Outer loop
 # Outer loop end: i = 6
 ```
 
----
-
-## Traversing Multiple Iterables with zip()
+### Traversing Multiple Iterables with zip()
 
 `zip()` allows parallel iteration over multiple iterables. It pairs elements from each iterable into tuples until the shortest iterable is exhausted.
 
@@ -197,9 +243,7 @@ for name, score in zip(names, scores):
 # Charlie: 78
 ```
 
----
-
-## Enumerating an Iterable with enumerate()
+### Enumerating an Iterable with enumerate()
 
 `enumerate()` returns both the index and the element while iterating.
 

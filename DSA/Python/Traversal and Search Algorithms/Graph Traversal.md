@@ -1,5 +1,43 @@
 # BFS vs DFS Graph Traversal
 
+## Nodes and Edges in a Graph
+
+### Undirected Graph
+
+An **undirected graph** has edges with no direction, so an edge between `A` and `B` can be used both from `A` to `B` and from `B` to `A`.
+
+For a simple undirected graph with `n` nodes and `m` edges:
+
+- `m = 0` means there are no edges, so the graph is disconnected when `n > 1`.
+- `m = n - 1` is the fewest number of edges required to make a graph connected, so every node can be reached from every other node. A **tree** is a connected graph with exactly `n - 1` edges.
+- `m = nC2 = n(n - 1) / 2` is the maximum number of edges for a graph with `n` nodes. In this case every pair of nodes is directly connected to each other.
+
+So the edge-count bounds are:
+
+```text
+Connected graph:  n - 1 <= m <= n(n - 1) / 2
+Any graph:        0 <= m <= n(n - 1) / 2
+```
+
+### Directed Graph
+
+A **directed graph** has edges with direction, so an edge from `A` to `B` can be used from `A` to `B`, but not automatically from `B` to `A`.
+
+For a simple directed graph with `n` nodes and `m` directed edges:
+
+- `m = 0` means there are no edges, so the graph is disconnected when `n > 1`.
+- `m = n - 1` is the fewest number of edges required to make the graph **weakly connected**, meaning it would be connected if edge directions were ignored.
+- `m = n` is the fewest number of edges required to make the graph **strongly connected** when `n > 1`, meaning every node can reach every other node by following edge directions.
+- `m = n(n - 1)` is the maximum number of directed edges, because each pair of nodes can have 2 ordered edges.
+
+So the edge-count bounds are:
+
+```text
+Weakly connected directed graph:    n - 1 <= m <= n(n - 1)
+Strongly connected directed graph:  n <= m <= n(n - 1)
+Any directed graph:                 0 <= m <= n(n - 1)
+```
+
 ## BFS (Breadth-First Search)
 
 - Visits nodes level-by-level (distance from start).

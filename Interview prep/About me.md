@@ -43,3 +43,7 @@ Keeping in mind the context I gave about my prior research and professional expe
 - For small to mid size companies, use the line: Instead of being a small cog in a massive legacy wheel, I would prefer immediate ownership and visibility of impact in a greenfield project environment.
 
 - I like the mentorship and clear paths to increased ownership.
+
+- Passionate about solving complex technical problems at scale. Work collaboratively while and use abstract thinking to and grit to drive toward a solution.
+
+- I want to work at a place where I feel like I am doing the best work of my life in service of a vision that genuinely excites me.
