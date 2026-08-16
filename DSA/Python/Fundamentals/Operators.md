@@ -317,6 +317,18 @@ x >>= 1  # Right-shift and assign
 
 ### Assignment Expression Operator
 
+Normal assignment is a statement. It binds a name, but it cannot be placed directly inside another expression.
+
+```python
+items = ["a", "b", "c"]
+count = len(items)
+
+if count > 0:
+    print(count)  # 3
+```
+
+The assignment expression operator `:=` is called the **walrus operator**. It assigns a value to a name and also returns that value as part of the surrounding expression.
+
 ```python
 items = ["a", "b", "c"]
 
@@ -324,7 +336,16 @@ if (count := len(items)) > 0:
     print(count)  # 3
 ```
 
-`:=` is called the walrus operator. It assigns a value inside an expression.
+This is useful when a value is needed both for a condition and later inside the block.
+
+```python
+while (line := input("Enter text: ")) != "quit":
+    print("You entered:", line)
+```
+
+Without the walrus operator, the repeated value usually has to be assigned before the condition or recomputed inside the block.
+
+Use it when it removes real repetition. If it makes the condition harder to read, regular assignment is clearer.
 
 ## 7. Increment / Decrement Operators
 

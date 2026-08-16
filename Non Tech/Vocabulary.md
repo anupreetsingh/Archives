@@ -44,3 +44,7 @@
 1. Monotonicity (noun): Used in technical domains like math. It means the quality of changing in only one direction, without reversing. Example: We need to prove the monotonicity of the function.
    1. Monotonic (adjective): Having monotonicity; only increasing, only decreasing, non-decreasing, or non-increasing. Example: The sequence is monotonic.
    2. Monotonically (adverb): In a monotonic way. Example: The values were monotonically increasing.
+
+1. Delimit(verb): Mark the edges/boundary of a thing. Example: The commas delimit the values in a CSV.
+
+1. Interface(Noun): A conncecting point where two separate systems or organizations meet and interact. Example: The command line interface lets users control the program by typing commands.

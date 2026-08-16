@@ -314,7 +314,28 @@ Examples Include:
 - Google App Engine
 - Azure App Service
 
-Platform engineering focuses on making infrastructure usable at scale. It takes the lower-level systems, services, and primitives built by infrastructure engineering and exposes them through higher-level abstractions, self-service workflows, and standardized interfaces so application teams can use them without needing to manage the underlying complexity directly.
+**Platform engineering** focuses on making infrastructure usable at scale. It takes the lower-level systems, services, and primitives built by infrastructure engineering and exposes them through higher-level abstractions, self-service workflows, and standardized interfaces so application teams can use them without needing to manage the underlying complexity directly.
+
+### Serverless
+
+Serverless means the servers still exist, but the server size, compute capacity, operating system, patching, and scaling details are abstracted away from you.
+
+Instead of choosing a specific VM size or maintaining a long-running server process, you deploy code or configure a managed cloud service. The cloud provider dynamically allocates compute when the service is used and scales capacity up or down based on demand.
+
+For example, with a serverless function, your code might run only when an HTTP request, queue message, file upload, or scheduled event happens. If there are no requests, there may be no active compute running for your code. If traffic suddenly increases, the provider can run many copies of the function in parallel.
+
+Serverless is different from PaaS because PaaS usually still feels like deploying a complete application onto a managed platform. The platform hides the VM and deployment details, but the app commonly runs as a long-lived process and you may still choose instance sizes, dyno sizes, or scaling rules.
+
+With serverless, the unit you manage is often smaller or more specialized: a function, API route, database table, object bucket, queue, or workflow. You focus more on events, configuration, and service limits than on server instances.
+
+Examples Include:
+
+- **Serverless functions:** AWS Lambda, Azure Functions, Google Cloud Functions, Cloudflare Workers
+- **Serverless containers:** AWS Fargate, Google Cloud Run, Azure Container Apps
+- **Serverless databases:** AWS DynamoDB, Aurora Serverless, Firebase Firestore, Azure Cosmos DB
+- **Serverless storage:** AWS S3, Google Cloud Storage, Azure Blob Storage
+- **Serverless queues and event services:** AWS SQS, AWS EventBridge, Google Pub/Sub, Azure Event Grid
+- **Serverless APIs and workflows:** AWS API Gateway, AWS Step Functions, Azure Logic Apps
 
 ### SaaS(Software as a Service)
 

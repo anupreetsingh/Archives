@@ -83,6 +83,21 @@ heap = [1, 3, 5, 7, 4]
   - finding kth largest/smallest element
   - priority queues
   - streaming data (e.g., running median)
+- A list managed by `heapq` can store comparable elements. When those elements are sequence types, such as tuples, lists, or strings, Python compares them lexicographically: it compares index `0` first, and if there is a tie, it compares index `1`, then index `2`, and so on.
+
+```python
+import heapq
+
+tasks = [(2, "write"), (1, "debug"), (1, "build"), (2, "test")]
+heapq.heapify(tasks)
+
+print(heapq.heappop(tasks))  # (1, "build")
+print(heapq.heappop(tasks))  # (1, "debug")
+print(heapq.heappop(tasks))  # (2, "test")
+print(heapq.heappop(tasks))  # (2, "write")
+```
+
+This is useful for priority queues where the first value is the main priority and later values break ties. If two elements tie up to a later field, that later field must still be comparable, or Python will raise a `TypeError`.
 
 ```python
 # Importing the standard python module for heaps
