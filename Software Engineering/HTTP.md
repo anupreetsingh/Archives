@@ -1,6 +1,16 @@
 # HTTP
 
-HTTP(HyperText Transfer Protocol) is the protocol clients and servers use to exchange requests and responses on the web. A client sends a request with a method, URL, headers, and sometimes a body. The server returns a response with headers, usually a body, and a status code.
+HTTP (Hypertext Transfer Protocol) was originally designed to transfer hypertext on the Web, with hypertext primarily referring to HTML documents containing hyperlinks.
+
+Nowadays, HTTP is a general-purpose protocol used by clients and servers to exchange requests and responses on the Web. An HTTP request contains a method, URL, headers, and optionally a body. The server returns an HTTP response containing a status code, headers, and optionally a body.
+
+The Content-Type header tells the receiver the type/format of the HTTP body (payload) being sent:
+
+Content-Type: text/html          # HTML / hypertext
+Content-Type: text/plain         # normal text
+Content-Type: application/json   # JSON
+Content-Type: image/png          # image
+Content-Type: video/mp4          # video
 
 ## HTTP Actions
 
@@ -44,8 +54,8 @@ Common status codes:
 | `200 OK` | Request succeeded. |
 | `201 Created` | A new resource was created. |
 | `204 No Content` | Request succeeded, but there is no response body. |
-| `301 Moved Permanently` | Resource has a permanent new URL. |
-| `302 Found` | Resource is temporarily at another URL. |
+| `301 Moved Permanently` | Resource has a permanent new URL. Permanent redirect|
+| `302 Found` | Resource is temporarily at another URL. Temporary redirect|
 | `400 Bad Request` | Request is malformed or invalid. |
 | `401 Unauthorized` | Authentication is missing or invalid. |
 | `403 Forbidden` | User is authenticated but not allowed. |
