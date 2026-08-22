@@ -1,8 +1,62 @@
 # Concurrency Models
 
-Concurrency models describe how a language or runtime lets multiple units of work make progress.
+At a high level, **concurrency is the goal or property** of having multiple tasks make progress over overlapping periods of time. There are several mechanisms for achieving it.
 
-This builds on the OS-level process, thread, CPU core, and scheduling concepts in [Computer Architecture](Computer%20Architecture.md#cpu).
+## Major Concurrency Mechanisms
+
+### Multitasking with Processes
+
+The operating system runs multiple processes concurrently.
+
+```text
+Chrome process  ───┐
+Python process  ───┼── OS scheduler ──→ CPU
+Spotify process ───┘
+```
+
+On one CPU core, the OS rapidly switches between them. On multiple cores, some can actually run in parallel.
+
+### Multithreading
+
+A single process creates multiple OS threads, which the OS scheduler manages.
+
+```text
+Server process
+  ├── Thread 1 ──→ Request A
+  ├── Thread 2 ──→ Request B
+  └── Thread 3 ──→ Request C
+```
+
+Again, one core provides concurrency through interleaving; multiple cores can additionally provide **parallelism**.
+
+### Async and Event-Loop Concurrency
+
+Instead of creating a thread for every task, many tasks can share a thread and **yield when they are waiting**.
+
+```text
+One OS thread
+
+Task A ── run ── await network ───────── resume
+                  ↓
+Task B            run ── await DB ────── resume
+                         ↓
+Task C                   run ───────────→
+```
+
+This is common in Python `asyncio`, JavaScript and Node.js, Rust async, and C# `async`/`await`.
+
+### Lightweight Runtime-Managed Threads and Coroutines
+
+This is where **goroutines** fit.
+
+```text
+Goroutine A ─┐
+Goroutine B ─┤
+Goroutine C ─┼── Go runtime ──→ OS threads ──→ CPU
+Goroutine D ─┘
+```
+
+The language runtime schedules large numbers of lightweight concurrent tasks onto a smaller number of OS threads.
 
 ## Workload Types
 
@@ -164,12 +218,3 @@ Different languages expose concurrency differently.
 | CPU-heavy numerical work | NumPy/PyTorch/native libraries |
 | Need shared mutable state | locks, queues, or redesign ownership |
 | Need maximum parallel thread execution in Python bytecode | free-threaded CPython, if dependencies support it |
-
-## Takeaway
-
-- Use **threads** when the program waits on blocking I/O.
-- Use **asyncio** when the whole stack supports non-blocking async APIs.
-- Use **processes** when pure Python computation needs multiple CPU cores.
-- Use **native libraries** when heavy computation can move out of Python bytecode.
-- The **GIL** protects CPython internals, but it does not make application logic automatically thread-safe.
-- Free-threaded CPython changes the threading story, but it also makes correct synchronization more important.

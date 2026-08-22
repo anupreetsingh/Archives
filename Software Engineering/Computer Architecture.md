@@ -37,12 +37,12 @@ Chrome Process
 #### Single Core CPU
 
 - The OS uses a mechanism called *Context Switching* which allows it to repeatedly switch between different threads by saving the state of one thread and loading another thread onto the core.
-- Because the OS does this very quickly, multiple threads appear to make progress during the same time which gives us *concurrency*
+- Because the OS does this very quickly, multiple threads appear to make progress during the same period of time which gives us *concurrency*
 
 #### Multi Core CPU
 
-- Since there are multiple cores available, multiple threads truly execute simultaneously which is known as *parallelism*.
-- They have concurrency along with parallelism.
+- Since there are multiple cores available, multiple threads truly execute simultaneously and make progress at same instant on different cores which is known as *parallelism*.
+- But since multiple threads are also making progress during the same period of time this is also concurrency so its parallelism along with concurrency.
 
 ### Machine Cycle
 

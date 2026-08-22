@@ -48,3 +48,11 @@
 1. Delimit(verb): Mark the edges/boundary of a thing. Example: The commas delimit the values in a CSV.
 
 1. Interface(Noun): A conncecting point where two separate systems or organizations meet and interact. Example: The command line interface lets users control the program by typing commands.
+
+1. Preemptive(adjective): Acting in advance specifically to prevent an anticipated event or problem from occurring. Example: The company took preemptive measures to prevent a security breach.
+
+1. Proactive(adjective): Taking initiative in anticipation of a future problem, need or opportunity. Example: She took a proactive approach by resolving the safety issue before it caused an accident.
+
+1. Reactive(adjective): Acting in response to an event or problem after it has occurred. Example: Repairing the equipment only after it breaks is a reactive approach.
+
+1. Hazard(Noun): It has the potential to cause harm. Wet floors without a sign are a hazard.
