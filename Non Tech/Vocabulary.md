@@ -55,4 +55,12 @@
 
 1. Reactive(adjective): Acting in response to an event or problem after it has occurred. Example: Repairing the equipment only after it breaks is a reactive approach.
 
-1. Hazard(Noun): It has the potential to cause harm. Wet floors without a sign are a hazard.
+1. Hazard(Noun): It has the potential to cause harm. Example: Wet floors without a sign are a hazard.
+
+1. Ratio(Noun): Comparison between amount of any two entities. Example: 60 : 40 Boys to girls ratio.
+
+1. Proportion(Noun): Measure of how much an entity contributes to the whole. Example: Proportion of boys = 60 / 100 = 0.6
+
+1. Percentage(Noun): Proportion expressed out of 100. 60% are boys.
+
+1.
