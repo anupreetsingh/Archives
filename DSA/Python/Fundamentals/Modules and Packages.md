@@ -24,7 +24,9 @@ Here:
 - `math` maps to the `math` module object.
 - `from math import pow` adds `pow` directly to the current module's global namespace.
 - `math.sqrt` uses dot notation to look up `sqrt` inside `math`.
-- `pow` works directly because it was imported as its own name.
+- `pow` works directly because it was imported as its own name. In this module,
+  that imported name shadows Python's built-in `pow()`; see
+  [`pow()`](<Built-in Functions.md#pow>).
 
 ### Standard library and third-party modules
 
