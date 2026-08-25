@@ -12,6 +12,21 @@ Memory Read Time:
 
 Which means reading from memory is 10^4 times faster than disk. So, if we can cache some frequently accessed data temporarily in RAM, it will be much better.
 
+**When to Bring up caching in a system:**
+
+- Read heavy workload
+- Expensive queries
+- High database CPU usage
+- Latency Requirements
+
+**How to Introduce Caching:**
+
+- Identify the bottleneck
+- Decide what to cache(selecting the keys in your cache)
+- Choose your cache architecture
+- Set an eviction policy
+- Address the downsides
+
 ## Caching Techniques
 
 These are various ways in which data is cached:
@@ -147,6 +162,11 @@ Ways to handle it:
 
 ### Hot Keys
 
+![Hot Keys](<Media/Hot Keys.png>)
+
 One hot key can overload the cache.
 
-###
+Ways to handle it:
+
+1. Shard the cache(make additional instances of caches) and replicate the hot key on multiple shards.
+2. Use in-process caching to add a fallback cache for the hot keys so your requests don't even need to hit the external cache.
