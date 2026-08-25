@@ -28,7 +28,7 @@ This is called **decoupling**: the producer's availability and speed are no long
 
 ## RabbitMQ
 
-A **traditional message broker**: a server you run that routes each message into a queue, from which it is delivered to exactly one consumer.
+A traditional message broker: a server you run that routes each message into a queue, from which it is delivered to exactly one consumer.
 
 A queue can have many consumers attached — that is how you scale throughput, and it is called the **competing consumers** pattern. The broker deals each message to one of them, so adding workers divides the work rather than duplicating it. Contrast Kafka, where every consumer group receives *every* message.
 
@@ -41,9 +41,9 @@ A queue can have many consumers attached — that is how you scale throughput, a
 
 ## SQS
 
-**Amazon Simple Queue Service** — the same delete-on-ack queue model, but fully managed. There is no broker to install, size, or patch, and it scales on its own.
+The same delete-on-ack queue model, but fully managed by AWS. There is no broker to install, size, or patch, and it scales on its own. You just create a queue on AWS and it gives you a endpoint.
 
-- **Flow:** producer sends to a queue → consumer **long-polls** for messages → processes → explicitly **deletes** the message. Deleting is the ack.
+- **Flow:** producer sends to a queue → consumer **long-polls** for messages → processes → explicitly deletes the message. Deleting is the ack.
 - **Visibility timeout** replaces broker-push retries: a received message becomes invisible to other consumers for a set window. Delete it in time and it is gone; fail or crash, and it reappears for someone else automatically.
 - **Two queue types:**
   - **Standard** — near-unlimited throughput, at-least-once, best-effort ordering.
@@ -65,10 +65,21 @@ A **distributed append-only log** — a structure you can only add to the end of
 - **Partitions:** a topic is split into independent logs. A **partition key** decides which one a message lands in, so ordering is guaranteed *per key* (all of customer 12345's orders stay in sequence) but never globally — that is the price of parallelism.
 - **Hardest to run:** partition rebalancing, broker failures, and consumer group coordination. Newer versions use **Raft** instead of Zookeeper, but managed options (Confluent Cloud, Amazon MSK, Azure Event Hubs) are worth it without in-house expertise.
 
-## Trade-offs and Where Each Shines
+## When to use
 
-> **RabbitMQ and SQS are queues — messages flow *through* them and are deleted.**
-> **Kafka is a log — messages live *in* it.**
+Use a messaging service in the following scenarios:
+
+- Async Work: User doesn't need work now. Example: Sending Emails, generating reports
+- Bursty Traffic: Absorb spikes without dropping requests.
+- Decoupling: Services scale and fail independently.
+- Reliability: Can't afford to loose work. Broker holds the messages.
+
+Don't use for synchronous work with strict latency requirements.
+
+## Where Each Shines
+
+> RabbitMQ and SQS are queues — messages flow *through* them and are deleted.
+> Kafka is a log — messages live *in* it.
 
 That one difference drives everything below.
 
@@ -93,3 +104,26 @@ That one difference drives everything below.
 **Kafka shines** when many systems need the same events, when replay matters for debugging or rebuilding state, and at millions of events per second. *Netflix* processes petabytes daily for recommendations and billing; *Uber* for real-time pricing and fraud detection; *LinkedIn* invented it and runs its feed on it.
 
 **Using both is common:** Kafka as the durable event backbone, RabbitMQ or SQS as the task queue processing the work those events trigger.
+
+## Scaling
+
+A messaging service can split a topic or queue into **partitions**, allowing multiple consumers to process messages in parallel. The producer supplies a **partition key**, which is hashed to select a partition; messages with the same key go to the same partition and retain their order.
+
+**Scenario question:** An order service publishes order events. What should the partition key be?
+
+- Use `customer_id` or `order_id` when events for the same customer or order must be processed in order or batched together.
+- Use a high-cardinality, evenly distributed key such as `order_id` when maximizing throughput matters and related-message ordering is unnecessary.
+
+Avoid low-cardinality or heavily skewed keys, such as `country`, because they can create a **hot partition**—one partition that receives much more traffic than the others, becomes a bottleneck, and limits scaling.
+
+## Durability and Fault Tolerance
+
+**Durability** prevents stored messages from being lost when the broker itself fails.
+
+**Fault tolerance** allows processing to continue or recover when a broker or consumer fails.
+
+| Service | Broker or storage failure | Consumer failure |
+|---|---|---|
+| **RabbitMQ** | Durable queues and persistent messages survive restarts; replicated **quorum queues** survive a broker-node failure. | Unacknowledged messages return to the queue for another consumer; repeated failures can go to a DLQ. |
+| **SQS** | AWS automatically stores messages redundantly across multiple Availability Zones and handles infrastructure failover. | An undeleted message reappears after its visibility timeout; repeated failures can go to a DLQ. |
+| **Kafka** | Partition replicas are stored on multiple brokers; if the leader fails, an in-sync replica becomes leader. Producer `acks=all` provides stronger durability. | A consumer restarts from its last committed offset, so uncommitted messages are processed again. |

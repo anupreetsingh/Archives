@@ -444,7 +444,7 @@ The primary database still stores the real product data. The search database usu
 
 A cache stores data that is expensive to fetch or calculate, so the backend can return it faster next time.
 
-Example: **Redis**. It keeps data in memory, which is much faster than reading from disk.
+**Redis** is an in-memory data store commonly used to cache frequently accessed database results. It can also support session storage, rate limiting, pub/sub messaging, distributed locks, counters, and task queues.
 
 Workflow Example:
 

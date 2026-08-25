@@ -267,9 +267,8 @@ The worst case can happen if many keys collide or if probing chains become very 
 In practice, Python dictionaries are designed to keep operations very close to `O(1)` average time by using:
 
 - hashing
-- open addressing
-- perturbation-based probing
-- resizing based on load
-- dummy markers for deletion
+- open addressing (Using probing policies like linear, quadratic, double hash or perturbation-based probing) or separate chaining.
+- resizing based on load factor
+- Lazy deletion
 
 General hash maps can also use separate chaining, but Python's `dict` specifically uses open addressing.

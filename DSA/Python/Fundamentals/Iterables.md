@@ -16,6 +16,29 @@ while i < len(numbers):
 
 ---
 
+## Iterable vs Iterator
+
+An **iterable** is an object that can be looped over, such as a list, string,
+or tuple. Calling `iter()` on it creates an **iterator**.
+
+An **iterator** produces one value at a time with `next()` and remembers its
+current position. Every iterator is iterable, but not every iterable is an
+iterator.
+
+```python
+numbers = [10, 20, 30]  # Iterable, but not an iterator
+# next(numbers)         # TypeError
+
+number_iterator = iter(numbers)
+print(next(number_iterator))  # 10
+print(next(number_iterator))  # 20
+
+for number in number_iterator:
+    print(number)              # 30; iteration continues from its current position
+```
+
+Objects returned by `map()`, `filter()`, `zip()`, and generator expressions are iterators. Once consumed, they do not restart automatically.
+
 ## Lazy vs Eager Iterables
 
 lazy iterable  → produces values only when needed
@@ -119,6 +142,40 @@ print([x * 2 for x in range(5)])
 # [0, 2, 4, 6, 8] 
 # Uses a list comprehension to build a list. 
 # The written structure for the command and the final result are the same for lists created using both generator expression and the list comprehension but form by different mechanisms.
+```
+
+### `map()`
+
+`map(function, iterable, *additional_iterables)` lazily applies a function and
+returns a `map` iterator. With multiple iterables, the function receives one
+item from each, and `map()` stops at the shortest iterable.
+
+```python
+numbers = list(map(int, ["10", "20", "30"]))
+print(numbers)  # [10, 20, 30]
+
+# A generator expression can perform the same lazy transformation.
+squares = (number ** 2 for number in [1, 2, 3])
+print(list(squares))  # [1, 4, 9]
+```
+
+### `filter()`
+
+`filter(function, iterable)` lazily keeps items for which the function returns
+a truthy value and returns a `filter` iterator. `map()` transforms items;
+`filter()` selects them.
+
+```python
+evens = list(filter(lambda number: number % 2 == 0, [1, 2, 3, 4]))
+print(evens)  # [2, 4]
+
+# A generator expression can perform the same lazy filtering.
+evens = (number for number in [1, 2, 3, 4] if number % 2 == 0)
+print(list(evens))  # [2, 4]
+
+# With None, filter() removes falsy items.
+values = [0, 1, "", "Python", None, False]
+print(list(filter(None, values)))  # [1, "Python"]
 ```
 
 ## Sequence and Non-Sequence Types

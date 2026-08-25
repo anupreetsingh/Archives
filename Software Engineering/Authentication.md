@@ -1,9 +1,3 @@
-# Cloud Caching
-
-## Redis
-
-Redis is an in-memory data store commonly used to cache frequently accessed database results. It can also support session storage, rate limiting, pub/sub messaging, distributed locks, counters, and task queues.
-
 ## Session Management
 
 ### Stateful Sessions with Redis
