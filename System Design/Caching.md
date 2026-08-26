@@ -1,3 +1,5 @@
+Refer the complete Hello Interview [Excalidraw](<https://app.excalidraw.com/l/56zGeHiLyKZ/7AUE0BlFxMd>) for images
+
 # Caching
 
 Cache is a temporary storage that keeps recently used data handy so you can get it much faster next time.
@@ -33,7 +35,7 @@ These are various ways in which data is cached:
 
 ### External Caching
 
-![External Caching](<Media/External Caching.png>)
+![External Caching](<Media/Caching/External Caching.png>)
 
 Cache is stored as external service separate from from your backend application, database, etc.
 
@@ -41,7 +43,7 @@ Example: Redis caching database query results.
 
 ### In-process Caching
 
-![In process Caching](<Media/In-Process caching.png>)
+![In process Caching](<Media/Caching/In-Process caching.png>)
 
 Your cache shares resources with the application servers.
 
@@ -51,7 +53,7 @@ Example: Python dictionary caches computed results.
 
 ### CDN
 
-![CDN](<Media/CDN.png>)
+![CDN](<Media/Caching/CDN.png>)
 
 CDN are geographically distributed network of servers that cache static content(like images, videos, HTML pages, javascript pages) near the users.
 
@@ -63,7 +65,7 @@ Example: Amazon Cloudfront caching images, videos, etc.
 
 ### Client-side caching
 
-![Client Side Caching](<Media/Client Side caching.png>)
+![Client Side Caching](<Media/Caching/Client Side caching.png>)
 
 This is when data is stored directly on the users device(Browser or mobile apps).
 
@@ -75,7 +77,7 @@ Example: Browser caches CSS, JS, images.
 
 ### Cache - Aside
 
-![Cache Aside](<Media/Cache Aside.png>)
+![Cache Aside](<Media/Caching/Cache Aside.png>)
 
 Flow:
 
@@ -86,7 +88,7 @@ Flow:
 
 ### Read - Through
 
-![Read Through](<Media/Read Through.png>)
+![Read Through](<Media/Caching/Read Through.png>)
 
 Similar to cache-aside but in this case the cache handles the database lookup instead of the application.
 
@@ -99,7 +101,7 @@ Flow:
 
 ### Write - Through
 
-![Write through](<Media/Write through.png>)
+![Write through](<Media/Caching/Write through.png>)
 
 Application writes directly to the cache first. Then the cache synchronously writes to DB. Write is considered complete when both steps happen.
 
@@ -109,7 +111,7 @@ Hard to achieve this perfect consistency that this scenario requires so less com
 
 ### Write - Behind
 
-![Write Behind](<Media/Write behind.png>)
+![Write Behind](<Media/Caching/Write behind.png>)
 
 Instead of updating the DB synchronously, the cache flushes those updates to the database usually in batches. Write is considered complete when it happens on the cache.
 
@@ -141,7 +143,7 @@ These are some of the common issues and complexities that come when a cache has 
 
 ### Cache Stampede (Thundering Herd)
 
-![Cache Stampede](<Media/Cache Stampede.png>)
+![Cache Stampede](<Media/Caching/Cache Stampede.png>)
 
 Ways to handle it:
 
@@ -150,7 +152,7 @@ Ways to handle it:
 
 ### Cache Consistency
 
-![Cache Consistency](<Media/Cache Consistency.png>)
+![Cache Consistency](<Media/Caching/Cache Consistency.png>)
 
 A common issue in the widely used cache-aside and read-through cache architectures. But it is Less common when a write-through or write-behind has been implemented because the cache would have the updated value in the database since the database queries are flowing through it.
 
@@ -162,7 +164,7 @@ Ways to handle it:
 
 ### Hot Keys
 
-![Hot Keys](<Media/Hot Keys.png>)
+![Hot Keys](<Media/Caching/Hot Keys.png>)
 
 One hot key can overload the cache.
 
