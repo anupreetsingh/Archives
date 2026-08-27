@@ -63,4 +63,8 @@
 
 1. Percentage(Noun): Proportion expressed out of 100. 60% are boys.
 
-1.
+1. Regressive (adjective): Tending to go backward or return to an earlier state. Example: The new policy was considered regressive because it reversed some of the progress made by the previous policy
+
+1. Regression (noun, in ML/statistics): A method used to predict a continuous numerical value, such as house price, temperature, or salary. The term “regression” comes historically from Francis Galton's observation of “regression toward the mean.” He observed that exceptionally tall parents tended to have children who were tall, but closer to the population's average height. Likewise, exceptionally short parents tended to have children closer to the average
+
+1. Normalization (noun): In ML/data, it means transforming numerical values to a common or standardized scale. In databases, organizing tables into a structured form designed to reduce redundancy and improve data integrity.

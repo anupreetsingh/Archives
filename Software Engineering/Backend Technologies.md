@@ -114,8 +114,9 @@ GET /users
 POST /users
 GET /users/123
 
-API(Application Programming Interface): The collection of requests that a backend exposes for clients to use, along with the rules for how those requests and responses are structured.
-> Named after the fact that it allows applications to the interact with other programmatically
+API(Application Programming Interface): The definitive collection of requests that a backend exposes for clients to use, along with the rules for how those requests and responses are structured.
+
+> Named after the fact that it allows applications to the interact with other applications programmatically
 
 API's could be formed in accordance with different conventions. Some common ones are:
 
@@ -123,9 +124,79 @@ API's could be formed in accordance with different conventions. Some common ones
 
 > The name comes from the fact that the client requests a representation of a resource's current state, commonly in JSON format.
 
-2. GraphQL: Lets the client ask for exactly the data it needs, usually through one endpoint. Instead of exposing many resource-based URL paths like REST, GraphQL exposes a schema that describes the available data and relationships.
+Suppose the frontend only needs the user's name:
+
+GET /users/42
+
+but the server returns:
+
+{
+  "id": 42,
+  "name": "Alice",
+  "email": "<alice@example.com>",
+  "address": "...",
+  "created_at": "...",
+  "preferences": {...}
+}
+
+You might receive more data than you need. This is called **over-fetching**.
+
+The opposite can also happen: you need a user and their orders, requiring:
+
+GET /users/42
+GET /users/42/orders
+
+That's potentially **under-fetching** — one request doesn't give you everything you need.
+
+This is one of the problems GraphQL was designed to address.
+
+2. GraphQL: Lets the client ask for exactly the data it needs, usually through one endpoint. Instead of exposing many resource-based URL paths like REST, GraphQL API commonly exposes one endpoint: schema that describes the available data and relationships.
+
+the client sends a query describing exactly what it wants.
+
+For example:
+
+query {
+  user(id: 42) {
+    name
+    email
+  }
+}
+
+The server might return:
+
+{
+  "data": {
+    "user": {
+      "name": "Alice",
+      "email": "<alice@example.com>"
+    }
+  }
+}
+
+This makes it especially useful for complex frontends where different screens need different combinations of data.
 
 3. RPC(Remote Procedure Call): A general approach where one service calls a function or procedure on another service as if it were local. RPC systems usually rely on strongly defined service contracts and are often used for fast communication between backend services or microservices. Examples: gRPC, Apache Thrift.
+
+For example, imagine you have microservices:
+
+                ┌──────────────┐
+                │ User Service │
+                └──────────────┘
+                       ↑
+                       │ gRPC
+                       │
+┌───────────────┐      │
+│ Order Service │──────┘
+└───────────────┘
+
+The Order Service might effectively call:
+
+userService.GetUser(42)
+
+even though GetUser() is actually executing on another machine/container/service.
+
+gRPC typically uses Protocol Buffers (Protobuf) rather than JSON.
 
 ### Data Validation
 

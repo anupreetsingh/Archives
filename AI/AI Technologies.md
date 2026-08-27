@@ -80,6 +80,12 @@ Visualization helps understand data, debug model behavior, and communicate resul
 
 It is commonly used for static plots like line charts, scatter plots, histograms, and training curves.
 
+### Seaborn
+
+**Seaborn** is a higher-level statistical data-visualization library built on top of Matplotlib.
+
+It provides attractive default styles and makes it easier to create statistical plots from Pandas DataFrames. Seaborn is often used for high-level plotting, while Matplotlib is used for detailed customization.
+
 ### Plotly
 
 **Plotly** is used for interactive visualizations.

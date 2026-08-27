@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="570" viewBox="0 0 900 570" role="img" aria-labelledby="title description">
+  <title id="title">ROC curve and classification-threshold tradeoff</title>
+  <desc id="description">A receiver operating characteristic graph showing a strong classifier above the random baseline. Moving from a high threshold near the origin toward a lower threshold increases both recall and the false-positive rate, while precision usually decreases.</desc>
+
+  <defs>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.08"/>
+    </linearGradient>
+    <marker id="curve-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="570" rx="18" fill="#f8fafc"/>
+  <text x="450" y="38" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="700" fill="#0f172a">ROC Curve: Effect of Lowering the Threshold</text>
+  <text x="450" y="62" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="14" fill="#475569">Each point on the curve uses a different classification threshold</text>
+
+  <!-- Plot area and grid -->
+  <rect x="110" y="85" width="660" height="390" fill="#ffffff" stroke="#cbd5e1"/>
+  <g stroke="#e2e8f0" stroke-width="1">
+    <line x1="110" y1="377.5" x2="770" y2="377.5"/>
+    <line x1="110" y1="280" x2="770" y2="280"/>
+    <line x1="110" y1="182.5" x2="770" y2="182.5"/>
+    <line x1="275" y1="85" x2="275" y2="475"/>
+    <line x1="440" y1="85" x2="440" y2="475"/>
+    <line x1="605" y1="85" x2="605" y2="475"/>
+  </g>
+
+  <!-- AUC area and reference line -->
+  <path d="M110 475 C125 300 150 205 205 150 C285 95 470 88 770 85 L770 475 Z" fill="url(#area)"/>
+  <line x1="110" y1="475" x2="770" y2="85" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 8"/>
+  <text x="588" y="244" transform="rotate(-30 588 244)" font-family="Inter, Arial, sans-serif" font-size="14" fill="#64748b">Random ranking (AUC = 0.5)</text>
+
+  <!-- ROC curve -->
+  <path d="M110 475 C125 300 150 205 205 150 C285 95 470 88 770 85" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+  <path d="M132 270 C150 211 170 177 205 150" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round" marker-end="url(#curve-arrow)"/>
+  <text x="347" y="119" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4ed8">Strong classifier (high AUC)</text>
+
+  <!-- Threshold points -->
+  <g filter="url(#shadow)">
+    <circle cx="121" cy="391" r="7" fill="#ffffff" stroke="#2563eb" stroke-width="4"/>
+    <circle cx="159" cy="195" r="7" fill="#ffffff" stroke="#2563eb" stroke-width="4"/>
+    <circle cx="263" cy="117" r="7" fill="#ffffff" stroke="#2563eb" stroke-width="4"/>
+  </g>
+
+  <rect x="133" y="354" width="156" height="52" rx="8" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)"/>
+  <text x="145" y="376" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#0f172a">High threshold</text>
+  <text x="145" y="395" font-family="Inter, Arial, sans-serif" font-size="12" fill="#475569">Few predicted positives</text>
+
+  <rect x="175" y="195" width="245" height="69" rx="8" fill="#eff6ff" stroke="#93c5fd" filter="url(#shadow)"/>
+  <text x="188" y="218" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#1e3a8a">Lower the threshold</text>
+  <text x="188" y="238" font-family="Inter, Arial, sans-serif" font-size="12.5" fill="#1e40af">Recall ↑   FPR ↑   Precision usually ↓</text>
+  <text x="188" y="255" font-family="Inter, Arial, sans-serif" font-size="11.5" fill="#475569">More examples are classified as positive</text>
+
+  <!-- Ideal point -->
+  <circle cx="110" cy="85" r="7" fill="#16a34a"/>
+  <path d="M121 91 L165 111" fill="none" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="170" y="109" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" fill="#15803d">Ideal point</text>
+  <text x="170" y="126" font-family="Inter, Arial, sans-serif" font-size="11.5" fill="#475569">Recall = 1, FPR = 0</text>
+
+  <!-- Axes -->
+  <g stroke="#334155" stroke-width="2">
+    <line x1="110" y1="475" x2="785" y2="475"/>
+    <line x1="110" y1="475" x2="110" y2="72"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="12" fill="#64748b">
+    <text x="110" y="495" text-anchor="middle">0</text>
+    <text x="275" y="495" text-anchor="middle">0.25</text>
+    <text x="440" y="495" text-anchor="middle">0.50</text>
+    <text x="605" y="495" text-anchor="middle">0.75</text>
+    <text x="770" y="495" text-anchor="middle">1</text>
+    <text x="93" y="479" text-anchor="end">0</text>
+    <text x="93" y="381.5" text-anchor="end">0.25</text>
+    <text x="93" y="284" text-anchor="end">0.50</text>
+    <text x="93" y="186.5" text-anchor="end">0.75</text>
+    <text x="93" y="89" text-anchor="end">1</text>
+  </g>
+  <text x="440" y="530" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155">False Positive Rate (1 − Specificity)</text>
+  <text x="27" y="280" text-anchor="middle" transform="rotate(-90 27 280)" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600" fill="#334155">True Positive Rate (Recall)</text>
+</svg>
