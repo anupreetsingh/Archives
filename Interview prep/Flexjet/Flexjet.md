@@ -56,8 +56,7 @@ It says it has been profitable for 15+ consecutive years. Doing that in a super 
 
 Flexjet from the lens of an ML engineer is a huge real time logistics + Aviation + service operation, that could use benifit from ML applications in a lot of avenues like :
 
-- Optimize crew and aircraft positioning and allocation
-- Optimize maintenaince scheduling
+- Optimize crew allocation, aircraft positioning, maintenaince scheduling
 - Identify operational bottlenecks and predict delays
 - Churn modeling for customer retention or recommendation systems
 - Internal knowledge assistant using RAG
@@ -68,8 +67,10 @@ There are also other senior AI Engineer postings on flexjet careers portal so th
 
 ### Initial Meeting Notes
 
-Dave davies (Chief of staff)
-Ken ricky (Owner) - Pilot, Book: Management by trust
+New team is supposed to have startup kind of culture.
+
+David davies (Chief of staff)
+Kenn Ricci (Owner) - Pilot, Book: Management by trust
 Durga nagala (CTO)
 
 Business goals, implementation prospects, vision.

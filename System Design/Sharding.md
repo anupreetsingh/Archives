@@ -40,7 +40,7 @@ Choosing a good shard key involves considering a variety of factors:
 
 - You would want it to have **high cardinalit**y(High frequency of unique values) like the `user_id`
 - The values of key should naturally spread out so we have **evenly distributed data**.
-- It aligns with our queries. Meaning queries are usually regarding data that is about one value of shard key. Example: Getting all the posts from this one user means we only have to hit one shard usually.
+- It aligns with **common query** patterns and avoids cross shard operations. Ideally, we choose a shard key that lets related records from different tables be placed on the same shard. For example, if both the User and Posts tables are sharded by user_id, then queries involving a user and that user's posts can usually be handled entirely by one shard instead of searching across or combining data from multiple shards. Some cross-shard queries are unavoidable, but a good shard key minimizes them.
 
 Choosing a bad shard key can involve:
 
