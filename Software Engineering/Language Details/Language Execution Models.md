@@ -85,6 +85,14 @@ greet()
 import dis
 print("\nDisassembled bytecode for greet():")
 dis.dis(greet)
+# Disassembled bytecode for greet():
+#   1           0 RESUME                   0
+
+#   2           2 LOAD_GLOBAL              1 (NULL + print)
+#              12 LOAD_CONST               1 ('hello')
+#              14 CALL                     1
+#              22 POP_TOP
+#              24 RETURN_CONST             0 (None)
 ```
 
 ### Just-In-Time Compilation
@@ -106,10 +114,3 @@ Some environments use **JIT (Just-In-Time) compilation**. They compile frequentl
 | **Interpreted** | Executed by an interpreter at runtime | Python, JavaScript, Ruby | Slower | High |
 | **Hybrid** | Compiled to bytecode, then executed by a VM/runtime | Java, Python, C# | Medium | High |
 | **JIT** | Compiled dynamically at runtime | Java, JavaScript, PyPy | Fast after warmup | High |
-
-### Takeaway
-
-- **Compiled:** source code becomes native machine code before execution.
-- **Interpreted:** source code is executed by an interpreter at runtime.
-- **Hybrid:** source code is compiled to bytecode, then run by a VM/runtime.
-- **JIT:** frequently used code is compiled into native machine code while the program is running.
