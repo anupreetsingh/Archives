@@ -68,3 +68,7 @@
 1. Regression (noun, in ML/statistics): A method used to predict a continuous numerical value, such as house price, temperature, or salary. The term “regression” comes historically from Francis Galton's observation of “regression toward the mean.” He observed that exceptionally tall parents tended to have children who were tall, but closer to the population's average height. Likewise, exceptionally short parents tended to have children closer to the average
 
 1. Normalization (noun): In ML/data, it means transforming numerical values to a common or standardized scale. In databases, organizing tables into a structured form designed to reduce redundancy and improve data integrity.
+
+1. Interface(Noun): A point of contact or method through which two entities interact with each other. Example: The user interface was easy to navigate.
+
+1. Interface(Verb): To interact, communicate, or connect with something. Example: The backend interfaces with the database.

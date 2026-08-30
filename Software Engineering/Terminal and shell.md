@@ -1,36 +1,10 @@
 # Terminal and Shell
 
-A terminal and a shell are related, but they are not the same thing.
-
-The **terminal** is the text-based interface where you type commands and see output. The **shell** is the program that reads those commands, interprets them, and starts other programs.
-
-Simple relationship:
-
-```md
-Terminal -> Shell -> Commands / CLI Programs -> Operating System
-```
-
-Example:
-
-```bash
-git status
-```
-
-When you run this command:
-
-1. You type `git status` into the **terminal**.
-2. The **shell** reads the command.
-3. The shell finds the `git` program.
-4. The shell runs `git` with `status` as an argument.
-5. Git prints output back to the terminal.
-
----
-
 ## Terminal
 
-A **terminal** is the application or window that gives you a text interface to the computer.
+A **terminal** is an application or window that lets you enter text for a shell program and view text output from a shell program.
 
-Examples:
+You could have a variety of terminals, Examples include:
 
 - macOS Terminal
 - VS Code integrated terminal
@@ -38,33 +12,15 @@ Examples:
 - Windows Terminal
 - Linux terminal emulators like GNOME Terminal or Konsole
 
-The terminal handles input and output. It lets you type text, sends that text to the shell, and displays whatever the shell or program prints back.
+Different terminals have different user experiences. Some differ in text highlighting, configuration, keyboard input handling, etc.
 
-The terminal itself usually does not understand commands like `cd`, `ls`, `git`, or `python`. Those are interpreted by the shell or executed as separate programs.
-
-### Terminal Emulator
+For example, macOS Terminal may not treat `Command + Right Arrow` as "move the cursor to the end of the line" or `Command + Left Arrow` as "move the cursor to the beginning of the line". The VS Code integrated terminal can support those shortcuts.
 
 Modern terminal apps are usually **terminal emulators**.
 
 Older computers used physical terminal devices connected to larger computers. A modern terminal app emulates that old text-based interface in a window.
 
-So when people say "open the terminal", they usually mean:
-
-```md
-Open a terminal emulator app so you can interact with a shell.
-```
-
-### Terminal Behavior vs Shell Behavior
-
-Different terminal emulators can handle the same keyboard input differently, even when they are running the same shell.
-
-For example, macOS Terminal may not treat `Command + Right Arrow` as "move the cursor to the end of the line" or `Command + Left Arrow` as "move the cursor to the beginning of the line". The VS Code integrated terminal can support those shortcuts.
-
-That difference is caused by the **terminal emulator**, not by the shell. The terminal decides how keyboard shortcuts are handled and what input gets sent to the shell.
-
-So if two terminals both run `zsh`, but one supports a shortcut and the other does not, the difference is usually in the terminal app's key handling, not in `zsh` itself.
-
----
+So when people say "open the terminal", they usually mean "Open a terminal emulator app so you can interact with a shell".
 
 ## Shell
 
@@ -340,26 +296,14 @@ You can print your `PATH` with:
 echo $PATH
 ```
 
----
-
-## Summary
-
-| Concept | Meaning |
-|---------|---------|
-| **Terminal** | The text window/app where you type commands and see output |
-| **Terminal emulator** | A modern app that emulates old physical terminals |
-| **Shell** | The command interpreter running inside the terminal |
-| **Bash** | A specific shell and shell scripting language |
-| **Zsh** | Another shell, commonly used interactively on macOS |
-| **CLI** | A command-line interface, or a tool used through typed commands |
-| **Shell script** | A file of commands written for a shell to execute |
-
-The clean mental model:
-
-```md
-The terminal is where you type.
-The shell is what interprets what you typed.
-Bash and Zsh are specific shells.
-CLI tools are programs you run through typed commands.
-Shell scripts are files written in a shell language.
+```bash
+git status
 ```
+
+When you run this command:
+
+1. You type `git status` into the **terminal**.
+2. The **shell** reads the command.
+3. The shell finds the `git` program.
+4. The shell runs `git` with `status` as an argument.
+5. Git prints output back to the terminal.

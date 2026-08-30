@@ -1,4 +1,4 @@
-# Index Calculation in Lists and Matrices
+# Index and Counting Calculation in Lists and Matrices
 
 ## Middle Index
 
@@ -12,36 +12,6 @@ For an array of size `n`, there are two useful "middles":
 For even `n`, they are different and equally important since there is no true middle.
 For odd `n`, they collapse into the same element: the true middle.
 
-### What `// 2` Gives You
-
-**0-indexed:**
-
-```text
-last index = n - 1
-
-(n - 1) // 2 gives: 
-- even n: lower middle 
-- odd n: True middle 
-
-n // 2 gives:
-- even n: Upper middle
-- odd n: True middle
-```
-
-**1-indexed:**
-
-```text
-last_index = size = n
-
-n // 2 gives:
-- even n: lower middle
-- odd n: element just before the true middle
-```
-
-### Formulas for Getting the Middle Index
-
-These formulas give the lower middle and upper middle, which are different for even `n` and automatically converge to the same element(the true middle) for odd `n`.
-
 **0-indexed:**
 
 ```text
@@ -51,12 +21,12 @@ upper_middle = n // 2
 
 **1-indexed:**
 
+1 - indexed is just +1 addition to 0 - indexed counterpart
+
 ```text
-lower_middle = (n + 1) // 2
+lower_middle = (n - 1) // 2 + 1 = (n + 1) // 2
 upper_middle = n // 2 + 1
 ```
-
-Use either formula for the corresponding indexed array, depending on whether you need the lower middle or upper middle when `n` is even.
 
 ## Negative Indexing
 
@@ -272,3 +242,140 @@ col = 6 % 4 = 2
 
 matrix[1][2]
 ```
+
+## Subarrays
+
+A subarray is a non-empty **contiguous** slice of the original array, fixed by choosing a start and end index.
+
+For `[A, B, C]`, the subarrays are:
+
+```text
+length 1: [A], [B], [C]
+length 2: [A, B], [B, C]
+length 3: [A, B, C]
+```
+
+### Subarrays of Length `k`
+
+In an array of length `n`, a subarray of length `k` can begin at any index from `0` through `n - k`.
+
+The number of possible starting indices is therefore:
+
+```text
+(n - k) - 0 + 1 = n - k + 1
+```
+
+So:
+
+```text
+number of subarrays of length k = n - k + 1
+```
+
+For `[A, B, C]`:
+
+```text
+length 1: 3 - 1 + 1 = 3
+length 2: 3 - 2 + 1 = 2
+length 3: 3 - 3 + 1 = 1
+```
+
+### Total Number of Subarrays
+
+#### Sum of different length of Subarrays
+
+The total number of subarrays of an array of length `n` is the sum of the
+number of subarrays of every possible length from `1` through `n`:
+
+$$
+\text{total} = \sum_{k=1}^{n}(n-k+1) = n+(n-1)+(n-2)+\cdots+1
+$$
+
+This is the sum of the first `n` positive integers:
+
+```text
+total non-empty subarrays = n(n + 1) / 2
+```
+
+For `[A, B, C]`:
+
+```text
+total = 3 + 2 + 1
+      = 3(3 + 1) / 2
+      = 6
+```
+
+#### Boundaries (Combinations)
+
+Another way to see the same count is to choose two **distinct** boundaries from the `n + 1` boundaries surrounding the elements. The first boundary starts the subarray and the second ends it.
+
+```text
+| A | B | C |
+0   1   2   3
+```
+
+Choosing boundaries `1` and `3`, for example, selects `[B, C]`. Thus:
+
+```text
+total non-empty subarrays = C(n + 1, 2) 
+                          = (n + 1)! / ((n - 1)! * (2!))
+                          = n * (n + 1) / 2
+```
+
+Requiring the two boundaries to be **distinct** is exactly what forbids the empty subarray: if the start and end boundary were allowed to coincide, that would add `n + 1` empty selections. So the empty case is excluded here by the choice rule itself, which is why the subarray count is stated for non-empty subarrays only.
+
+## Subsequences
+
+A subsequence is obtained by selecting `k` items from a sequence of `n` items without changing their relative order. The selected items do not need to be contiguous.
+
+### Subsequences of Length `k`
+
+To form a subsequence of length `k` from a sequence of length `n`, choose which `k` of the `n` distinct index positions `{0, 1, ..., n - 1}` to keep.
+
+Once the positions are chosen, their order is assumed to be fixed as per the original sequence so we don't need to worry about permutations but just combinations/selections of the distinct positions.
+
+Applying the size-`k` subset result to the index positions:
+
+```text
+number of subsequences of length k = subset of size k distinct positions = nCk
+```
+
+Important: `nCk` counts the ways to select `k` distinct **index positions** for forming `nCk` subsequences but those subsequences may not necessarily be unique depending on the values in the original sequence.
+
+For example, consider:
+
+```text
+[1, 4, 1, 3, 1]
+
+The sequence has five positions, so the number of positional subsequences of length `2` is: 5C2 = 10
+
+However, choosing positions `(0, 2)`, `(0, 4)`, or `(2, 4)` produces the same value subsequence: [1, 1]
+```
+
+Thus, In this case there are `10` positional subsequences of length `2`, but only `6` distinct subsequences by value.
+
+There is no standard formula for finding the distinct value subsequnce of size `k` from sequence of size `n`. The number of distinct value subsequences depends on the values and their order. For example, these sequences have the same length and element frequencies but different numbers of distinct length-2 subsequences:
+
+```text
+[1, 1, 2] -> [1, 1], [1, 2]                 -> 2
+[1, 2, 1] -> [1, 2], [1, 1], [2, 1]         -> 3
+```
+
+### Total Number of Subsequences
+
+There are `nCk` positional subsequences of length `k`. Summing over every possible length from `0` through `n` gives:
+
+$$
+\text{total subsequences}
+= nC0 + nC1 + nC2 + \cdots + nCn
+= \sum_{k=0}^{n} nCk
+= 2^n
+$$
+
+Therefore:
+
+```text
+subsequences including the empty subsequence = 2^n
+non-empty subsequences                       = 2^n - 1
+```
+
+The empty subsequence corresponds to the empty subset of positions. Contrast this with subarrays, where the empty case is excluded up front by requiring distinct boundaries.

@@ -175,9 +175,7 @@ To keep things simple, we usually describe an algorithm's time and space complex
 
 In more detailed analysis, we may separately consider best-case, average-case, and worst-case complexity. When the upper and lower bounds match, we may use **Big `Θ`** notation to describe the complexity more tightly.
 
-## Building blocks
-
-### Function Growth rates
+## Function Growth rates
 
 Seeing how different Big `O` expression grow makes it easier to judge how one algorithm’s performance scales compared with another algorithm.
 
@@ -193,11 +191,11 @@ Seeing how different Big `O` expression grow makes it easier to judge how one al
 | `O(2^n)` | Exponential | Often all subsets or binary choices. | Recursive Fibonacci without memoization. |
 | `O(n!)` | Factorial | Often all permutations. | Brute-forcing every route in traveling salesperson. |
 
-### Series Sums in Complexity
+## Series Sums in Complexity
 
 The total complexity of an algorithm sometimes comes from the sum of a series.
 
-#### Polynomial-Term Series
+### Polynomial-Term Series
 
 For a **polynomial-term series**, the final growth given by the sum increases one power from the terms in the series ( From `n^k` to `n^(k+1)` for the sum of the series):
 
@@ -207,7 +205,7 @@ Quadratic terms: 1^2 + 2^2 + 3^2 + ... + n^2 = n(n + 1)(2n + 1) / 6 = O(n^3)
 Cubic terms: 1^3 + 2^3 + 3^3 + ... + n^3 = [n(n + 1) / 2]^2 = O(n^4)
 ```
 
-#### Geometric Series
+### Geometric Series
 
 For a **geometric progression (GP)** based series, the final growth given by the sum is represented by the same power as the **greatest term**:
 
@@ -259,7 +257,7 @@ n + n/5 + n/25 + ... + 1 = n + (n - 1) / 4 = (5n - 1) / 4 = O(n)
 
 Although the complexity could also be written with constant multiple forms like `O(2n)`, `O(3n/2)`, or `O(5n/4)`, the cleanest way is `O(n)` because it describes that the sum is essentially a constant multiple of the greatest term, `n`.
 
-### Input Shape Matters
+## Input Shape Matters
 
 Complexity is expressed as a function of input size, but “input size” does not always mean `n` items in a list. The right variables depend on the shape of the input and the part of the structure the algorithm must process.
 

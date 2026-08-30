@@ -1,4 +1,4 @@
-# Permutations and Combinations
+# Combinatorics
 
 ## Core Counting Rules
 
@@ -94,7 +94,7 @@ In numbers from `1` to `30`:
 multiples of 2 or 3 from 1 to 30 = 15 + 10 - 5 = 20
 ```
 
-#### Side Note: Counting Multiples
+**Example: Counting Multiples**
 
 To count multiples of `k` in an inclusive range `[low, high]`:
 
@@ -604,6 +604,97 @@ Example:
           = x^4 + 4x^3y + 6x^2y^2 + 4xy^3 + y^4
 ```
 
+#### Subsets
+
+A subset is an unordered selection of elements from a set with no repititions. Since a set has distinct elements.
+
+So a subset of size `k` is basically choosing `k` elements from a set of `n` distinct elements with no repitition .i.e. `nCk`.
+
+```text
+number of size-k subsets = nCk = n! / (k! * (n - k)!)
+```
+
+The **power set** of a set $S$, denoted by $\mathcal{P}(S)$, is the set containing **all possible subsets** of $S$, including the empty set $\emptyset$ and $S$ itself.
+
+If $S$ contains $n$ distinct elements, then the total number of subsets in the power set is
+
+$$
+|\mathcal{P}(S)|
+= nC0 + nC1 + nC2 + \cdots + nCn
+= \sum_{k=0}^{n} nCk
+= 2^n
+$$
+
+So, a set with $n$ elements has exactly $2^n$ subsets.
+
+That sum equals `2^n`. Here is why, two ways:
+
+**Way 1: the binomial theorem (`x = y = 1`).**
+
+The expansion just derived holds for any `x` and `y`:
+
+```text
+(x + y)^n = (nC0)x^n + (nC1)x^(n-1)y + ... + (nCn)y^n
+```
+
+Set `x = 1` and `y = 1`. Every `x^(n-k)y^k` becomes `1`, so each term is just its coefficient:
+
+```text
+(1 + 1)^n = nC0 + nC1 + ... + nCn
+```
+
+The left side is `2^n`, so:
+
+```text
+nC0 + nC1 + ... + nCn = 2^n
+```
+
+**Way 2: decide each element independently (product rule).**
+
+Build a subset by walking the `n` elements and, for each one, deciding *include* or *exclude*:
+
+```text
+element 1: 2 choices (include or exclude)
+element 2: 2 choices
+...
+element n: 2 choices
+```
+
+Each distinct include/exclude pattern is a distinct subset, so by the product rule:
+
+```text
+total subsets = 2 * 2 * ... * 2   (n times) = 2^n
+```
+
+##### Example
+
+All subsets of `{A, B, C}`:
+
+```text
+size 0:  {}                       3C0 = 1
+size 1:  {A}   {B}   {C}          3C1 = 3
+size 2:  {A,B} {A,C} {B,C}        3C2 = 3
+size 3:  {A,B,C}                  3C3 = 1
+
+total = 1 + 3 + 3 + 1 = 8 = 2^3
+```
+
+The same 8 subsets, listed as the in/out decisions from way 2:
+
+```text
+A B C
+0 0 0  -> {}
+1 0 0  -> {A}
+0 1 0  -> {B}
+0 0 1  -> {C}
+1 1 0  -> {A,B}
+1 0 1  -> {A,C}
+0 1 1  -> {B,C}
+1 1 1  -> {A,B,C}
+```
+
+Each element contributes one binary digit, `n` digits give `2^n` patterns, and each pattern is one subset.
+
 ### Combinations for `k` Items From `n` Types (With Repetition)
 
 Calculating the number of combinations possible when choosing `k` items from `n` distinct types, where repetition is allowed and order does not matter.
@@ -715,3 +806,5 @@ BB
 BC
 CC
 ```
+
+## Subsets
