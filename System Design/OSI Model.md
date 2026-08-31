@@ -1,5 +1,7 @@
 # OSI(Open Systems Interconnection) Model
 
+![OSI Layers](<Media/OSI Layers.png>)
+
 Instead of thinking about networking as one giant thing, the OSI model splits it into 7 layers stacked on top of each other.
 
 Information in the layers travel in both directions, depending on whether a device is sending(7 to 1) or receiving data(1-7)

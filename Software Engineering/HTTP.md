@@ -20,7 +20,7 @@ HTTP actions are called **methods**. They describe what the client wants to do w
 |---|---|
 | `GET` | Read or fetch a resource. |
 | `POST` | Create a new resource or submit data. |
-| `PUT` | Replace an entire resource. |
+| `PUT` | Idempotent Update/Replace an entire resource. |
 | `PATCH` | Update part of a resource. |
 | `DELETE` | Remove a resource. |
 | `HEAD` | Get response headers without the body. |

@@ -8,7 +8,7 @@ You can only have 2 of the 3:
 
 But in a distributed system, you basically guarantee partition tolerance because network failures are unavoidable in a distributed system. So the only real choice you have when designing a distributed system is choosing whether to prioritize consistency or availability.
 
-![Network Failure between two nodes](<Media/Screenshot 2026-06-02 at 2.45.44 PM.png>)
+![Network Failure between two nodes](<Media/Network failure between nodes.png>)
 
 ## Prioritizing Strong Consistency  
 

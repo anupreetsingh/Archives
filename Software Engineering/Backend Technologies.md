@@ -124,6 +124,97 @@ API's could be formed in accordance with different conventions. Some common ones
 
 > The name comes from the fact that the client requests a representation of a resource's current state, commonly in JSON format.
 
+REST API paths model **resources**, which are generally plural nouns representing the core entities in a system design, such as `events`, `venues`, `tickets`, and `bookings`. The HTTP method represents the client's intent or action on a resource:
+
+```http
+GET  /events                    # Get all events
+GET  /events/{id}               # Get a specific event
+GET  /venues/{id}               # Get a specific venue
+GET  /events/{id}/tickets       # Get the available tickets for an event
+POST /events/{id}/bookings      # Create a new booking for an event
+GET  /bookings/{id}             # Get a specific booking
+```
+
+#### Request Inputs
+
+An HTTP request can provide input to an API through three main locations:
+
+1. **Path parameters** identify the specific resource being addressed. They are part of the URL path and are required when the route needs a particular resource, such as the `id` in `GET /events/{id}`.
+2. **Query parameters** provide optional modifiers such as filters, sorting, or pagination. They appear after `?` in the URL and are separated by `&`, such as `GET /events?city=LA&date=2025-01-01`.
+3. **Request body** carries a structured payload, commonly JSON, containing the data needed to create or update a resource.
+
+```http
+# Path parameter: identify event 42
+GET /events/42
+
+# Query parameters: filter the events collection
+GET /events?city=LA&date=2025-01-01
+
+# Request body: provide data for a new event
+POST /events
+Content-Type: application/json
+
+{
+  "title": "Backend Conference",
+  "description": "A conference about backend engineering",
+  "location": "Los Angeles",
+  "date": "2025-01-01"
+}
+```
+
+#### Pagination
+
+Pagination divides a large collection into smaller responses. It keeps response sizes and database work bounded while allowing the client to request the next group of results. Pagination parameters belong in the query string because they modify how a collection is read rather than identify a different resource.
+
+Every paginated query needs a deterministic order. If multiple records can have the same value in the main sort column, add a unique column such as `id` as a tie-breaker; otherwise, records can be skipped or repeated between requests.
+
+There are two common approaches:
+
+1. **Offset pagination** tells the server how many records to skip. A request such as `GET /events?limit=20&offset=40` asks for records 41–60 in the ordered result. Page-number pagination is the same idea expressed as `page` and `page_size`, where `offset = (page - 1) * page_size`.
+
+   ```sql
+   SELECT id, title, created_at
+   FROM events
+   ORDER BY created_at DESC, id DESC
+   LIMIT 20 OFFSET 40;
+   ```
+
+   Offset pagination is simple and lets clients jump to a particular page. However, large offsets become slower because the database still has to pass over the skipped records. Inserts or deletions before the current offset can also cause records to be repeated or missed while a client moves through the pages.
+
+2. **Cursor pagination**, also called **keyset pagination**, asks for records after the last record previously returned. The cursor is normally an opaque string encoding the ordered values, such as `created_at` and `id`.
+
+   ```http
+   GET /events?limit=20&after=eyJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wMVQxMDowMDowMFoiLCJpZCI6NDJ9
+   ```
+
+   ```sql
+   SELECT id, title, created_at
+   FROM events
+   WHERE (created_at, id) < ('2025-01-01T10:00:00Z', 42)
+   ORDER BY created_at DESC, id DESC
+   LIMIT 21;
+   ```
+
+   The server requests one extra record to determine whether another page exists, returns only the first 20, and builds `next_cursor` from the last returned record:
+
+   ```json
+   {
+     "items": [
+       {"id": 41, "title": "Backend Conference", "created_at": "2025-01-01T09:30:00Z"}
+     ],
+     "next_cursor": "eyJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wMVQwOTozMDowMFoiLCJpZCI6NDF9",
+     "has_more": true
+   }
+   ```
+
+   Cursor pagination performs consistently on large, frequently changing datasets, but it does not naturally support jumping directly to an arbitrary page.
+
+The backend should enforce a maximum `limit` or `page_size` so clients cannot request an unbounded response. A `total_count` can be useful for page-based interfaces, but counting a very large or heavily filtered collection may be expensive, so cursor-based APIs often return only `has_more` and the next cursor.
+
+#### Responses
+
+An HTTP response contains a **status code** indicating the result of the request and usually a **JSON response body** containing the returned data or error details.
+
 Suppose the frontend only needs the user's name:
 
 GET /users/42
@@ -176,7 +267,13 @@ The server might return:
 
 This makes it especially useful for complex frontends where different screens need different combinations of data.
 
-3. RPC(Remote Procedure Call): A general approach where one service calls a function or procedure on another service as if it were local. RPC systems usually rely on strongly defined service contracts and are often used for fast communication between backend services or microservices. Examples: gRPC, Apache Thrift.
+**N+1 Query Problem**
+
+GraphQL can cause an **N+1 query problem** when one query fetches a list of `N` records and a nested-field resolver performs another database query for each record. A request-scoped **DataLoader** solves this by batching those individual lookups into one query and caching repeated lookups during the request.
+
+3. RPC(Remote Procedure Call): A general approach where one service calls a function or procedure on another service as if it were local. RPC systems usually rely on strongly defined service contracts and are often used for fast communication between backend services or microservices.
+
+Examples: gRPC, Apache Thrift.
 
 For example, imagine you have microservices:
 
@@ -321,7 +418,7 @@ Some infrastructure-focused services that they provide are:
     - Google Cloud Load Balancing
     - Cloudflare Load Balancing
 
-3. Object Storage(Blob Storage): Cloud storage for files like images, videos, backups, logs, and documents.
+3. Object Storage(Blob Storage): Cloud storage for files like images, videos, backups, logs, and documents. These files are called Binary Large Objects(Blob). Software Engineering/Media/Blob Storage Reason.png
 
     Each file is stored as an independent object, making it easy to store large amounts of data and access it over the internet.
 
@@ -479,17 +576,85 @@ Different NoSQL databases are designed for different kinds of data and scale pro
 
 The tradeoff is that NoSQL databases are not all the same. MongoDB, Redis, Cassandra, and Neo4j solve different problems, so choosing "NoSQL" is not specific enough by itself.
 
-### Blob Storage and CDN
+### Blob Storage
 
-Files like images, videos, PDFs, or backups are stored in **blob storage**, and the primary database stores metadata about that file.
+Files like images, videos, PDFs, or backups are stored in **blob storage** as Binary Large Objects(Blob). Software Engineering/Media/Blob Storage Reason.pngand the primary database stores metadata about that file.
+
+Example: AWS S3, Google Cloud Storage, Azure Blob Storage.
+
+Common examples include:
+
+- Photos and videos for a social-media or messaging app
+- User-uploaded documents for a file-sharing or collaboration tool
+- Static web assets such as images, CSS, and JavaScript served through a CDN
+- Log and event archives used by analytics or security pipelines
+- Backup snapshots and database dumps kept for disaster recovery
+- Machine-learning training datasets containing images, audio, or Parquet files
+
+![Blob Storage Reason](<Media/Blob Storage Reason.png>)
+
+![Blob Storage Lookup](<Media/Block Storage Lookup.png>)
 
 Example:
 
 | product_id | image_url | title |
 |---|---|---|
-| 123 | `https://cdn.example.com/products/123.png` | Running Shoes |
+| 123 | `https://product-images.s3.amazonaws.com/products/123.png` | Running Shoes |
 
-**CDN** caches that file closer to users around the world so it loads faster.
+![Block Storage client upload](<Media/Block Storage client upload.png>)
+
+#### Multipart Uploads
+
+A **multipart upload** divides a large file into numbered chunks, called **parts**, and uploads each part separately. The object store then combines the parts in number order and exposes them as one object. The completed object behaves like a file uploaded in a single request; the parts are an implementation detail of the upload process.
+
+This is useful for large files because parts can be uploaded in parallel, and a failed part can be retried without restarting the entire upload. The client can also resume an interrupted upload if it retains the upload ID and the record of completed parts.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Backend
+    participant Database
+    participant Store as Object Store (S3)
+
+    Client->>Backend: Request multipart upload
+    Backend->>Store: Initiate upload
+    Store-->>Backend: Return upload ID
+    Backend-->>Client: Return upload ID and presigned part URLs
+
+    par Upload parts directly and in parallel
+        Client->>Store: Upload part 1
+        Store-->>Client: ETag for part 1
+    and
+        Client->>Store: Upload part 2
+        Store-->>Client: ETag for part 2
+    and
+        Client->>Store: Upload part 3
+        Store-->>Client: ETag for part 3
+    end
+
+    Client->>Backend: Complete upload with part numbers and ETags
+    Backend->>Store: Complete multipart upload
+    Store->>Store: Assemble parts in part-number order
+    Store-->>Backend: Return final object key or URL
+    Backend->>Database: Save object metadata
+    Backend-->>Client: Upload completed
+```
+
+The flow is:
+
+1. The client asks the backend to start an upload. The backend validates information such as the file name, content type, and expected size.
+2. The backend initiates a multipart upload with the object store and receives an **upload ID** that identifies this unfinished upload.
+3. The backend creates short-lived **presigned URLs** that authorize the client to upload particular part numbers directly to object storage. The large file therefore does not need to pass through the backend server.
+4. The client splits the file into parts and uploads them, often in parallel. The object store returns an **ETag** or another identifier for every successful part. Only failed parts need to be retried.
+5. After every part succeeds, the client sends the ordered list of part numbers and ETags to the backend. The backend asks the object store to complete the upload.
+6. The object store verifies the parts and assembles them in part-number order. This “stitching” happens inside the storage service; the backend does not download and concatenate the chunks itself.
+7. The backend stores the final object key, URL, size, and upload status in the primary database.
+
+An unfinished multipart upload should be **aborted** when the user cancels it or validation fails. A storage lifecycle rule should also remove abandoned uploads after a chosen period so incomplete parts do not continue consuming storage. Presigned URLs should expire quickly and authorize only the intended upload and part.
+
+### CDN
+
+**CDN** cache these static files like images, videos, HTML pages, javascript binaries, etc. closer to users around the world so it loads faster.
 
 Common pattern:
 
