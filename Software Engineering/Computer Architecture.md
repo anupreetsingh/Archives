@@ -1,18 +1,114 @@
 # Computer Architecture
 
-## CPU
+## Terminology
+
+### Hardware
+
+The physical components of a computer system.
+
+Examples:
+
+- CPU
+- RAM
+- SSD
+- GPU
+- Keyboard
+- Network card
+
+Hardware performs computation and other physical operations under the control of software.
+
+### Software
+
+The broad term for instructions and data that tell computer hardware what to do.
+
+Examples of software include:
+
+- Operating systems
+- Applications
+- Firmware
+- Device drivers
+- Utilities
+
+Software is non-physical; it is stored as data and instructions on hardware.
+
+### Firmware
+
+A specialized type of software that provides low-level control and is closely tied to a particular piece of hardware.
+
+Firmware is typically stored in non-volatile memory associated with the device.
+
+Examples:
+
+- BIOS/UEFI firmware on a motherboard
+- Firmware inside an SSD
+- Firmware inside a router
+- Firmware controlling a keyboard or mouse
+
+### Application
+
+Software designed to provide useful functionality to a user or another system.
+
+Examples:
+
+- Google Chrome
+- VS Code
+- Spotify
+- Microsoft Word
+
+For example when launching an application like Chrome The first Chrome process is created when the OS launches Chrome. Then Chrome's running code requests additional child processes from the OS. A typical flow looks like:
+
+```text
+User clicks application
+        ↓
+Operating system is asked to run the program
+        ↓
+OS loads the program's executable into memory
+        ↓
+OS creates the application's initial process
+        ↓
+Application code starts executing
+        ↓
+That process may ask the OS to create additional processes
+```
+
+An application may contain multiple programs/components and may run using one or many processes.
+
+For example:
+
+```text
+Google Chrome Application
+├── Browser Process
+├── Renderer Process
+├── Renderer Process
+├── GPU Process
+└── Utility Processes
+```
 
 ### Program
 
-An executable file on disk. Example: .exe on windows, main on linux or a compiled binary.
+A **File** is just bytes of data stored on disk. `.txt`, `.png`, `.jpg`, `.cpp` are all files that just differ in how those bytes are arranged. It is always up to the application consuming the file to determine how to interpret it.
+
+A **program** is an executable file on disk. Example: `.exe` on windows, main on linux or a compiled binary file. A **Binary File** contains instructions/data in a form the computer's processor can directly execute or use, rather than human-readable source code.
+
+Sometimes people also call a source code file like `.cpp` a program but the actual program is the compiled binary that will be formed from it.
 
 ### Process
 
-- Independent Program in execution. Loaded by the OS kernel when you run a program.
+Prcocess is an independent Program in execution. Loaded by the OS kernel when you run a program.
+
 - They are more secure and isolated.
 - Communication between processes is slower
 - Example: Opening VS Code, Google Chrome, etc.
--
+
+When a process is running, it has its own memory allocation like the heap, stack, code, data segments and its own process ID to keep track of its status by the OS. At any given instance, The CPU only contains the immediate execution state, mainly:
+
+```
+CPU
+├── Instruction register / pipeline → current instructions being executed
+├── Program counter                 → address of next instruction
+├── General-purpose registers       → current values/operands
+└── Stack pointer, flags, etc.      → current execution state
+```
 
 ### Thread
 
@@ -27,6 +123,10 @@ Chrome Process
 ├── Network Thread
 └── JavaScript Thread
 ```
+
+## CPU
+
+CPU(Central Processing Unit) is one of the core pieces of hardware and is responsible for executing instructions.
 
 ### CPU Cores
 
@@ -448,32 +548,3 @@ Examples:
 - file managers
 - desktop environments
 - background services
-
-#### Shell and Terminal
-
-A **terminal** is an interface for text input and output.
-
-A **shell** is the program that interprets commands typed by the user.
-
-Examples of shells:
-
-- `zsh`
-- `bash`
-- `fish`
-- PowerShell
-
-The terminal provides text input/output. The shell runs inside the terminal, reads commands from it, interprets them, and asks the operating system to execute programs.
-
-The shell is not the kernel. It is a normal user-space program that asks the operating system to run commands.
-
-```text
-User
-  ↓ types text
-Terminal
-  ↓ sends input to
-Shell
-  ↓ asks the OS to run programs
-Kernel
-  ↓ manages hardware and processes
-Hardware
-```

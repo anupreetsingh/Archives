@@ -83,12 +83,25 @@ Different kinds of relationships are:
 
 It is the first step you take to make data access faster.
 
+Example: If you want to query all posts for a given user. You would create an index for user_id(fk) on the post table
+Example: If you want to be able to sort using createdAt then we add an index at createdAt.
+
 ![Indexing](<Media/Data Modeling/Indexing.png>)
 
 In this example we use a B-Tree, which makes access logarithmic times faster than a linear scan.
 
-Example: If you want to query all posts for a given user. You would create an index for user_id(fk) on the post table
-Example: If you want to be able to sort using createdAt then we add an index at createdAt.
+### B-Tree
+
+A **B-Tree** is a balanced search tree that stores sorted keys and allows each node to have multiple children(Unlike a BST). Its high branching factor keeps the tree shallow, making it well suited to database indexes because fewer nodes—and therefore fewer disk pages—must be read.
+
+Its main properties are:
+
+- Keys within each node are sorted.
+- All leaf nodes remain at the same depth, so the tree stays balanced.
+- Each non-root node has a defined minimum and maximum number of keys, determined by the tree's order. The root is allowed to contain fewer keys.
+- An internal node containing $k$ keys has $k + 1$ children; leaf nodes have no children.
+- Search, insertion, and deletion take $O(\log n)$ time.
+- Nodes split or merge as data changes to preserve the tree's balance.
 
 ## Normalization vs Denormalization
 
