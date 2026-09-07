@@ -89,8 +89,10 @@ print(text.endswith("ld"))     # True
 ```python
 print(text.find("o"))      # 4 (first occurrence)
 print(text.rfind("o"))     # 7 (last occurrence)
-print(text.count("l"))     # 3 (number of occurrences)
+# .find() returns -1 when the element is not found.
 # .index() is like find() but raises ValueError if not found
+print(text.count("l"))     # 3 (number of occurrences)
+# `.count()` counts only non-overlapping occurrences: `"aaaa".count("aa")` returns `2`, not `3`.
 ```
 
 ### 8. `.zfill()` → Left-pads a string with zeros

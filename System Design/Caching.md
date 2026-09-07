@@ -86,6 +86,10 @@ Flow:
 - Application updates the cache
 - Application returns the value
 
+#### Consistency Strategy: Invalidate on Write
+
+When data is written to the database, the application deletes the corresponding cache entry instead of updating it. The next read misses the cache, fetches the latest value from the database, and repopulates the cache. This keeps writes simple but makes the first read after each write slower.
+
 ### Read - Through
 
 ![Read Through](<Media/Caching/Read Through.png>)

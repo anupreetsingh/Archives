@@ -8,6 +8,36 @@ A **namespace** is the actual name-to-object mapping.
 
 A **scope** is the region of code associated with a namespace level.
 
+## Python Vocabulary and Built-ins
+
+Python's vocabulary/grammar is understood directly by Python's parser, unlike names that are resolved to objects through namespaces.
+
+It Includes:
+
+- Keywords such as `if`, `for`, `def`, `class`, `return`, `and`, and `or`
+- Operators such as `+`, `-`, `==`, and `**`
+- Syntax such as function calls, attribute access, and indentation-delimited blocks
+- Notation such as `[]` for a list display and `{}` for an empty dictionary display
+
+A keyword cannot be **rebinded/shadowed** because it is part of the Python language's grammar:
+
+```python
+if = "hello"  # SyntaxError
+```
+
+**Built-ins** are names tied to objects in the namespace that Python makes available in all modules without any import. They include:
+
+- Functions such as `print()` and `len()`
+- Types such as `int`, `str`, `list`, and `dict`
+- Exceptions such as `Exception`
+
+Unlike keywords, a built-in name can be **shadowed** by a closer namespace, although doing so is usually best avoided:
+
+```python
+print = "shadowed"
+print("hello")  # TypeError because `print` now refers to a string
+```
+
 ## How Scope is Defined
 
 ### Other Languages
@@ -655,30 +685,3 @@ class Student:
 ```
 
 `cls` refers to the class that called the method. This is especially useful with inheritance.
-
-## Not part of Python namespaces
-
-Some things are related to names, but are not Python namespaces.
-
-### Keywords
-
-Keywords like `if`, `and`, `for`, `def`, and `class` are part of Python's grammar. They are different from built-in names like `print` because keywords cannot be shadowed as variable names.
-
-```python
-if = "hello"  # SyntaxError
-print = "hello"  # allowed, but bad idea
-```
-
-### Environment variables
-
-They are OS-level key-value settings available to a running program:
-
-```python
-import os  # os is a standard library module in Python
-
-print(os.environ["HOME"])
-```
-
-Here, `os` is added to the current module's global namespace and maps to the `os` module.
-Then `os.environ` gives access to OS-level environment variables. A `.env` file is a common way to define environment variables, but Python does not automatically load `.env` files unless a tool or library loads them.
-`"HOME"` is a key inside that environment-variable mapping.

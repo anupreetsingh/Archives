@@ -18,11 +18,31 @@ A code distribution written by someone else that can be installed and used in yo
 
 ### Package Manager
 
-Program for installing packages and frameworks from the internet. They could be System level and Language Level.
+A package manager installs, updates, and removes software together with its dependencies. They could be Operating-System(OS) level or Language Level.
 
-Packages can be installed individually, but most projects need a saved list of packages so the project can be installed again without dependency issues. Dependency issues happen when packages need different versions of the same package, when a package is missing, or when two developers are using different versions of a dependency.
+#### OS Level
 
-Different package managers need to know **where** to install a package and **how** to record that package for the project.
+OS-level package managers install software used by the operating system or by multiple users and projects. This can include installing CLI tools, desktop applications, system libraries, services, compilers, and language runtimes.
+
+Examples of OS level package managers:
+
+| Operating System | Package Manager |
+|---|---|
+| Debian/Ubuntu Linux | `apt` |
+| Fedora/RHEL Linux | `dnf` |
+| Arch Linux | `pacman` |
+| macOS | Homebrew |
+| Windows | `winget` / Chocolatey |
+
+For example, a system package manager might install Python, Node.js, Java, Git, PostgreSQL, or a shared C library. Packages are commonly installed into system-managed directories and may require administrator privileges.
+
+#### Language Level
+
+Language-level package managers install libraries and frameworks used by programs written in a particular language. Their dependencies are normally associated with a project or an isolated environment and are recorded in dependency and lock files so that the project can be installed reproducibly on another machine.
+
+**Dependency issues** can occur when a package is missing, packages require incompatible versions of the same dependency, or developers use different dependency versions.
+
+Different language-level package managers need to know **where** to make dependencies available and **how** to record them for the project.
 
 **Python:** The "current environment" is usually a **virtual environment** or a **conda environment**. Installing a package adds it to that environment and may also update a dependency file for the project.
 
@@ -43,7 +63,7 @@ Different package managers need to know **where** to install a package and **how
 
 A software framework built on top of a backend programming language that provides structure, conventions, and prebuilt functionality for developing server-side applications, reducing the amount of boilerplate code developers need to write.
 
-### Examples Map
+### Examples
 
 | Backend Programming Language | Runtime | Package Manager | Package/Library Examples | Frameworks |
 |---|---|---|---|---|
@@ -55,8 +75,8 @@ A software framework built on top of a backend programming language that provide
 
 ### Request-Response Cycle
 
-Client: Machine/ App/ Program sending a request.<br>
-Server: Machine/ App/ Program listening to and responding to requests.
+Client: Machine/App/Program sending a request.<br>
+Server: Machine/App/Program listening to and responding to requests.
 
 The communication process between a client and a server is called a request response cycle.
 
@@ -830,33 +850,3 @@ SQLite is excellent when simplicity matters.
 
 **PostgreSQL** is a server database. The database runs as a separate server process, often on a different machine or container, and the backend connects to it over the network.<br>
 PostgreSQL is usually better when many users are using the app at the same time and the backend needs a more powerful database server.
-
-### Data Storage Map
-
-Different kinds of data and workload usually go to different tools.
-
-```mermaid
-flowchart LR
-    Client["Client App"] --> Backend["Backend Server"]
-
-    Backend --> Cache["Cache<br/>Fast copy of frequently requested data"]
-    Cache -. "cache miss" .-> Backend
-
-    Backend --> Primary["Primary Database<br/>Source of truth"]
-    Backend --> Blob["Blob Storage<br/>Images, videos, files"]
-    Blob --> CDN["CDN<br/>Fast global delivery"]
-
-    Backend --> Search["Search Database<br/>Fast text search"]
-    Backend --> Queue["Queue<br/>Background or future work"]
-
-    Primary -. "copy/index" .-> Cache
-    Primary --> Analytics["Analytical Database<br/>Reports and data science"]
-```
-
-The backend server is the main place where business logic runs. It decides which storage system to use for a particular task.
-
-The primary database is usually the source of truth for the application. If another system like cache, search database, or analytics database has a copy of the data, that copy usually came from the primary database.
-
-The backend still talks to the cache directly because the backend is the one checking whether the fast copy is already available. If the data is not in cache, the backend reads it from the primary database and can save a copy in cache for future requests.
-
-For images and videos, the CDN is usually the cache layer. The file lives in blob storage, and the CDN keeps frequently requested files close to users.

@@ -19,7 +19,7 @@ Hardware performs computation and other physical operations under the control of
 
 ### Software
 
-The broad term for instructions and data that tell computer hardware what to do.
+The broad term for instructions and data that tell computer hardware what to do. Software is non-physical; it is stored as data and instructions on hardware.
 
 Examples of software include:
 
@@ -28,8 +28,6 @@ Examples of software include:
 - Firmware
 - Device drivers
 - Utilities
-
-Software is non-physical; it is stored as data and instructions on hardware.
 
 ### Firmware
 
@@ -132,7 +130,8 @@ CPU(Central Processing Unit) is one of the core pieces of hardware and is respon
 
 - A physical unit inside the CPU that executes instructions.
 - The OS Scheduler maps threads to cores.
-- Only one thread executes on a CPU core at any instant of time.
+- Normally only one thread executes on a CPU core at any instant of time.
+- But **Simultaneous multithreading (SMT)** allows one physical CPU core to process two threads at the same time by presenting itself to the OS as two logical cores. Both threads share the physical core's execution resources, so two logical cores do not provide the same performance as two separate physical cores. Intel's calls its implementation of SMT as Hyperthreading.
 
 #### Single Core CPU
 

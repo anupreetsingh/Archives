@@ -69,6 +69,6 @@
 
 1. Normalization (noun): In ML/data, it means transforming numerical values to a common or standardized scale. In databases, organizing tables into a structured form designed to reduce redundancy and improve data integrity.
 
-1. Interface(Noun): A point of contact or method through which two entities interact with each other. Example: The user interface was easy to navigate.
+1. Interface(Noun): A way, method, or point of contact through which two entities interact with each other. Example: The user interface was easy to navigate.
 
 1. Interface(Verb): To interact, communicate, or connect with something. Example: The backend interfaces with the database.

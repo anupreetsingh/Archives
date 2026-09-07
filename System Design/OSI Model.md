@@ -44,7 +44,11 @@ Other examples of application layer services could be HTTPS, DNS, FTP, etc.
 
 This layer is responsible for Data formatting, including tasks like encryption, compression and character encoding.
 
-For exammple: - TLS encryption, UTF-8 encoding, JPEG compression.
+For exammple: -
+
+- TLS(Transport layer security) encryption is used for encrypting HTTP to make it HTTPS. Conceptually it belongs in the OSI presentation layer, but in real world networking, TLS is implemented as a protocol that sits between Application and transport Layer.
+- UTF-8 encoding
+- JPEG compression.
 
 ## Layer 5 - Session Layer
 

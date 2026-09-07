@@ -27,9 +27,11 @@ So when people say "open the terminal", they usually mean "Open a terminal emula
 
 ## CLI
 
-**CLI** stands for **Command-Line Interface**.
+**CLI** stands for **Command-Line Interface**. It is a way of interacting with software by typing commands, instead of clicking buttons in  a graphical user interface(GUI).
 
-A CLI is a way of interacting with software by typing commands instead of clicking buttons in a graphical interface.
+A **CLI tool** is a program that provides a command-line interface. Which means you run that tool by typing the name of its executable, followed by any subcommands, options, and arguments that tell it what to do.
+
+Some programs provide only a CLI, while others provide both a CLI and a GUI. For example: Docker provides a GUI through the Docker desktop app and a CLI through the `docker` executable.
 
 Examples of CLI tools:
 
@@ -41,7 +43,7 @@ Examples of CLI tools:
 | Docker | `docker compose up` |
 | SQLite | `sqlite3 database.db` |
 
-The terminal is where you type the command. The shell interprets the command. The CLI program is often the actual tool being run.
+The terminal is where you type the command. The shell interprets the command. The CLI tool is often the actual tool being run.
 
 Example:
 
@@ -53,7 +55,7 @@ Breakdown:
 
 | Part | Meaning |
 |------|---------|
-| `git` | CLI program |
+| `git` | CLI Tool |
 | `commit` | Git subcommand |
 | `-m` | Option or flag |
 | `"Add notes"` | Argument passed to the command |
