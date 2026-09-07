@@ -72,3 +72,5 @@
 1. Interface(Noun): A way, method, or point of contact through which two entities interact with each other. Example: The user interface was easy to navigate.
 
 1. Interface(Verb): To interact, communicate, or connect with something. Example: The backend interfaces with the database.
+
+1. Cursor(Noun): A marker that indicates your current position within a place you are navigating. Example: The cursor shows where the next character will be inserted.

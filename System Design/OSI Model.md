@@ -27,18 +27,14 @@ As data moves between different network layer, each layer adds its own header an
 
 This is where applications interact with the network. It tells what network service does our application need?
 For instance: your browser making an HTTP request.
-Other examples of application layer services could be HTTPS, DNS, FTP, etc.
 
-- Different ways applications expose APIs to request data: REST vs GraphQL vs gRPC
+**Application Layer Protocols**
 
-- **WebSockets and SSE(Server-Sent Events)** are different communication mechanisms that an application can choose depending on the communication pattern it needs.
+- **HTTP/HTTPS:** Exchange requests and responses on the Web. HTTPS secures HTTP communication with TLS. See [HTTP](<../Software Engineering/HTTP.md>).
+- **DNS:** Looks up information about domain names, such as the IP address for a server.
+- **FTP:** Transfers files between a client and a server.
 
-  | WebSockets | SSE (Server-Sent Events) |
-  | --- | --- |
-  | Client ↔  Server | Server → Client |
-  | Both sides can send messages anytime | Only server pushes messages |
-  | Used for interactive communication | Used for live updates |
-  | Examples: Chat, games, trading | Examples: Notifications, dashboards, news feeds |
+REST, GraphQL, gRPC, webhooks, WebSockets, and SSE are different API approaches and communication mechanisms used at the application layer.
 
 ## Layer 6 - Presentation Layer
 

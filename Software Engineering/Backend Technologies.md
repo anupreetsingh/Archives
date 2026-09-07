@@ -94,226 +94,32 @@ sequenceDiagram
     Client->>Client: Render or use response
 ```
 
-### HTTP Request Elements
+- **Request:** A message sent by a client asking a server to do something, such as fetch data or create an order.
+- **Inbound request:** A request coming into the application we are looking at. A browser asking your backend to create an order is an inbound request to your backend.
+- **Outbound request:** A request sent by that application to another service. Your backend asking a payment service to process the order's payment is an outbound request from your backend.
+- **Response:** The message sent back to answer a request. It tells the caller what happened and can contain returned data or error details. Sending a response is not the same as making an outbound request.
 
-Example request:
+Inbound and outbound describe the direction relative to a particular application. The same request is outbound from your backend and inbound to the payment service. Your backend acts as the server when receiving the browser's request and as the client when calling the payment service.
 
-```http
-POST https://amazon.com/orders?status=pending
-Authorization: Bearer token
-Content-Type: application/json
-
-{
-  "productId": 123,
-  "quantity": 2
-}
-```
-
-```mermaid
-flowchart LR
-    Request["HTTP Request"]
-
-    Request --> Method["Method / Type<br/>POST"]
-    Request --> URL["URL<br/>https://amazon.com/orders?status=pending"]
-    Request --> Headers["Headers<br/>Authorization, Content-Type"]
-    Request --> Body["Body<br/>Data sent with request"]
-
-    URL --> Protocol["Protocol<br/>https://"]
-    URL --> Domain["Domain name<br/>amazon.com"]
-    URL --> Path["URL path<br/>/orders"]
-    URL --> Query["Query params<br/>?status=pending"]
-```
+See [HTTP](HTTP.md#url-to-request-target) to see how HTTP requests and responses are structured.
 
 ### APIs
 
-We use our programming language and backend framework to define what *types* of requests are allowed and *how* we should handle these requests
+**API(Application Programming Interface):** The definitive collection of requests that a backend exposes for clients to use, along with the rules for how those requests and responses are structured. We use our programming language and backend framework to define the API.
 
-Types of requests can vary by combination of HTTP Method + URL Path
-Example:
-GET /users
-POST /users
-GET /users/123
+> Named so because it allows applications to interact with each other programmatically.
 
-API(Application Programming Interface): The definitive collection of requests that a backend exposes for clients to use, along with the rules for how those requests and responses are structured.
+APIs could be formed in accordance with different conventions. Some common ones are:
 
-> Named after the fact that it allows applications to the interact with other applications programmatically
+1. **REST(Representational State Transfer):** Exposes resources through URL paths like `/users` or `/orders`, and uses HTTP methods to perform actions on those resources.
+2. **GraphQL:** Lets the client ask for exactly the data it needs, usually through one endpoint.
+3. **RPC(Remote Procedure Call):** A general approach where one service calls a function or procedure on another service as if it were local. Examples: gRPC, Apache Thrift.
 
-API's could be formed in accordance with different conventions. Some common ones are:
+See [API Design](API%20Design.md) for details on these conventions.
 
-1. REST(Representational State Transfer): The most common way for apps to talk to each other over HTTP. It exposes resources through URL paths like `/users` or `/orders`, and uses HTTP methods like `POST`, `GET`, `PUT`, and `DELETE` (CRUD) to perform actions on those resources.
+> API's on the web primarily uses HTTP for communication(HTTP for REST and GraphQL, HTTP2 for gRPC)
 
-> The name comes from the fact that the client requests a representation of a resource's current state, commonly in JSON format.
-
-REST API paths model **resources**, which are generally plural nouns representing the core entities in a system design, such as `events`, `venues`, `tickets`, and `bookings`. The HTTP method represents the client's intent or action on a resource:
-
-```http
-GET  /events                    # Get all events
-GET  /events/{id}               # Get a specific event
-GET  /venues/{id}               # Get a specific venue
-GET  /events/{id}/tickets       # Get the available tickets for an event
-POST /events/{id}/bookings      # Create a new booking for an event
-GET  /bookings/{id}             # Get a specific booking
-```
-
-#### Request Inputs
-
-An HTTP request can provide input to an API through three main locations:
-
-1. **Path parameters** identify the specific resource being addressed. They are part of the URL path and are required when the route needs a particular resource, such as the `id` in `GET /events/{id}`.
-2. **Query parameters** provide optional modifiers such as filters, sorting, or pagination. They appear after `?` in the URL and are separated by `&`, such as `GET /events?city=LA&date=2025-01-01`.
-3. **Request body** carries a structured payload, commonly JSON, containing the data needed to create or update a resource.
-
-```http
-# Path parameter: identify event 42
-GET /events/42
-
-# Query parameters: filter the events collection
-GET /events?city=LA&date=2025-01-01
-
-# Request body: provide data for a new event
-POST /events
-Content-Type: application/json
-
-{
-  "title": "Backend Conference",
-  "description": "A conference about backend engineering",
-  "location": "Los Angeles",
-  "date": "2025-01-01"
-}
-```
-
-#### Pagination
-
-Pagination divides a large collection into smaller responses. It keeps response sizes and database work bounded while allowing the client to request the next group of results. Pagination parameters belong in the query string because they modify how a collection is read rather than identify a different resource.
-
-Every paginated query needs a deterministic order. If multiple records can have the same value in the main sort column, add a unique column such as `id` as a tie-breaker; otherwise, records can be skipped or repeated between requests.
-
-There are two common approaches:
-
-1. **Offset pagination** tells the server how many records to skip. A request such as `GET /events?limit=20&offset=40` asks for records 41–60 in the ordered result. Page-number pagination is the same idea expressed as `page` and `page_size`, where `offset = (page - 1) * page_size`.
-
-   ```sql
-   SELECT id, title, created_at
-   FROM events
-   ORDER BY created_at DESC, id DESC
-   LIMIT 20 OFFSET 40;
-   ```
-
-   Offset pagination is simple and lets clients jump to a particular page. However, large offsets become slower because the database still has to pass over the skipped records. Inserts or deletions before the current offset can also cause records to be repeated or missed while a client moves through the pages.
-
-2. **Cursor pagination**, also called **keyset pagination**, asks for records after the last record previously returned. The cursor is normally an opaque string encoding the ordered values, such as `created_at` and `id`.
-
-   ```http
-   GET /events?limit=20&after=eyJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wMVQxMDowMDowMFoiLCJpZCI6NDJ9
-   ```
-
-   ```sql
-   SELECT id, title, created_at
-   FROM events
-   WHERE (created_at, id) < ('2025-01-01T10:00:00Z', 42)
-   ORDER BY created_at DESC, id DESC
-   LIMIT 21;
-   ```
-
-   The server requests one extra record to determine whether another page exists, returns only the first 20, and builds `next_cursor` from the last returned record:
-
-   ```json
-   {
-     "items": [
-       {"id": 41, "title": "Backend Conference", "created_at": "2025-01-01T09:30:00Z"}
-     ],
-     "next_cursor": "eyJjcmVhdGVkX2F0IjoiMjAyNS0wMS0wMVQwOTozMDowMFoiLCJpZCI6NDF9",
-     "has_more": true
-   }
-   ```
-
-   Cursor pagination performs consistently on large, frequently changing datasets, but it does not naturally support jumping directly to an arbitrary page.
-
-The backend should enforce a maximum `limit` or `page_size` so clients cannot request an unbounded response. A `total_count` can be useful for page-based interfaces, but counting a very large or heavily filtered collection may be expensive, so cursor-based APIs often return only `has_more` and the next cursor.
-
-#### Responses
-
-An HTTP response contains a **status code** indicating the result of the request and usually a **JSON response body** containing the returned data or error details.
-
-Suppose the frontend only needs the user's name:
-
-GET /users/42
-
-but the server returns:
-
-{
-  "id": 42,
-  "name": "Alice",
-  "email": "<alice@example.com>",
-  "address": "...",
-  "created_at": "...",
-  "preferences": {...}
-}
-
-You might receive more data than you need. This is called **over-fetching**.
-
-The opposite can also happen: you need a user and their orders, requiring:
-
-GET /users/42
-GET /users/42/orders
-
-That's potentially **under-fetching** — one request doesn't give you everything you need.
-
-This is one of the problems GraphQL was designed to address.
-
-2. GraphQL: Lets the client ask for exactly the data it needs, usually through one endpoint. Instead of exposing many resource-based URL paths like REST, GraphQL API commonly exposes one endpoint: schema that describes the available data and relationships.
-
-the client sends a query describing exactly what it wants.
-
-For example:
-
-query {
-  user(id: 42) {
-    name
-    email
-  }
-}
-
-The server might return:
-
-{
-  "data": {
-    "user": {
-      "name": "Alice",
-      "email": "<alice@example.com>"
-    }
-  }
-}
-
-This makes it especially useful for complex frontends where different screens need different combinations of data.
-
-**N+1 Query Problem**
-
-GraphQL can cause an **N+1 query problem** when one query fetches a list of `N` records and a nested-field resolver performs another database query for each record. A request-scoped **DataLoader** solves this by batching those individual lookups into one query and caching repeated lookups during the request.
-
-3. RPC(Remote Procedure Call): A general approach where one service calls a function or procedure on another service as if it were local. RPC systems usually rely on strongly defined service contracts and are often used for fast communication between backend services or microservices.
-
-Examples: gRPC, Apache Thrift.
-
-For example, imagine you have microservices:
-
-                ┌──────────────┐
-                │ User Service │
-                └──────────────┘
-                       ↑
-                       │ gRPC
-                       │
-┌───────────────┐      │
-│ Order Service │──────┘
-└───────────────┘
-
-The Order Service might effectively call:
-
-userService.GetUser(42)
-
-even though GetUser() is actually executing on another machine/container/service.
-
-gRPC typically uses Protocol Buffers (Protobuf) rather than JSON.
+**WebSockets and SSE(Server-Sent Events)** are ways an API can deliver updates when something happens, instead of making the client repeatedly ask whether anything changed.
 
 ### Data Validation
 
@@ -332,27 +138,7 @@ All of these technologies define the expected shape of data, validate incoming d
 | TypeScript/Javascript | **Next.js** | **Zod** |
 | Java | **Spring Boot** | **Jakarta Bean Validation** with **Hibernate Validator** |
 
-**Python / Pydantic** Example:
-
-```python
-from pydantic import BaseModel, EmailStr
-
-class CreateUserRequest(BaseModel):
-    email: EmailStr
-    age: int
-
-# This works because the data matches the expected shape.
-user = CreateUserRequest(
-    email="manpreet@example.com",
-    age=25
-)
-
-# This fails because the email is invalid and age is not an integer.
-user = CreateUserRequest(
-    email="not-an-email",
-    age="twenty-five"
-)
-```
+See [API Data Validation](API.md#data-validation) for an example.
 
 ### Servers
 
@@ -374,26 +160,7 @@ Example: **Uvicorn**, **Hypercorn**, and **Daphne**.
 Frameworks: **FastAPI**, **Django 3.0(With Async)**, and **Flask**<br>
 Runtime/Server layer: **Python** provides the runtime, ASGI servers like **Uvicorn**, **Hypercorn** and **Daphne** run the app and handle HTTP/network traffic.
 
-**FastAPI** Example:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/users/{user_id}")
-async def get_user(user_id: int):
-    return {"id": user_id, "name": "Manpreet"}
-```
-
-Run with:
-
-```bash
-uvicorn main:app --reload
-```
-
-Here, Uvicorn runs the FastAPI `app` object defined inside `main.py`.<br>
-The `app` object is your FastAPI application. It contains the registered routes, middleware, validation rules, and other backend behavior defined across source files like `main.py`, `routes.py`, `models.py`, `database.py`, etc.
+Uvicorn runs the FastAPI application, which contains the registered routes, middleware, validation rules, and other backend behavior. See [Setting Up a Route](API.md#setting-up-a-route) for an example.
 
 #### TypeScript/Javascript
 
