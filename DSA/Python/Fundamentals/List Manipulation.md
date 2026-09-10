@@ -288,9 +288,9 @@ part = nums[1:3]  # [1, 3]
 
 ### `list.copy()`
 
-A shallow copy creates a new outer container but keeps references to the same inner objects.
+A **shallow** copy creates a new outer container but keeps references to the same inner objects.
 
-A deep copy creates a new outer container and recursively copies the inner objects too.
+A **deep** copy creates a new outer container and recursively copies the inner objects too.
 
 `list.copy()` creates a shallow copy of the list.
 

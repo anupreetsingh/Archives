@@ -6,36 +6,36 @@
 
 An **undirected graph** has edges with no direction, so an edge between `A` and `B` can be used both from `A` to `B` and from `B` to `A`.
 
-For a simple undirected graph with `n` nodes and `m` edges:
+For a simple undirected graph with `V` nodes and `E` edges:
 
-- `m = 0` means there are no edges, so the graph is disconnected when `n > 1`.
-- `m = n - 1` is the fewest number of edges required to make a graph connected, so every node can be reached from every other node. A **tree** is a connected graph with exactly `n - 1` edges.
-- `m = nC2 = n(n - 1) / 2` is the maximum number of edges for a graph with `n` nodes. In this case every pair of nodes is directly connected to each other.
+- `E = 0` means there are no edges, so the graph is disconnected when `V > 1`.
+- `E = V - 1` is the fewest number of edges required to make a graph connected, so every node can be reached from every other node. A **tree** is a connected graph with exactly `V - 1` edges.
+- `E = VC2 = V(V - 1) / 2` is the maximum number of edges for a graph with `V` nodes. In this case every pair of nodes is directly connected to each other.
 
 So the edge-count bounds are:
 
 ```text
-Connected graph:  n - 1 <= m <= n(n - 1) / 2
-Any graph:        0 <= m <= n(n - 1) / 2
+Connected graph:  V - 1 <= E <= V(V - 1) / 2
+Any graph:        0 <= E <= V(V - 1) / 2
 ```
 
 ### Directed Graph
 
 A **directed graph** has edges with direction, so an edge from `A` to `B` can be used from `A` to `B`, but not automatically from `B` to `A`.
 
-For a simple directed graph with `n` nodes and `m` directed edges:
+For a simple directed graph with `V` nodes and `E` directed edges:
 
-- `m = 0` means there are no edges, so the graph is disconnected when `n > 1`.
-- `m = n - 1` is the fewest number of edges required to make the graph **weakly connected**, meaning it would be connected if edge directions were ignored.
-- `m = n` is the fewest number of edges required to make the graph **strongly connected** when `n > 1`, meaning every node can reach every other node by following edge directions.
-- `m = n(n - 1)` is the maximum number of directed edges, because each pair of nodes can have 2 ordered edges.
+- `E = 0` means there are no edges, so the graph is disconnected when `V > 1`.
+- `E = V - 1` is the fewest number of edges required to make the graph **weakly connected**, meaning it would be connected if edge directions were ignored.
+- `E = V` is the fewest number of edges required to make the graph **strongly connected** when `V > 1`, meaning every node can reach every other node by following edge directions.
+- `E = V(V - 1)` is the maximum number of directed edges, because each pair of nodes can have 2 ordered edges.
 
 So the edge-count bounds are:
 
 ```text
-Weakly connected directed graph:    n - 1 <= m <= n(n - 1)
-Strongly connected directed graph:  n <= m <= n(n - 1)
-Any directed graph:                 0 <= m <= n(n - 1)
+Weakly connected directed graph:    V - 1 <= E <= V(V - 1)
+Strongly connected directed graph:  V <= E <= V(V - 1)
+Any directed graph:                 0 <= E <= V(V - 1)
 ```
 
 ## BFS (Breadth-First Search)
@@ -165,7 +165,7 @@ So BFS and DFS usually track a `visited` state to avoid infinite loops and dupli
 
 - `set`: most common when nodes are hashable values like strings, numbers, or `(row, col)` tuples.
 - `dict`: useful when you also want to store information like parent, distance, color, or discovery state.
-- Boolean list: useful when nodes are numbered from `0` to `n - 1`.
+- Boolean list: useful when nodes are numbered from `0` to `V - 1`.
 - 2D boolean matrix: useful for grid traversal.
 - Parent check: works only for an undirected tree, where the only backward edge is the edge to the parent. For a general graph, use `visited`.
 

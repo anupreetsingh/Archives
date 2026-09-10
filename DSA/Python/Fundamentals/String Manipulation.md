@@ -51,10 +51,19 @@ print(joined)       # '2025-7-16'
 
 ### 3. `.replace()` → Replaces occurrences of a substring
 
+`.replace()` replaces **all non-overlapping occurrences** by default, scanning from left to right. Pass a third argument, `count`, to limit the number of replacements; `1` replaces only the first occurrence.
+
 ```python
-new_text = text.replace("World", "Python")
-print(new_text)     # 'Hello Python'
+repeated_text = "World World World"
+
+print(repeated_text.replace("World", "Python"))     # 'Python Python Python'
+print(repeated_text.replace("World", "Python", 1))  # 'Python World World'
+
+# Overlapping matches are not replaced:
+print("aaa".replace("aa", "X"))                     # 'Xa'
 ```
+
+In `"aaa"`, `"aa"` matches at positions `0–1` and `1–2`, but these overlap. Once the first match is replaced, its characters cannot participate in another match.
 
 ### 4. `.lower()`, `.upper()`, `.capitalize()`, `.title()`, `.swapcase()`
 
