@@ -574,7 +574,7 @@ There are different kinds of ML models:
   - MLP
   - CNNs
   - RNNs
-  - Transformerss
+  - Transformers
 
 A **neuron** is a small parameterized mathematical function within a neural network that transforms its inputs into an output, typically using learned weights and a bias followed by an activation function.
 

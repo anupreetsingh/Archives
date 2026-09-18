@@ -1,5 +1,7 @@
 # Comparison Sort
 
+A comparison sort determines the order of elements by comparing pairs of elements or their sorting keys, using operations such as `<`, `>`, or a custom comparator.
+
 ## Bubble Sort
 
 It is called bubble sort because each pass makes the extreme value in the unsorted prefix subarray "bubble up" toward the end through adjacent swaps.

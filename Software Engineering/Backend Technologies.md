@@ -539,7 +539,7 @@ ORMs are useful because they:
 2. Help create, read, update, and delete records
 3. Reduce repetitive SQL code
 4. Make relationships between tables easier to work with
-5. Help with database migrations in many frameworks
+5. Work with migration tools to keep the database schema aligned with model changes
 
 **Tradeoff:** ORMs can hide what SQL is actually being run. For simple apps this is convenient, but for performance-heavy apps developers still need to understand SQL.
 
@@ -609,6 +609,31 @@ user = session.get(User, 123)
 ```
 
 Here, the ORM knows that `User` maps to the `users` table, `id`, `name`, and `email` map to columns, and `123` is the primary key of the row to load. The database returns a row, and the ORM turns that row into a `User` object.
+
+#### Database Migration Tools
+
+A **database migration** is a versioned set of changes to a database, such as adding a table, changing a column, or creating an index. Migration tools manage these changes as the application evolves.
+
+The ORM maps models to tables and handles queries during application execution. The migration tool updates the actual database structure to match changes to those models. **Editing a model does not, by itself, update an existing database table.**
+
+Migration support can be built into the framework, as in Django, or provided by a separate tool, such as **Alembic** for SQLAlchemy.
+
+For example, adding an optional `phone` field to the `User` model above requires a migration that performs a database change like this:
+
+```sql
+ALTER TABLE users ADD COLUMN phone TEXT;
+```
+
+Existing rows keep their data and receive `NULL` for `phone`. Once the migration is applied, the ORM can read and write that column through the updated model.
+
+A typical workflow is:
+
+1. Update the ORM model to describe the intended schema.
+2. Generate a migration from the model changes, if the tool supports it, or write one manually. Review generated migrations because the tool cannot infer every intended change correctly.
+3. Commit the migration file alongside the model change so the schema history is versioned with the application code.
+4. Apply pending migrations to each environment in the required order. The tool records migration history in the database so it knows which changes remain to be applied.
+
+Migrations can also transform existing data, such as filling missing phone numbers before making the column required. Some changes support a reverse migration, but reversing the schema cannot automatically recover data deleted by a migration.
 
 ### Embedded Database vs Server Database
 

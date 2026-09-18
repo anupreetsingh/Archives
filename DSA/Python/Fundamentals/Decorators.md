@@ -61,34 +61,7 @@ You can make any sort of custom decorator of your choice. But keep a few things 
 
 ### Preserving metadata of original function
 
-When a decorator replaces a function with a wrapper, Python metadata such as the function name, docstring, and annotations can be lost.
-
-```python
-def decorator(func):
-    def wrapper():
-        return func()
-    return wrapper
-```
-
-The function now appears to be named `wrapper`, not the original function name.
-
-To fix this, use `functools.wraps`:
-
-```python
-from functools import wraps
-
-def decorator(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)
-    return wrapper
-```
-
-`@wraps(func)` is itself a decorator.
-
-It preserves metadata from the original function.
-
-In real code, most function decorators should use `functools.wraps`.
+See [`functools.wraps()`](<Functools.md#wraps>) for preserving the original function's metadata when writing a wrapper. The examples below use that pattern.
 
 ### Decorators With Arguments
 
@@ -170,11 +143,7 @@ When `expensive_operation()` runs, the `@timer` decorator records the start time
 
 Most decorator names are not built into Python directly. Some come from the standard library, some come from frameworks or third-party libraries, and some are custom decorators you define yourself.
 
-- `from functools import cache`
-  `@cache`: Stores results so repeated calls with the same arguments are faster. Very useful in recursion.
-
-- `from functools import lru_cache`
-  `@lru_cache(maxsize=128)`: Stores recent results, with an optional limit on how many results to remember.
+- [`@cache` and `@lru_cache`](<Functools.md#cache-and-lru_cache>): See the caching discussion for their differences, requirements, and example.
 
 - Install with `python -m pip install codetiming`, then use `from codetiming import Timer`
   `@Timer(name="expensive_operation", text="{name} took {:.4f} seconds")`: Prints or logs how long a function takes to run. This is a third-party decorator.
@@ -196,25 +165,6 @@ Most decorator names are not built into Python directly. Some come from the stan
 
 - `from django.contrib.auth.decorators import permission_required`
   `@permission_required("app.permission_name")`: Allows access only if the user has a specific permission. This is commonly used on Django views.
-
-Example with standard-library caching:
-
-```python
-from functools import cache, lru_cache
-
-
-@cache
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
-
-
-@lru_cache(maxsize=128)
-def get_user(user_id):
-    print(f"Fetching user {user_id}")
-    return {"id": user_id}
-```
 
 Example with a third-party timer decorator:
 
@@ -550,23 +500,7 @@ class Point:
 
 This is useful for classes that mainly store data.
 
-2. `@functools.total_ordering`
-
-```python
-from functools import total_ordering
-
-@total_ordering
-class Version:
-    def __eq__(self, other):
-        return self.number == other.number
-
-    def __lt__(self, other):
-        return self.number < other.number
-```
-
-`@total_ordering` fills in missing comparison methods such as `__le__`, `__gt__`, and `__ge__`.
-
-The class must define `__eq__` and at least one ordering method, such as `__lt__`.
+2. [`@functools.total_ordering`](<Functools.md#total_ordering>): See the comparison-method requirements and class example in the `functools` note.
 
 3. Registration-style class decorators
 

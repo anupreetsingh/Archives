@@ -74,3 +74,5 @@
 1. Interface(Verb): To interact, communicate, or connect with something. Example: The backend interfaces with the database.
 
 1. Cursor(Noun): A marker that indicates your current position within a place you are navigating. Example: The cursor shows where the next character will be inserted.
+
+1. Cloze (noun): An exercise in which one or more words are removed from a sentence or passage, leaving blanks to be filled in using context. The term comes from closure - the tendency to mentally complete something incomplete.- Example: “She opened her umbrella because it was _____.” → raining

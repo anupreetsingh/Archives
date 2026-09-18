@@ -392,10 +392,10 @@ on:
       - main
 
 jobs:
-  # test is the name of a job
   # github actions indents 2 spaces for next level
+  # test is the name of a job
+  # Creates a fresh Github-hosted Ubuntu Runner(VM) for the every job. So `test` job also gets a separate fresh VM.
   test:
-    # Creates a fresh Github-hosted Ubuntu Runner(VM) for the test job
     runs-on: ubuntu-latest
     # Everything under steps then executes on that same runner sequentially
     # The new VM starts without your repository files.
@@ -419,10 +419,10 @@ jobs:
       - name: Run tests
         run: pytest # pytest runs the automated tests in the tests/ folder that are named test_users.py, test_api.py, etc.
 
-  # Another job name
+  # build is another job started on a fresh VM.
   build:
-    needs: test # Requires the test job to successfully finish
-    runs-on: ubuntu-latest  # Creates separate runner for build job
+    needs: test # Requires the `test` job to successfully finish for starting the `build` job.
+    runs-on: ubuntu-latest  # The fresh VM uses an ubuntu machine.
 
     steps:
       - name: Checkout code

@@ -58,7 +58,7 @@ Any directed graph:                 0 <= E <= V(V - 1)
 
 - Visit all reachable nodes from a start node.
 - Differ mainly in order of visiting nodes and data structure used.
-- Usually track visited nodes to avoid processing the same node again.
+- Usually track **visited** nodes to avoid processing the same node again.
 
 ### Time and Space Complexity
 

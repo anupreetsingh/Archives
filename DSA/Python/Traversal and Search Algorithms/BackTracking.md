@@ -50,3 +50,11 @@ def backtrack(path, choices, target_sum):
         backtrack(path, choices, target_sum)  # Explore deeper
         path.pop()               # Undo choice (backtrack)
 ```
+
+### Normal DFS vs Backtracking
+
+- **Normal DFS:** Use when you need to explore a graph or tree—for example, check whether a node is reachable, find connected components, or visit every tree node. For graph reachability, once a node has been explored, reaching it through a different route adds no new information, so it stays marked as visited.
+
+- **Backtracking:** Use when you need to find valid solutions built from a sequence of choices. Earlier choices affect what you can choose next, so you restore the previous state before trying an alternative. sExamples include permutations, subsets, combinations, Sudoku, N-Queens, all simple paths, and word search without reusing cells within a path.
+
+**Example:** Checking whether any path exists from A to B uses normal DFS. Finding every simple path from A to B uses backtracking: a node cannot repeat within one path, but it can appear in other paths, so you unmark it from visited when returning from the current path.
