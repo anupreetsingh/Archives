@@ -76,3 +76,17 @@
 1. Cursor(Noun): A marker that indicates your current position within a place you are navigating. Example: The cursor shows where the next character will be inserted.
 
 1. Cloze (noun): An exercise in which one or more words are removed from a sentence or passage, leaving blanks to be filled in using context. The term comes from closure - the tendency to mentally complete something incomplete.- Example: “She opened her umbrella because it was _____.” → raining
+
+1. Hierarchy(Noun): An arrangement of entities into levels based on rank, authority, or parent–child relationships. Example: Hierarchy of Army Ranks.
+
+1. Taxonomy(Noun): A system for classifying entities into groups based on shared characteristics, often organized hierarchically. Example: Classifying books into fiction and nonfiction, then dividing fiction into categories such as mystery, fantasy, and romance.
+
+1. Topology(Noun): The arrangement of components and the connections between them. Examples:
+
+    Star Topology: Every device connects to a central device, such as a network switch.
+
+    Ring Topology: Devices connect in a closed loop, with each device connecting to its neighbours.
+
+    Full Mesh Topology: Every device connects to every other device.
+
+1.
