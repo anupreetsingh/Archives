@@ -89,7 +89,7 @@ A collision happens when two different keys with different hash output map to th
 
 ```text
 10 % 100 -> 10
-110 % 100 -> 100
+110 % 100 -> 10
 ```
 
 There are two common ways to handle collisions in a hash map:

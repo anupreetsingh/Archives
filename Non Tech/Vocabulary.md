@@ -1,5 +1,79 @@
-
 1. Etymology: Study of historical origin and evolution of words.
+
+1. **Parts of speech** are categories of words based on their role in a sentence. There are eight traditional parts of speech:
+    1. Noun: Names of a person, place, thing or idea. Example: Dog, Anupreet, Macbook.
+
+    2. Pronoun: Take the places of a noun or noun phrase. Common pronouns: It, He, Him, She, Her, Me, You.
+
+    3. Verb: Express an action or state of being.
+
+        Example: John *runs* every morning. She *knows* the answer.
+
+        A helping verb comes before the main verb and helps express things like tense, possibility, necessity or voice. Example: She *is* running. They *will* leave soon.
+
+    4. Adjective: Describes qualities of a noun or pronoun. Example: *beautiful* girl, *big* house, *red* car. Simple adjectives like *a*, *an*, and *the* are called articles/determiners.
+
+    5. Adverb: Describes a verb, an adjective or another adverb. Example: Runs *quickly*, he arrived *yesterday*, she spoke *very* *softly*.
+
+    6. Preposition: Show relationship involving things like place, time, position or direction. Common prepositions: in, on, at, by, with, from, to, under, over, between, through, before, after, about.
+
+        Example: She went *to* school *with* her friends. He sat *beside* me. The cat is *under* the bed.
+
+    7. Conjunction: Connects words, phrases or clauses. Common conjunctions: and, but, or, so, because, although, while, if, when, since.
+
+        Example: Tea *and* coffee, tired *but* happy, pizza *or* pasta.
+
+    8. Interjection: Express a sudden feeling or reaction. Usually has an `!` mark but it doesn't necessarily need it.
+
+        Example: *Wow!* The dog runs quickly. *Ah*, now I understand. *Ouch!* That really hurt, Oh, I didn't realize you were waiting for me.
+
+1. Subject: Person, thing or idea that performs the action or is being described. Example: *John* runs every morning. *The dog* barked loudly.
+
+1. Object: The person or thing that is affected by the action. Example: John kicks the *ball*. I ate the *pizza*. Object can direct or indirect. Example: She gave *me* a *book*. me is indirect object and book is the direct object.
+
+1. Phrase: A group of words that work together as a unit but does not contain a subject-verb relationship. Common type of phrases include:
+    1. Noun Phrase: A phrase built around a noun. Example: The tall man.
+    2. Verb Phrase: A main verb together with helping verbs. Example: has been studying.
+    3. Preposition Phrase: Begins with a preposition and usually ends with a noun or pronoun. Example: Under the bed.
+
+1. Clause: A group of words containing both a subject and verb. Clauses can be of two types:
+    1. Independent Clause: Can stand alone as a complement sentence. Example: She went home.
+    2. Dependent Clause: A clause that cannot stand alone as a complete sentence. Example: because she was tired.
+
+1. **Punctuations** are special symbols we use in writing to show where sentences end, where pauses or divisions occur, how ideas are connected and what tone or meaning is intended.
+
+    | Symbol | Name | Use | Example |
+    | --- | --- | --- | --- |
+    | `.` | Period / full stop | Ends a statement | **I am tired.** |
+    | `,` | Comma | Separates parts of a sentence | **His dog, a brown retriever, was always with thim** |
+    | `(` `)` | Parentheses | Sets off optional parenthetical information as a quieter, less emphasized aside | **His dog (a brown retriever) was always with him.** |
+    | `—` | Em dash | Adds a strong, noticeable break or interruption. Paired em dashes set off parenthetical or extra information with greater emphasis and more pronounced pauses than commas or parentheses. | **His dog - a large, brown retriever - was always with him.** |
+    | `-` | Hyphen | Joins words | **well-known author** |
+    | `?` | Question mark | Ends a direct question | **Where are you going?** |
+    | `!` | Exclamation mark | Shows strong emotion/emphasis | **Watch out!** |
+    | `:` | Colon | Introduces something | **I need three things: milk, eggs, and bread.** |
+    | `;` | Semicolon | Connects closely related independent clauses | **I was tired; I kept working.** |
+    | `'` | Apostrophe | Possession or contractions | **John's car**, **don't** |
+    | `"` | Quotation marks | Direct speech/quotation | She said, **“I'm tired.”** |
+    | `...` | Ellipsis | Shows omitted words or trailing thought | **I don't know... maybe.** |
+
+    With either paired em dashes or parentheses, the aside can be removed without breaking the sentence's grammar, although it may still provide important context.
+
+1. **Figures of Speech:** They are ways of using words creatively make an idea vivid and memorable. Example:
+
+    1. Simile(Noun): Compares two things using like or as. Example: She is as brave as a lion. He is cunning as a fox.
+    2. Metaphor(Noun): Describes something as something else to suggest similarity. Time is a theif. Exam was a piece of cake. He has a heart of stone.
+    3. Personification(Noun): Giving human qualities to something nonhuman. Example: Lightning danced around the night sky. The wind whispered through the trees.
+    4. Hyperbole(Noun): Using deliberate exagerration for emphasis. Example: We've done this a million times already. I'm so hungry I could eat a horse.
+    5. Oxymoron(Noun): Combines two contrasting terms. Example: Deafening Silence, Open Secret. Living dead.
+
+1. Duality(Noun): Two contrasting traits existing within one thing. Example: The duality of a father in both punishing and caring.
+
+1. Dichotomy(Noun): A division into two contrasting categories. Example: There is a striking dichotomy between his public image and private behaviour. The film focuses on the dichotomy between freedom and security.
+
+1. Irony(Noun): A situation that has contrast between what is expected and what happens(Situational Irony), or between what is said and what is meant(Verbal Irony). Situational Irony Example: A fire station burning down. Verbal Irony Example: "What a pleasant Weather" when there is a storm outside.
+
+1. Sarcasm(Noun): Using Verbal Irony to mock or tease. Example: "Right on time" to a person who is an hour late.
 
 1. Idiom(Noun)/ਮੁਹਾਵਰਾ: A peculiar expression whose meaning is characterisitically tied to a particular language and cannot be fully understood by simply reading the words.
 
@@ -89,4 +163,4 @@
 
     Full Mesh Topology: Every device connects to every other device.
 
-1.
+1. Phoneme(Noun): Smallest unit of sound in a language that can distinguish one word from another.
