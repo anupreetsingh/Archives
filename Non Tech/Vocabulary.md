@@ -1,5 +1,49 @@
 1. Etymology: Study of historical origin and evolution of words.
 
+1. Greek: Greek is a language spoken by the ancient greeks. It was eventually converted into latin alphabet used the romans.
+
+1. Latin: Language spoken by the ancient romans. It originated in the region of Latium in central Italy. Classical Latin, the polished literary form of Latin, flourished around 100 BC–200 AD, during the time of Caesar, Augustus, Virgil, etc.
+
+    After 500AD, polished latin gradually evolved into Romance languages like French, Spanish, Portuguese, Italian, Romanian, etc. The Latin alphabet spread throughout Europe and was adopted by other languages, such as English and German, initially due to Roman influence and later largely through Christianity.
+
+    Classical Latin continued to be used in writing, education, scholarship, and the Catholic Church long after it ceased to be an everyday spoken language. For example: The famous **Magna Carta** was written in latin in 1215 because latin was widely used in official legal documents and religious texts, even though the people of England primarily spoke Middle English at the time.
+
+1. Script: A writing system of written symbols used to represent one or more languages. Example: Latin script, Gurmukhi Script.
+
+1. Alphabet: Type of writing system in which consonants and vowels are represented by separate letters. Example:
+
+    Following language largely use letter in their alphabet that are derived from the latin script:
+    - English: 26 letters
+    - French: 26 + accented versions of those letters.
+    - Spanish: 27 letters
+    - German: 26 letters + Ä, Ö, Ü and ß
+
+1. Abugida: An abugida is a type of writing system in which consonant characters have an inherent vowel, and other vowels are typically indicated by modifying those consonant characters.
+
+1. Moraic:
+
+1. Morphographic:
+
+1. Language:
+
+    Punjabi is a language that can be formally written using two different scripts: Gurmukhi or Shamukhi. It can also informally be written in latin script like we usually do in text messages
+
+1. Dialect:
+
+1. Accent:
+
+1. Phoneme(Noun): Smallest unit of sound in a language that can distinguish one word from another.
+
+1. Grapheme:
+
+1. Morpheme:
+
+1. Syllable:
+
+1. Vowels: Sounds made with relatively unobstructed airflow through the mouth,  without being significantly blocked by your your tongue, teeth, or lips. English has 5 vowel letter : A, E, I, O, U.
+
+1. Consonants: Sounds made with airflow being blocked or narrowed something. English has 21 consonant letters. Examples: T - tongue touches behind the upper teeth; r - tongue narrows the airflow; p/b - lips close; f - upper and lower lip narrow the airflow.
+
 1. **Parts of speech** are categories of words based on their role in a sentence. There are eight traditional parts of speech:
     1. Noun: Names of a person, place, thing or idea. Example: Dog, Anupreet, Macbook.
 
@@ -163,4 +207,14 @@
 
     Full Mesh Topology: Every device connects to every other device.
 
-1. Phoneme(Noun): Smallest unit of sound in a language that can distinguish one word from another.
+1. Punjab(Noun): State in punjab named after the five rivers that flow through it. These 5 are Satluj, Ravi, Beas, Chenab and Jhelum. They eventually flow into the Indus(Sindhu) River in pakistan that flows into the arabian sea.
+
+1. Romanization(Noun): The process of using latin script to write a language that normally uses some other script. Example: Punjabi written using Latin letters in text messages, such as ਤੁਸੀਂ ਕਿਵੇਂ ਹੋ? → Tusi kiven ho?
+
+1. Anglicization(Noun): The process of adapting a foreign word, name, or phrase to conform to English spelling, pronunciation, or usage. Examples: सोनीपत (Sonipat) → Sonepat (an English spelling variant of the place name) and Jaspreet → Jass (an English-style nickname).
+
+1. Intonation(Noun): The pattern of rise and fall in pitch while speaking, used to convey meaning, attitude, or emotion. Example: Her rising intonation made the statement sound like a question: "You're leaving?". His falling intonation made his reply sound firm and final: “That’s my decision.”
+
+1. Cadence(Noun): The rhythmic flow of speech, shaped by its pace, pauses, and patterns of stress. Example: The speaker's slow, steady cadence gave the audience time to absorb each point.
+
+1. Enunciation(Noun): The act of pronouncing speech sounds and words clearly and distinctly. Example: Her clear enunciation made every word easy to understand, even at the back of the room.
