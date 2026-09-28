@@ -318,6 +318,7 @@ static int value = 42;     // Static variable
 
 #### BSS
 
+- BSS means Block Started by Symbol.
 - Contains Uninitialized global and static variables.
 - The executable stores metadata describing the required size rather than storing large blocks of zero bytes. The OS creates this region and initializes it to zero when the process starts.
 - Read/write accessible.
@@ -347,16 +348,20 @@ Reserve 100 MB of zero-initialized memory
 - Usually shared by all threads in a process.
 - Objects can be manually created and removed using `malloc`/`free` in C, `new`/`delete` in C++, or automatically managed through C++ abstractions such as smart pointers and RAII. High level languages such as python have automatic garbage collectors that free up unused objects.
 
-**Memory Leak:** Occurs when heap memory is allocated but never released, even though the program no longer has any way to use it.
-
 Example:
 
 ```cpp
-int* value = new int(42);
-// Forgot: delete value;
+void example() {
+    int* value = new int(42); // Allocates an int on the heap and returns its address for storage in value.
+
+    // delete expects a pointer to an object allocated with new, or nullptr.
+    delete value; // Destroys the pointed-to int and releases its memory.
+}
 ```
 
-The pointer may disappear, but the heap memory remains allocated.
+**Memory Leak:** Occurs when heap memory is allocated but never released, even though the program no longer has any way to use it.
+
+If `delete value;` is omitted in the example above, returning from `example()` ends the local pointer's lifetime but leaves the heap-allocated `int` allocated. Since no other pointer retains its address, the program can no longer access or release that object while it continues running
 
 #### Stack
 
@@ -374,17 +379,22 @@ The pointer may disappear, but the heap memory remains allocated.
 - Typically grows **downward** toward lower addresses
 
 ```cpp
-int main() {
-    int* value = new int(42);
+void example() {
+    int age = 42;
+    int* value = new int(age);
 
     delete value;
 }
 ```
 
-Visualization:
+`age` and `value` are both local objects, typically stored in the function call's stack frame. `age` stores an integer directly, while `value` stores the address of a separate heap-allocated `int`, initialized with a copy of `age`'s value. Both local objects' lifetimes end automatically when `example()` returns. The heap object is released earlier by `delete value;`.
+
+Visualization before `delete value;`:
 
 ```text
 Stack                    Heap
++------------+
+| age: 42    |
 +------------+          +------+
 | value -----+--------->|  42  |
 +------------+          +------+

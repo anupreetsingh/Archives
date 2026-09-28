@@ -42,7 +42,7 @@ This layer is responsible for Data formatting, including tasks like encryption, 
 
 For exammple: -
 
-- TLS(Transport layer security) encryption is used for encrypting HTTP to make it HTTPS. Conceptually it belongs in the OSI presentation layer, but in real world networking, TLS is implemented as a protocol that sits between Application and transport Layer.
+- TLS(Transport layer security) encryption is used for encrypting HTTP to make it HTTPS. In the OSI model, TLS is usually placed in the presentation layer, since encryption is a presentation-layer function, but in real-world networking, TLS is effectively implemented as a protocol that sits between the application and transport layers.
 - UTF-8 encoding
 - JPEG compression.
 
@@ -68,7 +68,7 @@ There are 2 major protocols that could be used here:
     - Reliable and ordered delivery
     - Retransmission of lost packets
     - Flow and Congestion control(don't overwhelm receiver)
-    - **3 Way handeshake** for establishing the connection
+    - **3 Way handshake** for establishing the connection
 
 2. UDP(User Datagram Protocol) provides:
     - Best effort delivery

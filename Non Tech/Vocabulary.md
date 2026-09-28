@@ -207,6 +207,10 @@
 
     Full Mesh Topology: Every device connects to every other device.
 
+1. Cardinality(Noun): Describes how many elements there are in a group or set. Unary(1), Binary(2), Ternary(3), Quaternary(4) can describe the number of components, arguments, or participants in something. Example: This is a binary operator. The operator has a cardinality of 2 because it takes two operands.
+
+1. Ordinality(Noun): Describes the rank of an element in a hierarchy. Primary(1), Secondary(2), Tertiary(3), Quaternary(4). Example: This is the secondary objective. This objective's ordinality is 2 because it ranks second in priority.
+
 1. Punjab(Noun): State in punjab named after the five rivers that flow through it. These 5 are Satluj, Ravi, Beas, Chenab and Jhelum. They eventually flow into the Indus(Sindhu) River in pakistan that flows into the arabian sea.
 
 1. Romanization(Noun): The process of using latin script to write a language that normally uses some other script. Example: Punjabi written using Latin letters in text messages, such as ਤੁਸੀਂ ਕਿਵੇਂ ਹੋ? → Tusi kiven ho?
