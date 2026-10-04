@@ -269,7 +269,7 @@ A `total_count` can be useful for page-based interfaces, but counting a very lar
 
 #### Responses and Fetching Data
 
-The backend chooses which fields to return for each resource. For HTTP status codes and successful method/status pairings, see [Status Codes](HTTP.md#status-codes).
+The backend chooses which fields to return for each resource. For HTTP status codes and successful method/status pairings, see [Status Codes](Networking/HTTP.md#status-codes).
 
 Suppose the frontend only needs the user's name:
 
@@ -437,7 +437,7 @@ An API framework can use a model like this to validate the request body before c
 
 ### Authentication and Authorization
 
-The backend checks who is calling and whether they are allowed to perform the requested action. See [Authentication](Authentication.md).
+The backend checks who is calling and whether they are allowed to perform the requested action. See [Authentication](Networking/Authentication.md).
 
 ## Event Notifications
 

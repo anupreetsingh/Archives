@@ -2,7 +2,7 @@
 
 **Authentication** establishes who a user or client is. Users can authenticate with a password, a one-time code, a passkey, or an external identity provider. API clients can present credentials such as API keys or access tokens. **Authorization** then determines which resources and actions that identity is allowed to access.
 
-The backend chooses which [endpoints](API%20Design.md#resources-and-routes) require authentication and enforces the check through **middleware, dependencies, decorators, or authentication guards**. For example, a custom decorator can protect a specific route:
+The backend chooses which endpoints require authentication and enforces the check through **middleware, dependencies, decorators, or authentication guards**. For example, a custom decorator can protect a specific route:
 
 ```python
 @app.get("/profile")
@@ -11,15 +11,17 @@ def get_profile():
     ...  # Return the authenticated user's profile.
 ```
 
-Here, `@app.get("/profile")` registers the endpoint, while `@require_auth` checks authentication before `get_profile()` runs. Missing or invalid credentials prevent the handler from running, typically producing `401 Unauthorized` for an API or a redirect to a login page for a browser application. The decorator is conceptual; see [Django's view protection](Django%20Guide.md#protecting-views) for a concrete implementation.
-
-A **session** is the application context associated with a client across multiple requests, such as its signed-in identity. After login, an authenticated session lets the client continue making requests without repeating the original sign-in process. Because [HTTP is stateless](HTTP.md#http-request-elements), each protected request still carries a credential that the server validates to recognize that session.
+Here, `@app.get("/profile")` registers the endpoint, while `@require_auth` checks authentication before `get_profile()` runs. Missing or invalid credentials prevent the handler from running, typically producing `401 Unauthorized` for an API or a redirect to a login page for a browser application.
 
 ## Session
 
+A **session** is the application context associated with a client across multiple requests, such as its signed-in identity. After login, an authenticated session lets the client continue making requests without repeating the original sign-in process. Because HTTP itself is stateless, each protected request still carries a credential that the server validates to recognize that session.
+
+That credential takes one of two forms: a reference to session data the server stores (stateful), or a signed token that carries the session claims itself (stateless).
+
 ### Stateful
 
-The client stores only an opaque session ID, usually in a cookie, while the corresponding session data (the state) remains something rapidly accessible such as an in-memory data store like **Redis**.
+In stateful authentication, the server keeps the session data (the state) and gives the client only an opaque session ID, usually in a cookie. The ID carries no information itself; it is a random key the server uses to look up the session, so the data is typically kept in a fast in-memory store such as **Redis**.
 
 ```mermaid
 flowchart LR
@@ -63,22 +65,14 @@ The attributes in this example control storage and delivery:
 
 On logout, the server can also clear this browser cookie with `Set-Cookie: session_id=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`. Deletion must match the original cookie's name, domain scope, and path. Clearing the cookie alone does not revoke the Redis session.
 
-#### Tradeoffs
-
-1. Sessions can be revoked immediately and updated centrally.
-2. Only a small, meaningless identifier is exposed to the client.
-3. Every authenticated request normally requires a Redis lookup.
-4. Redis becomes infrastructure that must be secured, scaled, and kept available.
-5. Storage usage increases with the number and size of active sessions.
-
 ### Stateless
 
-The client stores a signed JWT containing user claims. The server verifies the token locally instead of retrieving a session from a central store.
+In stateless authentication, the server stores no session data. Instead, the client holds a signed **JWT** (JSON Web Token) that carries the session's **claims**, statements such as the user ID, roles, and expiration time. Because the signature proves the server issued the token and nobody has altered it, the server can verify it locally instead of looking up a session in a central store.
 
 ```mermaid
 flowchart LR
     C[Client] -->|Signed JWT| A[Application server]
-    A -->|Verify signature and claims| K[Signing or public key]
+    A -.->|Verify locally| K[Signing or public key]
 ```
 
 #### Mechanism
@@ -90,7 +84,7 @@ flowchart LR
 
 ##### HTTP Bearer Token Exchange
 
-A JWT is a token format. **Bearer** describes how a token is used: whoever possesses a valid token can present it to exercise its granted access without proving possession of a separate cryptographic key. A bearer token can be a JWT or an opaque string. Bearer tokens must be kept private and transmitted over HTTPS.
+A JWT is a token *format*, the word **Bearer** describes how a token is *used*. As the word suggests, the *bearer* (whoever holds the token) gets its access; the server does not check who is presenting it. A stolen token therefore works just like the real one, so it must be kept private and sent only over HTTPS. A bearer token can be a JWT or an opaque string.
 
 A token-issuing endpoint commonly returns the JWT in a JSON response body. Here, `header.payload.signature` is a placeholder for the complete signed JWT:
 
@@ -123,13 +117,21 @@ Authorization: Bearer header.payload.signature
 
 ##### JWTs in Cookies
 
-A server can also return a JWT through `Set-Cookie`, with the JWT as the cookie value. The browser then follows the same [cookie exchange](#http-cookie-exchange), sending it in `Cookie`. Using a cookie does not itself require server-side session storage: the server can still validate the JWT locally. The token format and its transport are separate choices.
+A server can also return a JWT through `Set-Cookie`, with the JWT as the cookie value. The browser then follows the same cookie exchange, sending it in `Cookie`. Using a cookie does not itself require server-side session storage: the server can still validate the JWT locally. The token format and its transport are separate choices.
 
-#### Tradeoffs
+### Tradeoffs
 
-1. Authentication scales easily across application servers because no shared session lookup is required.
-2. Local verification avoids a Redis request, but the larger token is transmitted on every request.
-3. Immediate revocation is difficult; a stolen token can remain valid until it expires.
-4. Role or permission changes may not take effect until a new token is issued.
-5. Refresh tokens, rotation, or revocation lists can improve security but reintroduce server-side state.
-6. JWT payloads are encoded rather than encrypted, so they must not contain secrets.
+The core tradeoff when choosing between stateful and stateless is **control versus independence**: a stateful session lives on the server, so the server can change or revoke it at any time; a stateless token lives with the client, so servers need no shared storage but cannot take the token back before it expires.
+
+| | Stateful | Stateless |
+|---|---|---|
+| Credential the client holds | Small, meaningless session ID | Larger JWT whose claims anyone can read |
+| Server-side storage | Grows with active sessions | None |
+| Per-request cost | Lookup in a shared store such as Redis | Local signature check |
+| Scaling across servers | Every server depends on the shared store, which must be secured, scaled, and kept available | Any server with the key can verify independently |
+| Revocation | Immediate: delete the session | Difficult: a stolen token stays valid until it expires |
+| Role or permission changes | Take effect immediately | Wait until a new token is issued |
+
+**Stateful** suits browser applications and systems where instant logout or revocation matters. **Stateless** suits APIs verified by many services, where calling a shared store on every request is costly.
+
+Many systems combine both: a **short-lived JWT access token** avoids a lookup on most requests, while a server-side **refresh token** can be revoked. This reintroduces some state, but it limits how long a stolen access token stays useful.

@@ -136,7 +136,7 @@ sequenceDiagram
 
 Inbound and outbound describe the direction relative to a particular application. The same request is outbound from your backend and inbound to the payment service. Your backend acts as the server when receiving the browser's request and as the client when calling the payment service.
 
-See [HTTP](HTTP.md#url-to-request-target) to see how HTTP requests and responses are structured.
+See [HTTP](Networking/HTTP.md#url-to-request-target) to see how HTTP requests and responses are structured.
 
 ### APIs
 

@@ -183,7 +183,7 @@ The request asks *what to do, on which resource*; the response reports *what hap
 
 ### How the Backend Creates a Response
 
-A response is not typed out by hand either. In the [FastAPI route handler example](API.md#resources-and-routes), the function returns a Python dictionary. FastAPI serializes it into a JSON response, with the default status `200 OK` and `Content-Type: application/json`, and Uvicorn sends it back to the client.
+A response is not typed out by hand either. In the [FastAPI route handler example](../API%20Design.md#resources-and-routes), the function returns a Python dictionary. FastAPI serializes it into a JSON response, with the default status `200 OK` and `Content-Type: application/json`, and Uvicorn sends it back to the client.
 
 The backend can choose a different status, add headers, or return another body format. For the order above, it would select `201 Created` and add the `Location` header pointing at the new order. See [FastAPI responses](https://fastapi.tiangolo.com/advanced/response-directly/).
 
