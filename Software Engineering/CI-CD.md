@@ -294,6 +294,43 @@ In Kubernets, a **resource** is an API object that defines the desired state of 
 
 For example, when you create a Deployment, Service, ConfigMap, or Secret, you are creating Kubernetes resources.
 
+#### Manifests and Helm
+
+A **manifest** is the `.yaml` file that declares one or more resources. The flow is the same no matter how the manifest is produced:
+
+```text
+manifest (.yaml)  --kubectl apply / helm upgrade-->  API server  -->  etcd stores desired state
+                                                                          |
+                                     controllers + scheduler reconcile actual state to match it
+```
+
+There are two common ways to write and apply them:
+
+- **Plain manifests:** the YAML is written out in full, one file per resource (e.g. `k8s/deployment.yaml`, `k8s/service.yaml` in the CD section below). Applied with `kubectl apply -f k8s/`. Simple and readable, but values that differ between environments (image tag, replica count, memory limits) must be copied and edited per environment, or patched at deploy time with commands like `kubectl set image`.
+
+- **Helm charts:** **Helm** is a package manager for Kubernetes. A **chart** is a folder of manifest *templates* with placeholders, plus a `values.yaml` file that fills them in. Helm renders the templates into plain manifests and applies them as one versioned **release**.
+
+    ```text
+    my-app-chart/
+    ├── Chart.yaml            # chart name and version
+    ├── values.yaml           # default values (replicas: 3, image.tag: latest, ...)
+    └── templates/
+        ├── deployment.yaml   # replicas: {{ .Values.replicas }}
+        └── service.yaml
+    ```
+
+    ```bash
+    # Install or upgrade the release, overriding the image tag from CI
+    helm upgrade --install my-app ./my-app-chart --set image.tag=$IMAGE_TAG
+
+    # Roll back to the previous release if the new one is bad
+    helm rollback my-app
+    ```
+
+    One chart can serve dev, staging, and prod by swapping the values file (`-f values-prod.yaml`). Helm also keeps release history, so rollback is a single command. Third-party software such as Qdrant or Postgres is usually installed from its publisher's chart rather than written from scratch.
+
+Rule of thumb: plain manifests for a single small app in one environment; Helm once there are several services, several environments, or third-party components.
+
 ### Orchestration Options on AWS
 
 The orchestrator and the compute it controls are separate choices. Kubernetes or ECS determines the orchestration API and scheduling behavior, while EC2 or Fargate supplies the CPU and memory on which application containers run.
@@ -497,7 +534,7 @@ The EKS cluster and worker nodes could have been created manually through the AW
 
 ### k8s/
 
-We also assume the Kubernetes resources for the application have already been created from the files in the `k8s/` directory. For the initial deployment these could be applied using:
+We also assume the Kubernetes resources for the application have already been created from the plain manifests in the `k8s/` directory (see [Manifests and Helm](#manifests-and-helm)). For the initial deployment these could be applied using:
 
 ```bash
 kubectl apply -f k8s/deployment.yaml
