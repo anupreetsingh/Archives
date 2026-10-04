@@ -222,3 +222,5 @@
 1. Cadence(Noun): The rhythmic flow of speech, shaped by its pace, pauses, and patterns of stress. Example: The speaker's slow, steady cadence gave the audience time to absorb each point.
 
 1. Enunciation(Noun): The act of pronouncing speech sounds and words clearly and distinctly. Example: Her clear enunciation made every word easy to understand, even at the back of the room.
+
+1. Plinth(Noun): A low surface for placing something or sitting. Closest thing to "Thahraa" in punjabi.
