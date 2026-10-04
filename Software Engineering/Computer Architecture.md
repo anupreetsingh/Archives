@@ -478,20 +478,6 @@ Kernel space / operating system core
     └── permissions and isolation
 ```
 
-Typical interaction:
-
-```text
-Application or shell
-  ↓ system call
-Kernel
-  ↓ controls
-Hardware
-  ↓ returns result
-Kernel
-  ↓ returns result
-Application or shell
-```
-
 ### Kernel
 
 The kernel is the core component of an OS. Applications usually do not access hardware directly. Instead, they ask the kernel to perform privileged operations through **system calls**.
@@ -507,17 +493,65 @@ The kernel is responsible for managing the most important system resources:
 - networking
 - permissions and isolation
 
+#### User Mode and Kernel Mode
+
+Modern operating systems separate normal application code from privileged kernel code using two CPU modes:
+
+- **User mode**: where regular applications run. Code can only compute on its own process's memory. It cannot touch hardware, other processes' memory, or protected system resources.
+- **Kernel mode**: where the OS kernel runs, with full access to the hardware and all memory.
+
+The **CPU itself enforces** this separation, not just convention. If user-mode code tries a privileged instruction or accesses memory outside its address space, the CPU raises a fault and the kernel takes over, typically killing the process (for example with a segmentation fault). Together with virtual memory, this is what stops one program from crashing or spying on another.
+
 #### System Calls
 
-A **system call** is the controlled entry point from a user-space program into the kernel.
+A **system call** is how a running program asks the kernel to do something it isn't allowed to do itself. It is the one controlled doorway from user mode into kernel mode.
 
-Examples:
+A useful rule: **anything a process does beyond calculating needs a system call.** Hashing, parsing, and sorting happen entirely inside the process. Opening a file, printing to the terminal, sending over the network, starting another process, or getting more memory all go through the kernel.
 
-- creating a process
-- reading or writing a file
-- allocating memory
-- sending data over a network
-- asking for information about the system
+##### One System Call, Step by Step
+
+Follow one thread of `git` as it saves a commit object:
+
+1. git's own code runs in user mode, hashing files and building the commit object. The CPU runs git's instructions with restricted privileges.
+2. git calls `write()`. This executes a special CPU instruction (`syscall` on x86-64, `svc` on ARM) that switches the same CPU, still running the same thread, into kernel mode and jumps to a fixed kernel entry point. Programs cannot choose which kernel code runs.
+3. Kernel code runs on git's behalf: it checks permissions and writes to the file using the hardware. It is still git's thread, and the time counts as git's, but the instructions are now the kernel's.
+4. The kernel returns the result (bytes written, or an error). The CPU drops back to user mode, and git continues where it left off.
+
+So the kernel is not a separate process that programs send messages to; it is code a process's thread enters through this doorway. `time` shows the split for any command:
+
+```bash
+time git status
+# user  0.02s   ← git's own code (user mode)
+# sys   0.02s   ← kernel code on git's behalf (kernel mode)
+```
+
+| Need | Example system calls |
+| --- | --- |
+| Files | `open()`, `read()`, `write()`, `close()`, `rename()` |
+| Processes | `fork()`, `execve()`, `waitpid()`, `exit()` |
+| Memory | `mmap()`, `brk()` |
+| Network | `socket()`, `connect()`, `send()`, `recv()` |
+
+Programs rarely make system calls directly. They call library functions, such as C's `fopen()` or Python's `open()`, which make the system call underneath; these are the "system libraries" in the [OS diagram](#operating-systemos). Because each call switches CPU modes, it costs more than an ordinary function call, so libraries buffer output and send many small writes to the kernel in one `write()`.
+
+##### A Whole Command
+
+Zooming out to `git commit -m "msg"`, each program makes its own system calls:
+
+1. The shell reads your line with `read()` on the terminal and finds `/usr/bin/git` by checking `$PATH` with `stat()`.
+2. The shell starts git: `fork()` copies the shell, and `execve()` replaces that copy with git (`posix_spawn()` on macOS does both). The shell then waits in `waitpid()`.
+3. git makes its own system calls: `read()` on `.git/index`, `write()` for new objects in `.git/objects/`, and `rename()` to replace `.git/index.lock` with `.git/index`. Hashing needs none.
+4. git prints its result with `write()` and calls `exit(0)`. The shell's `waitpid()` returns, and it writes the next prompt.
+
+The shell does not make git's system calls for it.
+
+To watch system calls live on Linux:
+
+```bash
+strace -f -e trace=openat,write,rename,execve git commit -m "test"
+```
+
+On macOS, run `sudo fs_usage -w -f filesys git` in one terminal and commit in another.
 
 #### Device Drivers
 
@@ -530,15 +564,6 @@ Applications usually do not talk to devices directly. They ask the kernel, and t
 A **filesystem** organizes data on storage devices into files and directories.
 
 Applications use file operations like open, read, write, and delete. The kernel and filesystem code translate those requests into lower-level storage operations.
-
-#### User Mode and Kernel Mode
-
-Modern operating systems separate normal application code from privileged kernel code.
-
-- **User mode**: where regular applications run
-- **Kernel mode**: where the OS kernel runs
-
-This separation prevents normal programs from directly modifying hardware, other programs' memory, or protected system resources.
 
 #### Kernel in Other Contexts
 
@@ -557,3 +582,5 @@ Examples:
 - file managers
 - desktop environments
 - background services
+
+Despite shipping with the OS, these run in user mode like any other application and use the same system calls. A shell has no special access; it launches programs with `fork()` and `execve()`, as in the [`git commit` example](#system-calls).
