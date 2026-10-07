@@ -103,7 +103,14 @@ A commit requires a commit message, and is made like this:
 git commit -m "Your commit message"  
 ```
 
-Every commmit has a unique ***commit hash code*** associated with it that acts as its unique identifier.
+Every commit has a unique ***commit hash code*** that identifies it, calculated by hashing the entire **commit object**, which includes:
+
+- Author: The name and email of the person who originally wrote the changes.
+- Committer: The name and email of the person who recorded the commit in Git. The committer could be different from the author. For example, when you cherry-pick someone else’s commit, they remain the author, and you become the committer of the new commit.
+- Time: Separate author and committer timestamps, including time zone offsets.
+- Message: The description of the changes.
+- Tree object: A reference to the snapshot of the project's tracked files and directories.
+- Parent commit(s): The hashes of the preceding commits; the first commit has none.
 
 Get more context about [Branches](#branches) of commits in its section below.
 
