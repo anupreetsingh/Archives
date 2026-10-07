@@ -565,6 +565,26 @@ A **filesystem** organizes data on storage devices into files and directories.
 
 Applications use file operations like open, read, write, and delete. The kernel and filesystem code translate those requests into lower-level storage operations.
 
+##### Soft Link vs Hard Link vs APFS Clone
+
+- **Soft link (symlink)**: a tiny file that just stores another file's path, like a shortcut. If the target is moved or deleted, the link breaks. `ln -s target link`
+- **Hard link**: a second name for the same file (same inode). A change made through either name shows in both. The data is freed only when the last name is deleted. `ln target link`
+- **APFS clone**: a separate file with its own inode, whose block list points at the same data blocks on the SSD. Nothing is copied until one of the files changes. Then only the changed blocks get new space (copy-on-write), and the other file stays as it was. A block is freed only when no file uses it. `cp -c source copy`
+
+```txt
+Soft link:   link → "path/to/file" → file → inode → blocks
+
+Hard link:   name A ─┐
+                     ├→ one inode → blocks
+             name B ─┘
+
+APFS clone:  file A → inode A ─┐
+                               ├→ shared blocks  (+ each file's own changed blocks)
+             file B → inode B ─┘
+```
+
+The VM manager **Tart** uses an APFS clone, so macOS running inside the VM can change its disk while the downloaded image stays untouched.
+
 #### Kernel in Other Contexts
 
 The word **kernel** can also mean the central execution component of a system.
