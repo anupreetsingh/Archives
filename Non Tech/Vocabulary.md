@@ -224,3 +224,5 @@
 1. Enunciation(Noun): The act of pronouncing speech sounds and words clearly and distinctly. Example: Her clear enunciation made every word easy to understand, even at the back of the room.
 
 1. Plinth(Noun): A low surface for placing something or sitting. Closest thing to "Thahraa" in punjabi.
+
+1. Artifact(Noun): Something created, produced or left behind as a result of some process or activity. Example: An ancient clay pot is an artifact of the civilization that made it. The compressed image had visible artifacts, including blurry edges and blocky patches around the text.

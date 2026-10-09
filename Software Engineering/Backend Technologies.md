@@ -12,6 +12,8 @@ Popular Languages:
 2. Typescript/Javascscript: Enabled by NodeJS to run outside of a browser
 3. Java
 
+For what a runtime supplies and how Node.js fits, see [Runtimes](<Language Details/Language Execution Models.md#runtimes>).
+
 ### Package/Library
 
 A code distribution written by someone else that can be installed and used in your project. It usually contains functions, classes or tools that give us additional functionality like access to use-case-specific data type, calculation features, talking to a database and setting up user authentication and login.
