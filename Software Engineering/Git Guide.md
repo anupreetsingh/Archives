@@ -695,6 +695,46 @@ A---B---C main
 - Run `git rebase --update-refs main` while on `topic`.
 - Git rebases `topic` onto `main`, so it rewrites `D`, `E`, and `F` as `D'`, `E'`, and `F'`. Since `feature` pointed to one of the rewritten commits, Git also updates `feature` from `E` to `E'`; `topic` moves from `F` to `F'`, and `main` stays at `C`.
 
+### Filter Repo
+
+Rebase replays a branch's commits onto a new base, and interactive rebase lets you edit those commits along the way. But both only touch the commits on one branch, and with interactive rebase you have to know exactly which commits contain the change you want to edit and mark each one by hand.
+
+`git filter-repo` goes through **every commit in the whole repository** and applies a rule to each one, so you don't need to know where the change lives, e.g. "remove this file everywhere" or "change this author email everywhere". It is a separate tool (`brew install git-filter-repo`) and the officially recommended replacement for the old `git filter-branch`.
+
+- **Command:** `git filter-repo <filter-options>` in a fresh clone of the repo.
+- **Intent:** Change something across all of history as if it had always been that way from the very first commit.
+
+How it flows:
+
+```text
+Before:
+
+A---B---C---D main      (secret.env added in B, still present in C and D)
+
+After `git filter-repo --invert-paths --path secret.env`:
+
+A---B'---C'---D' main   (secret.env never existed in any commit)
+```
+
+- Git starts at the root commit `A` and walks forward through every commit on every branch and tag.
+- For each commit, it applies the filter to that commit's snapshot/metadata. `A` doesn't contain `secret.env`, so it comes out unchanged with the same hash.
+- `B` had the file, so its snapshot changes and a new commit `B'` is created with a different hash.
+- `C` didn't change on its own, but its parent did (`B` → `B'`), and the parent hash is part of the commit object, so `C` must also become a new commit `C'`. The same chain reaction rewrites `D` as `D'`.
+- At the end, branch and tag pointers move to the rewritten commits, and the `origin` remote is removed so you don't accidentally push the rewritten history over the old one without meaning to.
+
+Common uses:
+
+```bash
+git filter-repo --invert-paths --path secret.env           # purge a file (leaked secret, huge binary) from all history
+git filter-repo --subdirectory-filter src/lib             # extract a subfolder into its own repo, making it the new root
+git filter-repo --mailmap my-mailmap                       # fix author/committer names and emails in every commit
+git filter-repo --replace-text expressions.txt             # replace text (e.g. a password string) in every file of every commit
+```
+
+**Why it's really helpful:** Deleting a file in a new commit only hides it from the latest snapshot; it still lives in every older commit and anyone can check it out. `filter-repo` is the clean way to make it as if the file never existed, and it's much faster and safer than `filter-branch`.
+
+**Caveat:** Every rewritten commit gets a new hash, so this is the same "rewriting shared history" problem as rebasing pushed commits but on the whole repo. You'll need to force-push, and everyone else must re-clone. A leaked secret should still be rotated, since old clones and forks still contain it.
+
 ## Resolving Conflicts
 
 A conflict means Git cannot automatically produce one final file from the versions involved in the current operation. No matter whether the conflict came from a merge, squash merge, cherry-pick, or rebase, the handling pattern is the same:
