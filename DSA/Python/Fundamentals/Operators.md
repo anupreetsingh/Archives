@@ -29,7 +29,7 @@ print(a * b)  # Multiplication ✖️ : 30
 print(a / b)  # Division ➗ : 3.333..., returns the Quotient as a floating point number
 print(a % b)  # Modulus 🧮 : 1, Returns the Remainder of the division
 print(a//b)   # Floor Division : 3 , returns the Quotient as an integer(Rounded down towards negative infinity aka leftwards on the number line), so -10//3 gives -4.
-              # Particularly useful for reversing a list since n//2  gives middle index in case of odd elements and first element of second half in case of even elements. So you only have to traverse the first half of the list 
+              # Particularly useful for reversing a list since n//2  gives upper middle, so you only have to traverse the first half of the list.
               # for i in range(n // 2):
               #     arr[i], arr[n - 1 - i] = arr[n - 1 - i], arr[i]
 print(a ** b) # Exponentiation: 10 raised to the power of 3 = 1000
@@ -389,7 +389,8 @@ print(a ^ b)   # 6
 
 # NOT (~)
 # Syntax: ~x
-# Action: flips all bits (2's complement form)
+# Action: flips all bits (one's complement); 
+# the result is read as two's complement, so ~x == -x - 1
 # ~0101 = ...1010 = -6
 print(~a)      # -6
 
@@ -441,4 +442,4 @@ Python does not have a C++-style scope resolution operator like `::`.
 
 Python resolves plain names using the **LEGB rule** and resolves attributes using dot notation, such as `module.name`, `Class.attribute`, and `object.attribute`.
 
-See [Namespace and Scope.md](</Users/manpreetsingh/Downloads/Study/Notes/DSA/Python/Fundamentals/Namespace and Scope.md>) for `global`, `nonlocal`, class attributes, and instance attributes.
+See [Namespace and Scope.md](<Namespace and Scope.md>) for `global`, `nonlocal`, class attributes, and instance attributes.
