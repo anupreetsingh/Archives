@@ -160,10 +160,10 @@ The external program is a **child process** launched by the main shell process. 
 
 ### Output Redirection
 
-The shell executes the commands it reads, normally displaying their standard output in the terminal. When it encounters an unquoted `>` or `>>`, it interprets it as an **output redirection operator** and directs the command's standard output to a file:
+The shell executes the commands it reads, normally displaying their standard output in the terminal. When it encounters an unquoted `>` or `>>`, it directs the command's standard output to a file:
 
-- `>` creates the file or overwrites its existing contents.
-- `>>` appends output to the end of the file, creating it if it does not exist.
+- `>` **output redirection operator**: creates the file or overwrites its existing contents.
+- `>>` **append output redirection operator**: appends output to the end of the file, creating it if it does not exist.
 
 ```bash
 echo "First line" > notes.txt
