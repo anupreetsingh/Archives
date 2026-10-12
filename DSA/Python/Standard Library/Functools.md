@@ -139,11 +139,11 @@ Here, the accumulator starts at `1`, then becomes `1`, `2`, `6`, and `24`. The i
 
 `initial` is optional. Without it, the first item becomes the accumulator and processing starts with the second item. An empty iterable without an initial value raises `TypeError`.
 
-Unlike the lazy iterators produced by [`map()` and `filter()`](<Iterables.md#map>), `reduce()` consumes its input to compute a final result. If that input is an iterator, its consumed items are no longer available. Use a clearer specialized operation when one exists, such as `sum()`, `min()`, `max()`, or `math.prod()`; the multiplication here demonstrates how accumulation works.
+Unlike the lazy iterators produced by [`map()` and `filter()`](<../Fundamentals/Iterables.md#map>), `reduce()` consumes its input to compute a final result. If that input is an iterator, its consumed items are no longer available. Use a clearer specialized operation when one exists, such as `sum()`, `min()`, `max()`, or `math.prod()`; the multiplication here demonstrates how accumulation works.
 
 ## Caching Results
 
-These utilities use [decorators](<Decorators.md#the-core-idea>) to remember computed results. For the algorithmic use of memoization, see [Memoization and Tabulation](<../Traversal and Search Algorithms/DP(Memoization & Tabulation).md>).
+These utilities use [decorators](<../Fundamentals/Decorators.md#the-core-idea>) to remember computed results. For the algorithmic use of memoization, see [Memoization and Tabulation](<../Traversal and Search Algorithms/DP(Memoization & Tabulation).md>).
 
 ### `cache()` and `lru_cache()`
 
@@ -188,7 +188,7 @@ To keep every result for this same function, import `cache` and replace `@lru_ca
 
 ### `cached_property()`
 
-`@cached_property` computes an attribute the first time it is accessed on an instance, then stores that result on the instance for later access. For the underlying property concept, see [method decorators](<Decorators.md#common-method-decorators-used-in-oop>).
+`@cached_property` computes an attribute the first time it is accessed on an instance, then stores that result on the instance for later access. For the underlying property concept, see [method decorators](<../Fundamentals/Decorators.md#common-method-decorators-used-in-oop>).
 
 ```python
 from functools import cached_property
@@ -219,7 +219,7 @@ The cached value belongs to each instance rather than a function-level cache key
 
 ### `wraps()`
 
-When a [decorator](<Decorators.md#the-core-idea>) replaces a function with a wrapper, the resulting callable normally exposes the wrapper's name and docstring. `@wraps(original)` copies metadata such as the original function's name, docstring, and annotations onto the wrapper.
+When a [decorator](<../Fundamentals/Decorators.md#the-core-idea>) replaces a function with a wrapper, the resulting callable normally exposes the wrapper's name and docstring. `@wraps(original)` copies metadata such as the original function's name, docstring, and annotations onto the wrapper.
 
 ```python
 from functools import wraps

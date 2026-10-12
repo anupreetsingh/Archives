@@ -61,7 +61,7 @@ You can make any sort of custom decorator of your choice. But keep a few things 
 
 ### Preserving metadata of original function
 
-See [`functools.wraps()`](<Functools.md#wraps>) for preserving the original function's metadata when writing a wrapper. The examples below use that pattern.
+See [`functools.wraps()`](<../Standard Library/Functools.md#wraps>) for preserving the original function's metadata when writing a wrapper. The examples below use that pattern.
 
 ### Decorators With Arguments
 
@@ -143,7 +143,7 @@ When `expensive_operation()` runs, the `@timer` decorator records the start time
 
 Most decorator names are not built into Python directly. Some come from the standard library, some come from frameworks or third-party libraries, and some are custom decorators you define yourself.
 
-- [`@cache` and `@lru_cache`](<Functools.md#cache-and-lru_cache>): See the caching discussion for their differences, requirements, and example.
+- [`@cache` and `@lru_cache`](<../Standard Library/Functools.md#cache-and-lru_cache>): See the caching discussion for their differences, requirements, and example.
 
 - Install with `python -m pip install codetiming`, then use `from codetiming import Timer`
   `@Timer(name="expensive_operation", text="{name} took {:.4f} seconds")`: Prints or logs how long a function takes to run. This is a third-party decorator.
@@ -500,7 +500,7 @@ class Point:
 
 This is useful for classes that mainly store data.
 
-2. [`@functools.total_ordering`](<Functools.md#total_ordering>): See the comparison-method requirements and class example in the `functools` note.
+2. [`@functools.total_ordering`](<../Standard Library/Functools.md#total_ordering>): See the comparison-method requirements and class example in the `functools` note.
 
 3. Registration-style class decorators
 
