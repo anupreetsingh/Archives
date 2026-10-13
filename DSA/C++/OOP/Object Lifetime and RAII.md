@@ -2,7 +2,7 @@
 
 Every C++ object has a precise **lifetime**: it begins when its constructor finishes and ends when its destructor runs. Unlike Python, where an object lives "until nothing references it and the runtime gets around to freeing it", C++ tells you **exactly** when each object dies.
 
-**RAII** (Resource Acquisition Is Initialization) builds on that precision: tie every resource (memory, a file, a lock, a network connection) to an object, acquire the resource in the constructor, and release it in the destructor. Then the resource is released automatically, on every path out of the scope, with no cleanup code to forget.
+**RAII** (Resource Acquisition Is (part of / tied to) Initialization) builds on that precision: tie every resource (memory, a file, a lock, a network connection) to an object, acquire the resource in the constructor, and release it in the destructor. Then the resource is released automatically, on every path out of the scope, with no cleanup code to forget.
 
 It's the most important idiom in C++, and it plays the role that `with` statements and `try`/`finally` play in Python.
 
@@ -214,7 +214,7 @@ void add_score(int s) {
 }                                          // ...m is unlocked here
 ```
 
-Python's equivalent is `with lock:`.
+Python's equivalent is `with lock:`. Mutexes, the three lock types, and deadlock are covered in [Mutexes and Locks](<../Concurrency/Mutexes and Locks.md>).
 
 ## 5. RAII and Exceptions: Stack Unwinding
 
