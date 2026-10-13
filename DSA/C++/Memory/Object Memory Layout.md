@@ -105,6 +105,28 @@ struct MixedSorted { double value; int id; char flag; };   // sizeof = 16
 
 A 33% saving per object adds up across a million of them: less memory, and more objects per cache line.
 
+### Unions: Members Share One Address
+
+A `union` is declared like a `struct`, but every member starts at offset 0. The members overlap, so a union holds only one of them at a time:
+
+```cpp
+struct S { int y; bool z; };   // sizeof = 8: y at offset 0, z at offset 4, then 3 bytes tail padding
+union  U { int y; bool z; };   // sizeof = 4: y and z both at offset 0
+```
+
+```text
+S (8 bytes):  offset 0          4     5             8
+              [       y        ][ z ][ pad pad pad ]
+
+U (4 bytes):  offset 0          4
+              [       y        ]
+              [ z ]
+```
+
+- A union's size is its **largest member's** size, rounded up to its alignment (the strictest member's): `union { char c[5]; int i; }` is 8.
+- Writing a member makes it the **active** member and overwrites the bytes it shares with the others. Reading any member other than the active one is undefined behavior in C++ (C allows it). To reinterpret bytes as another type, use `std::bit_cast` (C++20) or `std::memcpy`.
+- A union doesn't record which member is active. `std::variant<int, bool>` (from `<variant>`) stores that tag next to the value and checks it on every access. Prefer it unless the exact layout matters.
+
 ## 4. Special Cases
 
 ```cpp
@@ -236,6 +258,7 @@ Since the layout is fixed at compile time, so is `sizeof`. Adding a member to a 
 Object        = members in declaration order + padding (+ vptr if any virtual functions)
 Alignment     = each member at a multiple of its alignment; struct alignment = strictest member's
 sizeof        = always a multiple of the alignment (tail padding), so arrays stay aligned
+Union         = all members at offset 0, one active at a time; sizeof = largest member, rounded up to the alignment
 Reduce size   -> order members from largest to smallest alignment; bit-fields for flags; avoid needless virtual
 Arrays        -> elements stored inline and contiguously: cache-friendly
 Performance   -> contiguous > pointer chasing; small objects > padded ones; SoA for hot loops over a few members
