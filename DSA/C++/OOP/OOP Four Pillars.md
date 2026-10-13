@@ -160,8 +160,10 @@ Unlike Python, there's no MRO (method resolution order) linearization. If both b
 
 Like the Python note says, there are two kinds:
 
-1. **Compile-time polymorphism** → function overloading (and templates). The compiler chooses.
-2. **Run-time polymorphism** → overriding `virtual` functions. The choice is made at runtime, based on the object's actual type.
+1. **Compile-time polymorphism** → function overloading (and templates). The compiler chooses. This is **static dispatch**.
+2. **Run-time polymorphism** → overriding `virtual` functions. The choice is made at runtime, based on the object's actual type. This is **dynamic dispatch**.
+
+**Dispatch** means choosing which function body a call runs. Static dispatch chooses at compile time, from the type written in the code. Dynamic dispatch chooses at runtime, from the type of the object actually there. See [Virtual Functions and Vtables](<Virtual Functions and Vtables.md#static-vs-dynamic-dispatch>).
 
 ### 4.1 Function Overloading (Compile-time Polymorphism)
 
@@ -216,7 +218,7 @@ for (const auto& a : animals) {
 
 #### Without `virtual`, There's No Override
 
-In Python, **every** method can be overridden, and the lookup always uses the object's actual class. In C++, a member function is only dispatched at runtime if it's declared `virtual`. A non-virtual function with the same name in a derived class merely **hides** the base version, and which one runs depends on the **static type** of the pointer or reference:
+In Python, **every** method can be overridden, and the lookup always uses the object's actual class. In C++, a member function only gets dynamic dispatch if it's declared `virtual`; everything else is statically dispatched. A non-virtual function with the same name in a derived class merely **hides** the base version, and which one runs depends on the **static type** of the pointer or reference:
 
 ```cpp
 class Animal {
@@ -234,12 +236,12 @@ public:
 Dog dog;
 Animal& ref = dog;
 
-ref.speak();      // "Woof!"           virtual: uses the object's real type (Dog)
-ref.describe();   // "I am an animal"  non-virtual: uses the reference's type (Animal)
+ref.speak();      // "Woof!"           virtual, dynamic dispatch: uses the object's real type (Dog)
+ref.describe();   // "I am an animal"  non-virtual, static dispatch: uses the reference's type (Animal)
 dog.describe();   // "I am a dog"      called on a Dog directly
 ```
 
-How `virtual` does this under the hood (vtables), and what it costs, is the subject of [Virtual Functions and Vtables](<Virtual Functions and Vtables.md>).
+How `virtual` implements dynamic dispatch under the hood (vtables), and what it costs, is the subject of [Virtual Functions and Vtables](<Virtual Functions and Vtables.md>).
 
 #### `override` and `final`
 

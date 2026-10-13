@@ -140,6 +140,7 @@ print(m.add(2, 3, 4))     # Output: 9
 - When a subclass defines a method with the same name and parameters as a method in its parent class.
 - The subclass's method "overrides" the parent's version.
 - Enables dynamic behavior — the method called depends on the object type at runtime.
+- Choosing the method from the object's runtime type is called **dynamic dispatch** (or late binding). In Python every method call is dynamically dispatched: `a.speak()` looks up `speak` on the object, then along `type(a)`'s MRO, each time the line runs.
 
 ```python
 class Animal:

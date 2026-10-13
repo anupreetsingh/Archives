@@ -1,6 +1,6 @@
 # Virtual Functions and Vtables in C++
 
-[OOP Four Pillars](<OOP Four Pillars.md#42-method-overriding-run-time-polymorphism>) showed **what** `virtual` does: through a base-class pointer or reference, a call runs the derived class's version. This note shows **how**. The mechanism is the **vtable**, and it explains virtual functions' cost, their rules, and the bugs around them.
+[OOP Four Pillars](<OOP Four Pillars.md#42-method-overriding-run-time-polymorphism>) showed **what** `virtual` does: through a base-class pointer or reference, a call runs the derived class's version. This note shows **how**. Choosing the function at runtime like this is called **dynamic dispatch**, and the mechanism C++ compilers use for it is the **vtable**, and it explains virtual functions' cost, their rules, and the bugs around them.
 
 ## Static Type vs Dynamic Type
 
@@ -22,6 +22,23 @@ Animal* pick(bool b) { return b ? static_cast<Animal*>(new Dog) : new Cat; }
 
 - **Non-virtual** calls use the **static** type. The compiler picks the function and emits a direct call.
 - **Virtual** calls use the **dynamic** type. The compiler emits code that looks up the right function **at runtime**.
+
+## Static vs Dynamic Dispatch
+
+**Dispatch** is the step that decides which function body a call actually runs. A call like `a.speak()` names a function, but when several classes define `speak`, something has to pick one. The two kinds of dispatch differ in **when** that choice is made and **which type** it's based on:
+
+- **Static dispatch** (also called early binding): the compiler chooses at compile time, from the **static** type. Non-virtual member functions, free functions, overloads, and template calls are statically dispatched. The result is a direct call to a fixed address, which the optimizer can inline.
+- **Dynamic dispatch** (also called late binding or dynamic binding): the choice is made at runtime, from the **dynamic** type. In C++, only calls to `virtual` functions through a pointer or reference are dynamically dispatched. The result is an indirect call, whose target is only known once the program is running.
+
+```cpp
+Animal* p = pick(user_input);   // dynamic type unknown until runtime
+p->legs();    // static dispatch:  always Animal::legs, decided by the compiler
+p->speak();   // dynamic dispatch: Dog::speak or Cat::speak, decided when this line runs
+```
+
+Dynamic dispatch is what makes run-time polymorphism possible: code written against `Animal&` can call behavior that was written later, in a class it has never heard of.
+
+Dynamic dispatch is the **behavior**; the vtable is how C++ compilers **implement** it. The C++ standard only requires that the dynamic type's override runs, not how. Every major compiler uses vtables, and the rest of this note describes them. Other languages implement the same behavior differently: Python looks the name up in dictionaries at call time (see [How Python Compares](#how-python-compares)).
 
 ## The Flow of a Virtual Call
 
@@ -116,12 +133,13 @@ A virtual call is two memory loads plus an indirect jump. The non-virtual call d
 
 ## How Python Compares
 
-In Python, **every** method call is "virtual". `a.speak()` looks up `"speak"` in the object's `__dict__`, then walks the classes in the MRO, checking each class's `__dict__` (a hash lookup each time), until it finds it. Then it creates a bound method object and calls it.
+In Python, **every** method call is "virtual": every call is dynamically dispatched, and there's no static dispatch to opt into. `a.speak()` looks up `"speak"` in the object's `__dict__`, then walks the classes in the MRO, checking each class's `__dict__` (a hash lookup each time), until it finds it. Then it creates a bound method object and calls it.
 
 A C++ virtual call is an array index done by the CPU in a few instructions. A non-virtual C++ call is a direct jump, or no call at all once inlined.
 
 | | Python method call | C++ non-virtual | C++ virtual |
 |---|---|---|---|
+| Dispatch | Dynamic | Static | Dynamic |
 | Lookup | Hash lookups along the MRO, at runtime | None: resolved at compile time | Two loads: vptr, then vtable slot |
 | Can be inlined | No | Yes | Usually not (unless devirtualized) |
 | Can be overridden | Always | No (only hidden) | Yes |
@@ -147,7 +165,7 @@ This is why C++ makes `virtual` **opt-in**: classes that don't need runtime poly
 
 ### Devirtualization
 
-When the compiler **can** prove the dynamic type, it turns a virtual call back into a direct call, which can then be inlined:
+When the compiler **can** prove the dynamic type, it turns dynamic dispatch back into static dispatch: a direct call, which can then be inlined:
 
 ```cpp
 Dog d;
@@ -217,7 +235,7 @@ dynamic_cast<Dog*>(p)         // checks RTTI; returns nullptr if *p isn't a Dog
 
 When the set of types is closed and known in advance, these avoid vtables entirely:
 
-- **Templates** (compile-time polymorphism): the type is fixed per call site, so calls can be inlined. See [Templates](<../Fundamentals/Templates.md>).
+- **Templates** (compile-time polymorphism): the type is fixed per call site, so calls are statically dispatched and can be inlined. See [Templates](<../Fundamentals/Templates.md>).
 - **`std::variant` + `std::visit`**: holds one of a fixed set of types by value, with no heap allocation and no slicing.
 - **Data-oriented design**: store each kind of object in its own contiguous array and process each array in its own loop. That's common in high-performance game code, such as Unreal's Mass framework.
 
@@ -228,8 +246,8 @@ Object:       [ vptr | members... ]      vptr: 8 hidden bytes per object of a po
 vptr   ->     the class's vtable         one per class: slots of function pointers, plus RTTI
 Call:         obj -> vptr -> vtable[slot] -> jump
 
-Static type   (what the code says)       -> used by non-virtual calls
-Dynamic type  (what the object is)       -> used by virtual calls
+Static type   (what the code says)       -> used by non-virtual calls: static dispatch, chosen at compile time
+Dynamic type  (what the object is)       -> used by virtual calls:     dynamic dispatch, chosen at runtime
 
 Cost:         8 bytes per object, an indirect call, and (mostly) lost inlining
 Rules:        virtual destructor in base classes; use override; no derived dispatch in ctors/dtors;
