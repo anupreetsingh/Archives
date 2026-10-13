@@ -10,7 +10,8 @@ C++/
 ├── Fundamentals/           what C++ is, how it's built, the core language, generic code
 ├── Memory/                 where objects live, pointers, references, const, UB, layout, ownership
 ├── OOP/                    classes, lifetime, copying/moving, inheritance, virtual dispatch, operators
-└── Standard Library/       containers, iterators, algorithms
+├── Standard Library/       containers, iterators, algorithms
+└── Concurrency/            threads, data races, mutexes, locks, deadlock
 ```
 
 ---
@@ -69,25 +70,38 @@ Classes in C++ are built around **lifetime**: constructors, destructors, copying
 | 19 | [Classes and Objects](<OOP/Classes and Objects.md>) | Members, `this`, access control, constructors and initializer lists, static members | [OOP-Self](<../Python/OOP/OOP-Self .md>) |
 | 20 | [Object Lifetime and RAII](<OOP/Object Lifetime and RAII.md>) | Destructors, construction/destruction order, RAII, stack unwinding | `with` statements, `__del__` |
 | 21 | [Copy and Move Semantics](<OOP/Copy and Move Semantics.md>) | Shallow vs deep copy, rule of three/five/zero, rvalue references, `std::move`, `noexcept` | [List Manipulation](<../Python/Fundamentals/List Manipulation.md#listcopy>) (shallow copies) |
-| 22 | [Smart Pointers](<Memory/Smart Pointers.md>) | `unique_ptr`, `shared_ptr`, `weak_ptr`, cycles, choosing an ownership model | CPython's reference counting and `gc` |
-| 23 | [OOP Four Pillars](<OOP/OOP Four Pillars.md>) | Encapsulation, abstract classes, inheritance, overloading vs overriding, slicing, virtual destructors, `dynamic_cast` | [OOP Four Pillars](<../Python/OOP/OOP Four Pillars.md>) |
-| 24 | [Virtual Functions and Vtables](<OOP/Virtual Functions and Vtables.md>) | How virtual dispatch works (vptr → vtable → function), its costs, virtual calls in constructors | |
-| 25 | [Object Memory Layout](<Memory/Object Memory Layout.md>) | Alignment, padding, member ordering, the vptr's cost, cache lines, AoS vs SoA | [List Structure](<../Python/Fundamentals/List Structure.md>) |
-| 26 | [Operator Overloading](<OOP/Operator Overloading.md>) | `operator==`, `<=>`, `<<`, `+=`/`+`, `[]`, `()`, `explicit operator bool` | [OOP-dunder methods](<../Python/OOP/OOP-dunder methods.md>) |
+| 22 | [std move](<Memory/std move.md>) | Condensed `std::move` reference: lvalues/rvalues, `T&` vs `const T&` vs `T&&`, the stack-object → heap-buffer layout of `string`/`vector`, copy vs move, what `std::move` doesn't guarantee | Assignment sharing vs `copy.deepcopy` |
+| 23 | [Smart Pointers](<Memory/Smart Pointers.md>) | `unique_ptr`, `shared_ptr`, `weak_ptr`, cycles, choosing an ownership model | CPython's reference counting and `gc` |
+| 24 | [OOP Four Pillars](<OOP/OOP Four Pillars.md>) | Encapsulation, abstract classes, inheritance, overloading vs overriding, slicing, virtual destructors, `dynamic_cast` | [OOP Four Pillars](<../Python/OOP/OOP Four Pillars.md>) |
+| 25 | [Virtual Functions and Vtables](<OOP/Virtual Functions and Vtables.md>) | Static vs dynamic dispatch, how dynamic dispatch works (vptr → vtable → function), its costs, virtual calls in constructors | |
+| 26 | [Object Memory Layout](<Memory/Object Memory Layout.md>) | Alignment, padding, member ordering, unions, the vptr's cost, cache lines, AoS vs SoA | [List Structure](<../Python/Fundamentals/List Structure.md>) |
+| 27 | [Operator Overloading](<OOP/Operator Overloading.md>) | `operator==`, `<=>`, `<<`, `+=`/`+`, `[]`, `()`, `explicit operator bool` | [OOP-dunder methods](<../Python/OOP/OOP-dunder methods.md>) |
+| 28 | [Function Specifiers](<OOP/Function Specifiers.md>) | Where `static`, `virtual`, `const`, `&`/`&&`, `noexcept`, `override`, `= 0`/`= default`/`= delete` go, what each zone means, and which keywords an out-of-class definition repeats | `@staticmethod`, `@abstractmethod`, `@typing.override` |
 
-**Checkpoint:** you can explain what breaks when a class with a raw owning pointer is copied, and the order in which `Car : Vehicle` with two members is constructed and destroyed.
+**Checkpoint:** you can explain what breaks when a class with a raw owning pointer is copied, the order in which `Car : Vehicle` with two members is constructed and destroyed, and which keywords in `virtual int get() const noexcept override;` the `.cpp` definition repeats.
 
 ## Stage 5: Generic Code and the Standard Library
 
 | # | Note | What it answers | Compare with (Python) |
 |---|---|---|---|
-| 27 | [Templates](<Fundamentals/Templates.md>) | Function and class templates, instantiation, why they live in headers, concepts | Duck typing |
-| 28 | [STL Containers](<Standard Library/STL Containers.md>) | `vector` (size/capacity, invalidation), `unordered_map`, `map`, sets, `deque`, `stack`/`queue`, `priority_queue` | [List Structure](<../Python/Fundamentals/List Structure.md>), [Hash Maps Structure](<../Python/Fundamentals/Hash Maps Structure.md>), [Heap Data Structure](<../Python/Fundamentals/Heap Data Structure.md>), [Collections](<../Python/Standard Library/Collections.md>) |
-| 29 | [Lambdas](<Fundamentals/Lambdas.md>) | Syntax, captures by copy/reference, `mutable`, dangling captures, `std::function` | [Lambda In-line Function](<../Python/Fundamentals/Lambda In-line Fucntion.md>) |
-| 30 | [Iterators and Algorithms](<Standard Library/Iterators and Algorithms.md>) | `begin`/`end`, how range-`for` works, `<algorithm>`, remove-erase, ranges and views | [Iterables](<../Python/Fundamentals/Iterables.md>), [Bisect](<../Python/Standard Library/Bisect.md>) |
-| 31 | [Error Handling](<Fundamentals/Error Handling.md>) | Exceptions, RAII instead of `finally`, `noexcept`, `optional`, `expected`, `assert`, and how Unreal does it without exceptions | `try` / `except` |
+| 29 | [Templates](<Fundamentals/Templates.md>) | Function and class templates, instantiation, why they live in headers, concepts | Duck typing |
+| 30 | [Kinds of Classes](<OOP/Kinds of Classes.md>) | Class vs class template vs instantiation, what a function template is and how it differs from a class template, members of templates (`virtual` or not), abstract/`final`/nested classes, why `enum class` isn't a class | `Generic[T]`, `ABC`, `Enum` |
+| 31 | [STL Containers](<Standard Library/STL Containers.md>) | `vector` (size/capacity, invalidation), `unordered_map`, `map`, sets, `deque`, `stack`/`queue`, `priority_queue` | [List Structure](<../Python/Fundamentals/List Structure.md>), [Hash Maps Structure](<../Python/Fundamentals/Hash Maps Structure.md>), [Heap Data Structure](<../Python/Fundamentals/Heap Data Structure.md>), [Collections](<../Python/Standard Library/Collections.md>) |
+| 32 | [Lambdas](<Fundamentals/Lambdas.md>) | Syntax, captures by copy/reference, `mutable`, dangling captures, `std::function` | [Lambda In-line Function](<../Python/Fundamentals/Lambda In-line Fucntion.md>) |
+| 33 | [Iterators and Algorithms](<Standard Library/Iterators and Algorithms.md>) | `begin`/`end`, how range-`for` works, `<algorithm>`, remove-erase, ranges and views | [Iterables](<../Python/Fundamentals/Iterables.md>), [Bisect](<../Python/Standard Library/Bisect.md>) |
+| 34 | [Error Handling](<Fundamentals/Error Handling.md>) | Exceptions, RAII instead of `finally`, `noexcept`, `optional`, `expected`, `assert`, and how Unreal does it without exceptions | `try` / `except` |
 
-**Checkpoint:** you can explain why `std::vector<std::unique_ptr<Enemy>>` is a common choice, and why `ages["Leo"]` on a missing key doesn't raise an error.
+**Checkpoint:** you can say which of `Box`, `Box<int>`, and `enum class AlertState` are types and which are classes, why a member function template can't be `virtual`, and why `std::vector<std::unique_ptr<Enemy>>` is a common choice, and why `ages["Leo"]` on a missing key doesn't raise an error.
+
+## Stage 6: Concurrency
+
+Threads share memory, so this stage builds directly on Stage 3 (UB) and Stage 4 (RAII). Read it before any code that runs work off the game thread.
+
+| # | Note | What it answers | Compare with (Python) |
+|---|---|---|---|
+| 35 | [Mutexes and Locks](<Concurrency/Mutexes and Locks.md>) | `std::thread`, data races vs race conditions, ThreadSanitizer, `std::mutex`, `lock_guard` / `scoped_lock` / `unique_lock`, critical-section scope, deadlock and how to avoid it, `atomic`, Unreal's `FCriticalSection` / `FScopeLock` | `threading.Lock`, `with lock:`, the GIL |
+
+**Checkpoint:** you can explain why `++counter` from two threads loses updates, why a value read after a `lock_guard`'s scope ends is unprotected, and why two threads calling `transfer(x, y)` and `transfer(y, x)` can hang.
 
 ---
 
@@ -95,9 +109,9 @@ Classes in C++ are built around **lifetime**: constructors, destructors, copying
 
 | Plan milestone | Read first |
 |---|---|
-| **0.2a Warm-up drills** (references, `const`, virtual dispatch, virtual-destructor leak) | Stages 1–3, plus notes 19, 20, 23, 24 |
-| **0.2b RAII wrapper** (file handle, destructor on every exit path) | 20 [Object Lifetime and RAII](<OOP/Object Lifetime and RAII.md>), 31 [Error Handling](<Fundamentals/Error Handling.md>) (stack unwinding) |
-| **0.2c Dynamic array** (ctor/dtor → copy → move → rule of five → template) | 21 [Copy and Move Semantics](<OOP/Copy and Move Semantics.md>), 27 [Templates](<Fundamentals/Templates.md>), and the `vector` section of 28 [STL Containers](<Standard Library/STL Containers.md>) |
+| **0.2a Warm-up drills** (references, `const`, virtual dispatch, virtual-destructor leak) | Stages 1–3, plus notes 19, 20, 24, 25 |
+| **0.2b RAII wrapper** (file handle, destructor on every exit path) | 20 [Object Lifetime and RAII](<OOP/Object Lifetime and RAII.md>), 34 [Error Handling](<Fundamentals/Error Handling.md>) (stack unwinding) |
+| **0.2c Dynamic array** (ctor/dtor → copy → move → rule of five → template) | 21 [Copy and Move Semantics](<OOP/Copy and Move Semantics.md>), 22 [std move](<Memory/std move.md>), 29 [Templates](<Fundamentals/Templates.md>), and the `vector` section of 31 [STL Containers](<Standard Library/STL Containers.md>) |
 | **0.5 Project tour** (`Build.cs`, modules, generated headers) | 3 [Compilation and Linking](<Fundamentals/Compilation and Linking.md>), 4 [Preprocessor](<Fundamentals/Preprocessor.md>), 5 [Headers and Source Files](<Fundamentals/Headers and Source Files.md>) |
 
 The notes explain the concepts, but deliberately don't solve the 0.2b and 0.2c exercises. The examples use different classes (`ScopedTimer`, `Texture`) from the ones the plan asks you to build.
