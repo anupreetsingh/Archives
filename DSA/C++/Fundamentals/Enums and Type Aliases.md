@@ -42,6 +42,8 @@ AlertState back = static_cast<AlertState>(0);   // AlertState::Idle
 | Converts to `int` implicitly | Yes | No, needs `static_cast` |
 | Use in new code | Rarely | **Default choice** |
 
+Despite the keyword, an `enum class` isn't a class: it can't have member functions, constructors, or base classes. [Kinds of Classes](<../OOP/Kinds of Classes.md#7-enum-class-not-a-class>) compares it with real classes.
+
 > Unreal uses `enum class` with the `UENUM()` macro and an `E` prefix, for example `enum class EGuardState : uint8 { Patrolling, Investigating, Chasing };`.
 
 ### Choosing Values and the Underlying Type

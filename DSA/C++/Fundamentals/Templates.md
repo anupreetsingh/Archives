@@ -132,6 +132,8 @@ Box b2(3.14);                 // C++17 class template argument deduction (CTAD):
 
 `Box<int>` and `Box<std::string>` are **different, unrelated types**. A `Box<int>` can't be assigned to a `Box<double>`, and they share no code at runtime.
 
+[Kinds of Classes](<../OOP/Kinds of Classes.md>) compares class templates with normal classes, function templates, and the other constructs that use the word `class`.
+
 > Milestone 0.2c ends by turning a hand-written dynamic array into a class template. That's exactly how `std::vector<T>` and Unreal's `TArray<T>` are built.
 
 ### Member Functions Defined Outside the Class
@@ -240,6 +242,7 @@ Both let one piece of code work with many types:
 | | Templates | Virtual functions |
 |---|---|---|
 | Type decided | At compile time, per call site | At runtime, per object |
+| Dispatch | Static | Dynamic |
 | Call cost | Direct call, usually inlined | Indirect call through the vtable |
 | Mixing types in one container | No: `std::vector<T>` holds one `T` | Yes: `std::vector<std::unique_ptr<Base>>` |
 | Code size | One copy per type used | One copy |
