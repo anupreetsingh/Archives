@@ -129,6 +129,8 @@ class Point2 {      // members are PRIVATE by default
 
 By convention, `struct` is used for plain bundles of public data with little behavior (like a Python `dataclass` or `namedtuple`), and `class` for types with invariants, private state, and member functions.
 
+A `union` is declared the same way, but its members share one block of memory instead of each getting their own (see [Object Memory Layout](<../Memory/Object Memory Layout.md#unions-members-share-one-address>)).
+
 ```cpp
 Point p{3, 4};               // aggregate initialization: members in declaration order
 Point q;                     // uses the default member initializers: {0, 0}
@@ -276,6 +278,8 @@ void Dog::birthday() {
 ```
 
 Member functions defined **inside** the class body are implicitly `inline`, so they can stay in the header. That's fine for one-line getters.
+
+Keywords that are part of the function's type, such as `const` and `noexcept`, are repeated in the definition. Keywords that describe its role in the class, such as `static`, `virtual`, `explicit`, and `override`, appear only in the class. The full list is in [Function Specifiers](<Function Specifiers.md#7-declaring-in-the-class-defining-outside-it>).
 
 ## Static Members: Class Attributes and Static Methods
 

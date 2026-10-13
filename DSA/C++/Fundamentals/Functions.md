@@ -22,6 +22,8 @@ return     name       parameter list            body
  type              (each with its own type)
 ```
 
+Declarations can also carry keywords before the return type (`static`, `inline`, `constexpr`) and after the parameter list (`noexcept`, and for member functions `const` and `override`). [Function Specifiers](<../OOP/Function Specifiers.md>) covers where each one goes and what it means.
+
 Python's type hints (see [Function Syntax](<../../Python/Fundamentals/Function Syntax.md#type-hints>)) are optional and not enforced. In C++ the types are **required** and **enforced** at compile time:
 
 ```python
@@ -311,6 +313,14 @@ counter();   // 3
 ```
 
 It's like a global variable that only this function can see. In Python you'd use a closure, a function attribute, or a class for this. See [Scope and Namespaces](<Scope and Namespaces.md#5-storage-duration-how-long-a-variable-lives>).
+
+The variable belongs to the **function**, not to any one call. When execution first reaches the declaration, the variable is initialized and placed in static storage instead of the call's stack frame. Every later call skips the initializer and reuses that same object, which is destroyed after `main()` returns. An ordinary local, by contrast, is created fresh on every call and destroyed when the call ends.
+
+Because every caller shares one instance:
+
+- **Threads share it too.** A `static std::mutex` inside a function is one mutex that all threads lock. Since C++11 the first-time initialization is thread-safe: if two threads reach it at once, one initializes it and the other waits. Later reads and writes to the variable are not protected and still need a lock.
+- **Member functions share it across objects.** A `static` local in a member function is one variable for the whole class, not one per object.
+- **Each template instantiation gets its own.** `f<int>` and `f<double>` are separate functions, so each has its own copy.
 
 ## `inline` and `constexpr` Functions
 
