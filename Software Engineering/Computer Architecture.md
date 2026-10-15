@@ -143,6 +143,16 @@ CPU(Central Processing Unit) is one of the core pieces of hardware and is respon
 - Since there are multiple cores available, multiple threads truly execute simultaneously and make progress at same instant on different cores which is known as *parallelism*.
 - But since multiple threads are also making progress during the same period of time this is also concurrency so its parallelism along with concurrency.
 
+#### Performance and Efficiency Cores
+
+- Many modern CPUs mix two kinds of cores on one chip, called a *heterogeneous* (or hybrid) design:
+  - **Performance cores (P-cores):** big, fast, and power-hungry. Used for work the user is waiting on.
+  - **Efficiency cores (E-cores):** smaller and slower, but they do the same work for far less energy. Used for background work.
+- Both kinds run the same instruction set, so a thread can move between them at any time without being recompiled.
+- The idea started on phones as ARM's **big.LITTLE** (2011). Apple has used it since the iPhone's A10 (2016) and on Macs since M1 (2020); Intel since 12th-gen Alder Lake (2021).
+- The OS scheduler decides which thread runs on which kind of core. macOS and iOS decide using the thread's **QoS class**: user-interactive work goes to P-cores, and work marked background is kept on E-cores, which saves battery.
+- Apple Silicon groups cores of the same kind into **clusters** that share an L2 cache (see [CPU Caches](#cpu-caches)). An M4 has one cluster of 4 P-cores and one of 6 E-cores. `sysctl hw.perflevel0` describes the P-cores and `hw.perflevel1` the E-cores.
+
 ### Machine Cycle
 
 Sequence of 4 steps a CPU performs to execute a single machine language instruction.
@@ -163,6 +173,59 @@ flowchart LR
 > Not to be confused with a Clock Cycle
 
 **Clock Cycle** is one tick of the CPU's clock. One machine cycle can take several clock cycles and clock cycles differ for different CPUs depending on their frequency (Old Intel: 5MHz, Modern Intel: 3-5GHz).
+
+### CPU Caches
+
+Step 1 of the machine cycle fetches from memory, but RAM is far too slow to keep up with the CPU. One RAM read takes about 100 ns, and in that time a modern core could run hundreds of instructions. To hide that gap, the CPU keeps copies of recently used memory in small, fast **caches** on the chip itself.
+
+```mermaid
+flowchart LR
+    C["Core"] --> L1["L1"]
+    L1 -->|miss| L2["L2"]
+    L2 -->|miss| L3["L3"]
+    L3 -->|miss| R["RAM"]
+```
+
+When a core needs the data at some address:
+
+1. It checks **L1**, the smallest and fastest cache. If the data is there, that's a **cache hit**, and it arrives in a few cycles.
+2. On a **cache miss**, it checks **L2**, then **L3**. Each level is bigger but slower.
+3. If every level misses, the data comes from **RAM** and is copied into the caches on the way back, so the next access to it hits.
+
+| Level | Typical size | Shared by | Approx. latency |
+|-------|--------------|-----------|-----------------|
+| L1 | 32–128 KB (split into instruction and data caches) | One core | ~1 ns |
+| L2 | 1–16 MB | One core on x86, a cluster of cores on Apple Silicon | ~3–5 ns |
+| L3 | Tens of MB | All cores | ~10–20 ns |
+| RAM | GBs | The whole system | ~100 ns |
+| SSD | Hundreds of GB – TBs | The whole system | ~100 µs |
+
+Apple Silicon has no L3. Its last level is a **System Level Cache (SLC)** shared by the CPU, GPU, and Neural Engine. On an M4 (`sysctl hw.perflevel0` and `hw.perflevel1` show these):
+
+- Performance cores: 128 KB L1 data cache each, 16 MB L2 shared by the 4 P-cores.
+- Efficiency cores: 64 KB L1 data cache each, 4 MB L2 shared by the 6 E-cores.
+
+#### Cache Lines
+
+- Caches don't store single bytes. Memory moves between RAM and the caches in fixed-size blocks called **cache lines**: 64 bytes on most x86 CPUs, 128 bytes on Apple Silicon (`sysctl -n hw.cachelinesize` prints `128`).
+- Reading one byte loads its whole line, so the neighboring bytes come along for free.
+- A cache line is to the CPU caches what a [page](#pages-and-frames) is to RAM: the unit everything moves in, just much smaller (64–128 B vs 4–16 KB).
+- Writes usually stay in the cache. A written line is marked **dirty** and only written back to RAM when it's evicted, the same idea as [dirty pages](#reclaiming-memory-clean-dirty-compressed-and-swapped-pages).
+
+#### Why Caches Work: Locality
+
+Caches are tiny compared to RAM, yet most accesses hit, because programs don't touch memory randomly:
+
+- **Temporal locality:** data used recently is likely to be used again soon (a loop counter, the top of the stack). Caches keep recently used lines around.
+- **Spatial locality:** data near something just used is likely to be used next (the next array element, the next instruction). Loading whole lines means the neighbor is already there, and the **hardware prefetcher** spots sequential patterns and loads lines before they're asked for.
+
+This is why iterating a contiguous array is fast and chasing pointers through a linked list is slow: the array uses every byte of every line it loads, while each list node can be a fresh miss. [Object Memory Layout](<../DSA/C++/Memory/Object Memory Layout.md#7-why-layout-matters-the-cache>) covers what this means for C++ code.
+
+#### Caches and Multiple Cores
+
+- Each core has its own L1, so the same line can be copied into several cores' caches at once.
+- When one core writes to its copy, a **cache coherence** protocol in hardware invalidates the copies in other cores, so no core reads a stale value.
+- That invalidation has a cost. If two threads write to different variables that happen to share one line, the cores keep invalidating each other's copy even though the threads never touch the same data. This is **false sharing** (see [Object Memory Layout](<../DSA/C++/Memory/Object Memory Layout.md#false-sharing-multithreading>)).
 
 ### Race Conditions
 
@@ -431,7 +494,7 @@ Why this is useful:
 
 #### Pages and Frames
 
-- The virtual address space is divided into fixed-size blocks called **pages** (commonly 4 KB).
+- The virtual address space is divided into fixed-size blocks called **pages** (commonly 4 KB on x86-64 and Linux, and 16 KB on Apple Silicon Macs and iOS devices).
 - Physical RAM is divided into equally sized blocks called **frames**.
 - Any virtual page can be placed in any physical frame. The seemingly contiguous pages of one process do **not** need to land in contiguous frames.
 
@@ -440,9 +503,68 @@ Why this is useful:
 - Each process has its own data structure called Page Table, maintained by the OS that maps a **virtual page number → physical frame number**.
 - Because the table is per-process, the *same* virtual address in two different processes maps to *different* frames. This is what makes isolation work.
 
-**Swapping**
+#### TLB (Translation Lookaside Buffer)
 
-When RAM fills up, the OS moves **cold** (rarely used) pages out to a reserved **swap** area on disk to free frames for active pages. Those pages are paged back in on demand if touched again later.
+The page table is stored in RAM. If the MMU had to read it on every memory access, each load would first need extra RAM reads just to find the physical address. And it's more than one extra read: on 64-bit systems the page table is a tree several levels deep (4 on x86-64), so one lookup, called a **page-table walk**, can take several reads.
+
+The fix is the same idea as the [CPU caches](#cpu-caches): the **TLB** is a small cache inside the MMU that holds recently used **virtual page → physical frame** translations.
+
+```mermaid
+flowchart LR
+    VA["Virtual address"] --> T{"In TLB?"}
+    T -->|hit| PA["Physical address"]
+    T -->|miss| W["Walk page table"]
+    W -->|page in RAM| F["Fill TLB"] --> PA
+    W -->|not in RAM| PF["Page fault → OS"]
+    PA --> C["CPU caches / RAM"]
+```
+
+On every memory access:
+
+1. The CPU issues a virtual address. The MMU splits it into a **virtual page number** (the high bits) and an **offset** within the page (the low bits: 12 bits for 4 KB pages, 14 for 16 KB).
+2. The MMU looks up the page number in the TLB.
+   - **TLB hit:** the frame number comes back almost immediately.
+   - **TLB miss:** the MMU walks the page table to find the entry, then stores it in the TLB for next time.
+3. Frame number + offset gives the physical address, which goes to the CPU caches and RAM as usual. Only the page number is translated; the offset stays the same.
+4. If the walk finds the page isn't in RAM (never touched, dropped, compressed, or swapped), the CPU raises a **page fault** and the OS takes over, as described in [Reclaiming Memory](#reclaiming-memory-clean-dirty-compressed-and-swapped-pages).
+
+Points worth knowing:
+
+- The TLB is small (tens to a few thousand entries), but most accesses hit, thanks to the same locality that makes CPU caches work.
+- **TLB reach** = entries × page size: how much memory the TLB can cover without missing. Bigger pages mean more reach. With 16 KB pages, each entry covers 4× as much memory as with 4 KB, which is one benefit of Apple's page size, and why servers running large databases use **huge pages** (2 MB or 1 GB).
+- **Context switches:** TLB entries belong to one address space. When the CPU switches to another process, the OS either flushes the TLB, so the new process starts empty and pays for misses, or tags each entry with an address-space ID (**ASID** on ARM, **PCID** on x86) so entries from different processes can coexist. Switching between threads of the same process needs neither, because they share one page table.
+
+#### Reclaiming Memory: Clean, Dirty, Compressed, and Swapped Pages
+
+When free frames run low, the OS has to take frames back from pages that already hold them. How expensive that is comes down to one question: **does an up-to-date copy of this page already exist somewhere else?**
+
+The OS works through these options from cheapest to most drastic:
+
+1. **Clean pages are dropped.** A clean page is identical to a copy on disk: executable code, read-only `mmap`'d files, file data read in and not modified. The OS frees the frame and clears the page-table entry. If the page is touched again, a page fault re-reads it from the disk.
+2. **Dirty pages are compressed.** A dirty page has no up-to-date copy anywhere else. Either it was modified after loading, or it never had a backing file at all (heap and stack, called **anonymous** memory). Dropping it would lose data, so it has to be saved first. A dirty page backed by a file (e.g. a writable `mmap`) can be written back to that file and then dropped. Anonymous pages have nowhere to go, so the OS **compresses** them: several pages are packed into fewer frames, still in RAM. Getting one back costs a decompression, which is much faster than a disk read. macOS and iOS do this by default; Linux offers it through zswap and zram.
+3. **Dirty pages are swapped.** If compression isn't enough, pages are written to a **swap** area on disk and their frames are freed. Touching one again triggers a page fault that reads it back from disk, the slowest path. On macOS, it's the already-compressed pages that get written out.
+4. **Processes are killed.** When nothing else can be freed, the OS terminates a process to get its memory back. How often that happens depends on the platform:
+   - Linux: the **OOM killer** picks the process with the highest OOM score and kills it.
+   - iOS: **jetsam** does the killing. iPhones don't swap at all (M-series iPads are the exception), so exceeding the memory limit means being killed.
+   - macOS: ordinary apps have no fixed limit. Memory pressure pushes pages to compression and then swap, so the cost is slowdown, not termination. A process is killed only if it opted in to being reclaimed when idle (`EnablePressuredExit`, Sudden Termination), has an explicit jetsam limit (some Apple daemons), or swap itself runs out.
+
+The hardware tracks what the OS needs here. Each page-table entry has a **dirty bit**, set by the MMU on the first write to the page, and an **accessed bit**, set on any use. The OS reads the dirty bit to decide whether a page can be dropped or must be saved, and the accessed bit to find cold pages to evict first.
+
+| State      | Where the data lives                | Example                          | To free the frame          | To use it again            |
+|------------|-------------------------------------|----------------------------------|----------------------------|----------------------------|
+| Clean      | RAM, plus an identical copy in a file | App code, read-only `mmap`      | Just drop it               | Page fault, re-read file   |
+| Dirty      | Only in RAM                         | Heap and stack pages after a write | Compress or swap it first | Already resident           |
+| Compressed | RAM, packed with other pages        | A cold heap page                 | Swap it out (macOS)        | Page fault, decompress     |
+| Swapped    | Swap area on disk                   | A long-idle heap page            | Already freed              | Page fault, disk read      |
+
+**Why it matters**
+
+Apple's **footprint** metric answers one question: *how much of this process's memory can the OS **not** take back immediately?*
+
+- Clean pages: can be taken back instantly → not counted. The OS just drops them. Not entirely free: if the page is touched again, it costs a page fault and a re-read from disk. But since the OS can reclaim them the moment memory gets tight, clean pages can never be what runs the system out of RAM.
+- Dirty and compressed pages: can't be taken back immediately → counted. The OS first has to compress them or write them to swap. On iOS, with no swap, the only way left may be killing the process.
+
+So **footprint = dirty + compressed**. This is also why `mmap`ing read-only data is cheap: it stays clean, and one copy is shared across every process that maps it.
 
 #### Relation to Processes and Threads
 
