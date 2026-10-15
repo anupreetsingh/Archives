@@ -13,7 +13,7 @@ Mnemonics to remember the name:
 - All People Seem To Need Data Processing. (7-1)
 - Please Do Not Throw Away Sausage Pizza. (1-7)
 
-As data moves between different network layer, each layer adds its own header and creates a different **Protocol Data Unit(PDU)**.
+As data moves between different network layer, each layer adds its own header and creates a different **PDU**(Protocol Data Unit). This is called encapsulation.
 
 | Layer | PDU Name |
 | --- | --- |
@@ -142,9 +142,68 @@ Load Balancer
 
 ## Layer 2 - Data Link Layer
 
-Responsible for hop-to-hop communication between devices on the local network(LAN).
+Responsible for **hop-to-hop** delivery between devices on the same **local network** (LAN).
 
-IP addresses from the network layer tells where the packets need to reach eventually but MAC(Media Access Control) address on computer network card tells which device the frames need to go to on the next hop  
+- The **IP address** (Layer 3) says where the packet must reach *eventually*. It stays the same end to end.
+- The **MAC address** (Media Access Control) of a network card says which device the frame goes to on the *next hop*. It changes at every hop.
+
+### ARP
+
+**ARP** (Address Resolution Protocol) connects the two: given an IP on the local network, it finds that device's MAC.
+
+Where ARP runs:
+
+1. An app on your laptop sends data. The macOS kernel's networking code builds the IP packet.
+2. The kernel needs a MAC for the next hop. It checks its own ARP cache, a table kept in kernel memory. `arp -a` simply prints that table.
+3. On a cache miss, the kernel builds the ARP request itself and hands the broadcast frame to the network card.
+4. The network card transmits the frame. Like the switch, the card just sends and receives frames. It doesn't know what ARP is.
+5. The access point or switch passes it on to everyone. Neither one reads it or answers.
+6. The kernel on each receiving device reads the request. On the device that owns that IP, the kernel builds the reply and sends it back.
+
+### Local Network (LAN)
+
+A LAN is a group of devices that can reach each other directly at Layer 2, sending frames by MAC address without any routing step. In practice they are all connected to the same switch or Wi‑Fi access point.
+
+#### The "home router" box
+
+A home router is really several devices in one case, and only one of them is a router:
+
+​```text
+┌──────────── "home router" box ─────────────┐
+│  Wi‑Fi access point ─┐                     │
+│                      ├─ Switch ── Router ──┼── ISP / Internet
+│  Ethernet ports ─────┘    (LAN side)  (WAN side)
+│  + DHCP server, DNS forwarder, NAT         │
+└────────────────────────────────────────────┘
+​```
+
+- The **switch and access point** work at Layer 2. They read MAC addresses and pass frames between devices on the LAN.
+- The **router** works at Layer 3. It reads IP addresses and moves packets *between* networks: your LAN on one side, the ISP on the other.
+
+So "no router in between" means no *routing step*. LAN-to-LAN traffic passes only through the switch part of the box.
+
+### Subnets
+
+Devices on a LAN share an IP range called a **subnet**, e.g. `192.168.1.0/24` (`192.168.1.0`–`192.168.1.255`).
+
+- **Private IP**: an address from a reserved range (`192.168.x.x`, `10.x.x.x`, `172.16–31.x.x`). It's unique only within one LAN, and internet routers won't forward it. The devices on the LAN get one from the router (via DHCP).
+- **Public IP**: globally unique and reachable from anywhere. Your ISP gives one to your router.
+
+#### Local or not?
+
+For every packet, the device checks the destination IP against its subnet:
+
+1. **Inside my subnet** → it's on my LAN. ARP for that device's MAC and send the frame straight to it.
+2. **Outside my subnet** → the destination isn't on my LAN, so the device can't reach it directly. Instead it ARPs for the router's MAC address (the router is the *default gateway*) and sends the frame there. The frame is addressed to the router's MAC, but the packet inside still carries the final destination IP. The router then forwards the packet.
+
+    In case 2, the router strips off the incoming frame (it only matters on the LAN) and applies **NAT** (Network Address Translation). It rewrites the packet's private source IP and port to its own public IP and a port of its choosing. It records that mapping in its NAT table, then sends the packet out in a new frame towards the ISP. When the reply comes back to that public IP and port, the router looks up the mapping and rewrites the destination back to the device's private IP and port. It then delivers the packet on the LAN in a new frame addressed to the device's MAC (which it gets from its ARP table).
+
+| Case | Frame dest MAC (next hop) | Packet dest IP (final) | Who handles it |
+|---|---|---|---|
+| Laptop → TV (same LAN) | TV's MAC | TV's private IP | Switch only, no routing |
+| Laptop → internet server | Gateway's MAC | Server's public IP | Switch → router → internet |
+
+A frame's destination MAC is **always local**: either the final device or the gateway. The far-away destination is only ever in the IP header. The switch therefore never needs to know about anything outside the LAN.
 
 ## Layer 1 - Physical Layer
 
