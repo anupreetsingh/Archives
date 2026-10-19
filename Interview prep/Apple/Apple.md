@@ -18,6 +18,42 @@ Day-of rules:
 - Dress: whatever presents my best self in a work setting.
 - No AI tools during the interview unless the interviewer says otherwise.
 
+## Prep Plan (Oct 15–19)
+
+| Day | Focus |
+|---|---|
+| **Thu 10/15** | Relearn OS fundamentals, taught in the order things happen in the experimentation system (route below) |
+| **Fri 10/16** | Cold design mock (no notes) → design spec → rebuild pieces 1–2. Evening: project walkthrough drill |
+| **Sat 10/17** | Mock 2 (new prompt) → rebuild the exposure path, tests, measurements |
+| **Sun 10/18** | Review the rest of the resume, fill in every `[Fill in]` → Mock 3 (full 50 min: conversation + design + runnable code) |
+| **Mon 10/19** | Mock 4 (new prompt), test Webex + CoderPad, pitch out loud ×3, pick 3 questions. Stop by evening |
+
+**Thursday's route:** 0 process, threads, syscalls → 1 daemon lifecycle → 2 IPC → 3 event loops → 4 synchronization → 5 memory → 6 storage and durability → 7 power and scheduling → 8 experimentation concepts. Each stop ends with check questions, answered without notes.
+
+### Rules
+
+1. **Learn only what the screen tests, and keep the hard stop.** Topics come in the order the system uses them. The cold mock happens Friday morning whether or not I feel ready, because mocks show what's still missing.
+2. **I design, the agent types.** For the rebuild, I make every design decision. The agent builds one piece at a time. Before moving on, I explain that piece back and make one small change to it myself. macOS first (kqueue + launchd); epoll + systemd last.
+3. **Name OS tools by their C/C++ API, not the Swift or Objective-C wrapper.** That's the language I say I use for systems work.
+
+| Topic | Say (C/C++) | Not (Swift/ObjC) |
+|---|---|---|
+| Threads and locks | `std::thread`, `std::mutex`, `std::condition_variable`, `std::atomic`, `std::counting_semaphore`; `pthread_*`, `os_unfair_lock` | `NSLock`, `OSAllocatedUnfairLock`, actors |
+| GCD | libdispatch C API: `dispatch_queue_create`, `dispatch_async`, `dispatch_source_create`, `dispatch_semaphore_t` | `DispatchQueue`, `DispatchSource`, `DispatchSemaphore` |
+| XPC | `xpc_connection_create_mach_service`, `xpc_dictionary_*` | `NSXPCConnection` |
+| Clocks | `clock_gettime`, `mach_absolute_time`, `mach_continuous_time`, `std::chrono::steady_clock` | `ContinuousClock`, `SuspendingClock`, `DispatchTime` |
+| Change notifications | `notify_post`, `notify_register_dispatch` | `NotificationCenter` |
+| Background scheduling | `xpc_activity_register` | `BGTaskScheduler`, `NSBackgroundActivityScheduler` |
+| Processes and pipes | `posix_spawn`, `fork`/`exec`, `pipe` | `Process`, `Pipe` |
+| Files and memory | `open`/`write`/`fsync`/`rename`, `mmap`/`munmap` | `Data.write(options: .atomic)`, `Data(contentsOf:options: .alwaysMapped)` |
+| Logging | `os_log`, `os_signpost` | `Logger` |
+
+Exceptions, so nothing I say contradicts the resume or the code:
+
+- **UI is Swift/SwiftUI.** Native Apple UI can't be written in C++.
+- **The experimentation service's Swift wrapper stays.** It's on the resume, and it's the developer-facing layer over the C ABI. Apple ships its own frameworks the same way.
+- **Role Radar isn't C++.** The checker is **Python** (~100 files) and the macOS app is **Swift**. Name the language the code is actually in, then explain the mechanism by the C API underneath it. For example, Python's `fcntl.flock` is `flock(2)`, and Foundation's `Process`/`Pipe` sit on `posix_spawn` and `pipe(2)`.
+
 ## Job Description
 
 **OS Software Engineer, Evaluation** · Cupertino, California · Software and Services · Posted Oct 12, 2026
@@ -57,16 +93,6 @@ PAY
 
 Base pay range: **$129,300 – $225,300**, plus RSUs, ESPP (discounted stock), medical/dental, retirement, tuition reimbursement, and possibly a discretionary bonus and relocation.
 
-**Logistics and To-Do (from the recruiter email)**
-
-- [x] Reply with **8 timeslots across multiple dates**, 8am–6pm **Pacific** (convert from Eastern: 11am–9pm ET). Sent Oct 13.
-- [x] Confirm the Oct 20 slot with the coordinator (Mari). Done Oct 14.
-- [ ] Install and test **Webex** (audio + video), and get familiar with **CoderPad** (run a practice problem in it in C++ and Swift).
-- [x] Make sure the **Apple ID** is up to date.
-- [x] Read and approve the **Privacy Consent** (panel can't be scheduled without it).
-- [x] Confirm the application was submitted directly on jobs.apple.com. Submitted Oct 12.
-- **No AI tools during the interview** unless the interviewer says otherwise.
-
 ## Interview Process
 
 ### Step 1: Hiring Manager & System Design Screen (Webex, 50 min)
@@ -98,7 +124,7 @@ So: start at the architecture, then go down to component interfaces, and be read
 
 1. **Principle first, platform second.** Explain the portable OS concept, then how macOS/Linux implement it. "Focus on the OS you're most familiar with" means macOS + Linux for me.
 2. **Name the resource cost of every choice:** CPU, memory, persistent storage. Also power and network, since this is on-device.
-3. **APIs are the developer's UX:** easy to understand, hard to misuse, cheap to call.
+3. **APIs are the developer's UX:** Make them easy to understand, hard to misuse, cheap to call.
 4. **Scale across devices:** Watch → iPhone → Mac → Apple TV/HomePod → Vision Pro. Say what changes per tier.
 5. **Follow-ups are collaborative, not attacks.** Answer, then check: "does that address what you were getting at?"
 6. **They grade approach, communication, and depth, not a perfect answer.** State assumptions, trade-offs, and what I'd measure.
@@ -113,7 +139,7 @@ So: start at the architecture, then go down to component interfaces, and be read
 - **Experimentation vs Evaluation:** *experimentation* is enabling controlled variants (A/B tests, feature configurations, algorithms, ML models). *Evaluation* is measuring whether a variant improves the target outcome **without regressing** latency, crashes, CPU, memory, storage, battery, or reliability (the [guardrail metrics](#experimentation-vocabulary)).
 - **Who the users are:** mostly other Apple engineers, so API ergonomics, safety, low runtime overhead, and being hard to misuse matter as much as the daemon's internals.
 - **Why AI is in the pitch:** AI features (models, prompts, thresholds) need to be shipped as variants, measured, and rolled back safely. That makes an experimentation platform the delivery and measurement pipeline for AI features.
-- **Sibling postings:** the same team has senior roles open ("AIML - Sr OS Software Engineer, Evaluation", "Sr Lead Engineer, Evaluation", "Sr Data Engineer, Measurement"), so the team is actively growing. One senior posting describes a service that can **roll out / roll back experiments to billions of devices in a few hours**. That number sets the bar for rollback speed in a design answer.
+- **Sibling postings:** the same team has senior roles open ("AIML - Sr OS Software Engineer, Evaluation", "Sr Lead Engineer, Evaluation", "Sr Data Engineer, Measurement"), so the team is actively growing. One of those senior postings says the team's experimentation service can **turn an experiment on or off across billions of devices within a few hours**. That's the team's own number, so use it as the target if asked to design an experiment rollout system. A bad experiment must be switchable off everywhere in hours. That rules out shipping changes through an OS or app update. Devices have to pull experiment config from a server, so flipping a flag server-side reaches the whole fleet on the next fetch.
 - **Where this team sits:** the wider Evaluation org also covers backend/measurement and AI evaluation. The OS group is one layer of a larger platform, so in a design answer the server and analysis sides are other teams' systems with interfaces to mine.
 
 ### The Hiring Manager: Rajan Ranga
@@ -122,40 +148,15 @@ So: start at the architecture, then go down to component interfaces, and be read
 - **Background:** mobile/embedded OS platforms and low-level systems.
 - **Hiring sequence:**
   1. Apple posted a **Sr OS Engineering Manager, Evaluation** role to lead the on-device daemon/framework effort. He appears to be the person hired into it (March 2026).
-  2. He posted the **Sr OS Software Engineer, Evaluation** role (200658427-0836) on May 28, 2026. It still looked open on Oct 15, so the two roles are probably being filled in parallel.
-  3. He posted this **OS Software Engineer** role on Oct 12.
+  2. Apple posted the **Sr OS Software Engineer, Evaluation** role (200658427-0836) on May 28, 2026. It still looked open on Oct 15, so the two roles are probably being filled in parallel.
+  3. Apple posted this **OS Software Engineer** role on Oct 12.
 
-  He's building out the on-device team from scratch, and this may be one of his first hires.
 - What that likely means for the screen:
   - His background is low-level OS work, so expect follow-ups to go deep (memory, IPC, scheduling, resource limits on small devices) rather than stay at the boxes-and-arrows level.
   - He's still setting the team's direction, so he'll want someone who ramps up fast and can own pieces of the daemon and framework without much hand-holding.
   - The senior role probably owns the overall architecture, and this role builds features and APIs alongside it. Pitch myself as someone who takes a well-scoped piece end to end and learns quickly from a senior engineer.
   - A new manager is also judging fit for the team he's building, so Part 1 (best work, capabilities picked up) carries real weight.
 - Don't lead with any of this. Let it come out through questions (see [Followup Questions](#followup-questions), Q7 and Q8).
-
-### triald: Apple's Experimentation Daemon, as Seen on My Mac
-
-On macOS 26.4 there is a shipping daemon that matches the posting's "on-device daemon and framework" description:
-
-- Binaries: `/usr/libexec/triald` (per-user **LaunchAgent**) and `/usr/libexec/triald_system` (system-wide **LaunchDaemon**).
-- Frameworks (private): `Trial.framework` (client side), `TrialServer.framework` (daemon logic), `TrialProto.framework` (serialization, probably protobuf).
-- Public reporting (Eclectic Light, 2022) describes Trial as running "experiments" and delivering **ML models/assets** for Siri, Photos analysis, Visual Look Up, and Live Text without an OS update. Its data lives in `~/Library/Trial` and can take substantial disk space.
-
-Reading its launchd plists (`plutil -p /System/Library/LaunchAgents/com.apple.triald.plist`) shows the design principles this team cares about:
-
-| What the plist says | What it means | Design lesson |
-|---|---|---|
-| `MachServices` (`com.apple.trial.status`, `...namespace-management`, `...cache-delete`, `com.apple.aps.triald`) | Launched **on demand** when a client connects over XPC; not running otherwise | Zero idle cost. `aps` is likely Apple Push (wake on new experiment); `cache-delete` is likely the OS asking it to purge assets when disk is low |
-| `EnableTransactions` + `EnablePressuredExit` | launchd may kill it when it has no open XPC transactions, and **under memory pressure** while idle | Daemon must be killable at any moment, so state lives on disk, not in memory |
-| `ProcessType = Adaptive` | Runs as Background, gets boosted to Interactive when a client is waiting on it over XPC | Priority follows the caller (priority donation), no hard-coded priority |
-| `xpc.activity` `fetch-experiments`: `Interval 86400`, `RequireInexpensiveNetworkConnectivity`, `AllowBattery false`, `Priority Maintenance`, `RandomInitialDelay 3600` | Fetch once a day, only on Wi-Fi, only on power, at low priority, with up to 1 h of random jitter | **Jitter prevents a thundering herd across 2.5B devices**; the system scheduler (DAS) picks the cheapest moment |
-| `...cellular`: `Interval 259200` | Cellular fetch only every 3 days | Tiered network policy |
-| `setup-assistant-fetch`: `NetworkDownloadSize 2 GB`, `DataBudgeting` | Big asset download during device setup, within a data budget | Large ML assets are budgeted, not free |
-| `post-upgrade` activities (`PostInstall`) | Re-runs after an OS update | Re-evaluate everything when the OS version changes |
-| `RequiresClassC` on every activity | My reading: only runs after first unlock, when Class C (default) data-protection files are readable | A daemon can start before the user unlocks, so it must cope with unreadable files |
-| `LaunchEvents` → `notifyd` matching: `language.changed`, `countryCodeChanged`, Apple account added/deleted, keyboard/Siri prefs, MDM profile changes, `crashreporter.auto_submit_preference_changed`, `com.apple.triald.new-experiment` | Woken whenever a **targeting input** changes, including the **analytics-sharing consent toggle** | Re-evaluate eligibility when inputs change, and honor consent immediately |
-
-**How to use this in the interview:** say "I was curious how Apple's own daemon is set up, so I read triald's launchd plist on my Mac." It shows curiosity. Don't claim to know its internals or that this team owns it; ask instead (see [Followup Questions](#followup-questions)).
 
 ### Summary
 
@@ -189,12 +190,12 @@ Apple's Experimentation team runs the system that lets any Apple feature ship va
 | Service manager | **launchd**: LaunchDaemons (system) vs LaunchAgents (per-user) | **systemd**: system vs `--user` units | Starts, restarts, and on-demand-launches services |
 | On-demand launch | `MachServices`, `Sockets` (+ `launch_activate_socket`), `LaunchEvents` | `.socket` units (+ `sd_listen_fds`), `.path`, `.timer` | Service runs only when someone needs it, so idle cost is zero |
 | Idle exit | `EnableTransactions`, `EnablePressuredExit`, `xpc_transaction_begin/end` | Exit-on-idle + socket activation | The OS may kill an idle daemon to reclaim memory |
-| IPC | **XPC** (`xpc_connection`, `NSXPCConnection`), Mach ports, UDS, pipes, shared memory | D-Bus, UDS, pipes, shared memory | XPC adds launchd lifecycle, typed messages, and **peer entitlement checks via audit token** |
+| IPC | **XPC** (`xpc_connection_*`), Mach ports, UDS, pipes, shared memory | D-Bus, UDS, pipes, shared memory | XPC adds launchd lifecycle, typed messages, and **peer entitlement checks via audit token** |
 | Broadcast signal | Darwin notifications (`notify_post`, `notify_register_dispatch`), no payload | D-Bus signals, `inotify` on a file | Cheap "something changed, go re-read" |
 | Event loop | **GCD** queues + dispatch sources, CFRunLoop, **kqueue** | **epoll**, `timerfd`, `signalfd`, `eventfd` | kqueue watches fds, timers, signals, processes, and file changes in one API; epoll needs an fd for each |
 | Priorities | **QoS classes**: user-interactive, user-initiated, default, utility, background | nice, cgroups cpu weight, `SCHED_*` | Scheduler + I/O + timer coalescing all follow QoS |
-| Priority inversion | `os_unfair_lock`, `pthread_mutex`, and XPC replies **donate priority**; `DispatchSemaphore` **does not** | PI mutexes (`PTHREAD_PRIO_INHERIT`) | A semaphore doesn't know who will signal it, so a high-QoS waiter can be starved by a low-QoS worker |
-| Deferred background work | **DAS** (`dasd`) via `xpc_activity`, `BGTaskScheduler`, `NSBackgroundActivityScheduler` | systemd timers, cron | The OS chooses *when* to run, based on power, network, thermal state, and usage |
+| Priority inversion | `os_unfair_lock`, `pthread_mutex`, and XPC replies **donate priority**; `dispatch_semaphore_t` **does not** | PI mutexes (`PTHREAD_PRIO_INHERIT`) | A semaphore doesn't know who will signal it, so a high-QoS waiter can be starved by a low-QoS worker |
+| Deferred background work | **DAS** (`dasd`) via `xpc_activity_register` | systemd timers, cron | The OS chooses *when* to run, based on power, network, thermal state, and usage |
 | Memory limits | **jetsam** (iOS has no swap; kills by priority band at a per-process limit), memory compression | **OOM killer**, cgroup `memory.max`, swap | On iOS, exceeding the limit means being killed, so design for a fixed budget |
 | Memory accounting | **footprint** = dirty + compressed. **Clean** (file-backed, unmodified) pages don't count; the OS can drop and reload them | RSS, PSS, cgroup memory includes page cache | mmap'd read-only data is clean memory and shared across processes, so it's cheap |
 | File protection | Data Protection classes A/B/**C (default: available after first unlock)**/D | (none built in) | A daemon running before first unlock can't read Class C files |
@@ -211,7 +212,7 @@ Apple's Experimentation team runs the system that lets any Apple feature ship va
 | On-device daemon + framework | **On-Device Experimentation Service**: C++ daemon + C library + Swift wrapper |
 | launchd / systemd | Socket-activated on both; Role Radar's launchd agent with restart and SIGTERM drain |
 | kqueue / epoll / GCD | Single non-blocking kqueue/epoll loop; Role Radar reads pipes on GCD queues |
-| Concurrency, mutexes, semaphores | Mutex-guarded ring buffer + writer thread; global and per-source semaphores; atomic-counter thread pool; GA assignments on mutexes, semaphores, and lock-free CAS |
+| Concurrency, mutexes, semaphores | Mutex-guarded ring buffer + writer thread; global and per-source semaphores (asyncio, in Role Radar's Python checker); atomic-counter thread pool; GA assignments on mutexes, semaphores, and lock-free CAS |
 | IPC | Unix domain sockets, mmap'd shared snapshot, pipes (JSON CLI), GA assignments on sockets and pipes |
 | Memory management | Page-cache OOM fix with `posix_fadvise`; mmap snapshot; under 2 MB RSS; GA page-table and page-fault assignments |
 | Memory, power, performance obsession | 90 ns vs 30 µs lookups; 12× fewer wakeups via a coalesced timer |
@@ -410,7 +411,7 @@ For each item: explain it as a **flow** first (start → middle → end), then e
 **The flow:** client process calls `variant(for:)` → C library checks the mmap'd snapshot (fast path, ~90 ns) → if the snapshot is missing, falls back to the socket path: launchd/systemd starts the daemon on the first connection → daemon's kqueue/epoll loop accepts on the Unix domain socket → computes the arm from `hash(salt, experiment, device_id)` → replies. Config pushes rewrite the snapshot via temp file + `rename`. Exposures go into a mutex-guarded ring buffer that a writer thread flushes on a coalesced 60 s timer.
 
 - **Why socket activation?** The daemon costs nothing until the first client connects. launchd/systemd own the listening socket, so connections made while the daemon restarts queue up instead of failing. APIs: `launch_activate_socket()` (macOS), `sd_listen_fds()` (Linux).
-- **Why Unix domain sockets and not XPC?** Portability across macOS and Linux. On Apple-only, **I'd use XPC**: launchd lifecycle built in, typed messages, automatic priority donation, and **peer entitlement checks through the audit token** (UDS only gives uid/gid via `getpeereid` / `SO_PEERCRED`).
+- **Why Unix domain sockets and not XPC?** Portability across macOS and Linux. On Apple-only, **I'd use XPC**: launchd lifecycle built in, typed messages, automatic priority donation, and **peer entitlement checks through the audit token**. A UDS on macOS can get the audit token too (`LOCAL_PEERTOKEN`), but then I write the entitlement check myself; on Linux, `SO_PEERCRED` gives only pid/uid/gid.
 - **Why one event-loop thread?** Each request is a tiny CPU-bound lookup, so one thread avoids locks and keeps the footprint small. Anything blocking (disk flush) moves to another thread, which is exactly what the ring-buffer bullet is about.
 - **kqueue vs epoll:** kqueue registers changes and waits in one syscall, and watches timers, signals, processes, and file changes natively (`EVFILT_TIMER`, `EVFILT_SIGNAL`, `EVFILT_VNODE`). epoll only watches fds, so timers and signals need `timerfd` / `signalfd`. Know whether I used level- or edge-triggered (`EPOLLET` / `EV_CLEAR`) and why.
 - **Salted hash:** the salt keeps arms independent across experiments. **⚠ Trap:** which hash did I use? If `std::hash`, admit it isn't stable across standard libraries and say I'd switch to a specified hash (Murmur/xxHash/SHA-256). **Where does the device ID come from** (`/etc/machine-id`, IOPlatformUUID, a generated UUID on disk)? At Apple, a hardware ID would be a privacy problem; a random per-install ID is better.
@@ -420,20 +421,26 @@ For each item: explain it as a **flow** first (start → middle → end), then e
 - **⚠ Trap: exposures with a lock-free fast path.** If lookups never touch the daemon, how do exposures reach it? Know the answer (async fire-and-forget message? batched per process?).
 - **90 ns vs 30 µs:** how measured (benchmark loop, warm cache, median vs p99)? The 30 µs is two syscalls + two context switches + waking the daemon. First lookup after mapping is slower (page fault).
 - **Ring buffer + writer thread:** why a mutex and not a lock-free SPSC queue? Simpler, provably correct, uncontended in practice, tiny critical section. What happens when the buffer is full? Drop oldest or newest, and **count drops**. What if the device dies before the flush? Up to 60 s lost. That's fine if loss is random across arms, and harmful if one arm crashes more (SRM).
-- **12× fewer wakeups / 2 MB RSS:** from what to what, and measured how (`powermetrics`, `top -stats idlew`, `/proc/<pid>/status` context switches)? Coalescing = timer leeway (`DispatchSource` leeway, timer slack on Linux), which lets the OS batch wakeups across processes.
+- **12× fewer wakeups / 2 MB RSS:** from what to what, and measured how (`powermetrics`, `top -stats idlew`, `/proc/<pid>/status` context switches)? Coalescing = timer leeway (the leeway argument of `dispatch_source_set_timer`, timer slack on Linux), which lets the OS batch wakeups across processes.
 - **ThreadSanitizer:** did it catch a real race? Have one specific example ready.
 - **Why a C library with a Swift wrapper?** A stable C ABI is callable from C, C++, ObjC, and Swift. The Swift layer adds types and ergonomics. Apple's own frameworks follow a similar pattern (C/ObjC core + Swift overlay).
 
 ### Role Radar
 
+**Languages:** the macOS app is Swift (`macos/RoleRadarMenu.swift`); the checker daemon is Python (`role_radar/`).
+
 **The flow:** SwiftUI app → installs and supervises the checker as a launchd agent → checker runs checks, bounded by semaphores → app reads checker state by running its JSON CLI over pipes on GCD queues → when the Mac sleeps, a Lambda takes over through a DynamoDB lease.
 
-- **launchd supervision:** `KeepAlive` restarts it; on stop, launchd sends SIGTERM, then SIGKILL after `ExitTimeOut` (I set 60 s). Handle SIGTERM with a dispatch source / kqueue `EVFILT_SIGNAL`, not work inside a signal handler (only async-signal-safe calls are allowed there).
+- **launchd supervision:** `KeepAlive` restarts it; on stop, launchd sends SIGTERM, then SIGKILL after `ExitTimeOut` (I set 60 s). The checker registers SIGINT/SIGTERM/SIGHUP with asyncio's `loop.add_signal_handler` (`cli.py`): first signal = finish in-flight work and release the lease, second = quit now. Underneath, that's the **self-pipe trick**: the real C signal handler only writes a byte to a socket (`signal.set_wakeup_fd`), and the event loop wakes and runs my callback as normal code. That's the portable answer to "only async-signal-safe calls are allowed in a signal handler." The C/C++ equivalents are kqueue `EVFILT_SIGNAL`, a libdispatch signal source, or `signalfd` on Linux.
 - **⚠ Trap: pipes.** If the app waits for the child to exit before reading stdout, and the output exceeds the pipe buffer (~64 KB), both block forever. Reading stdout and stderr concurrently on GCD queues avoids that. Be ready to say this is why.
 - **flock PID file:** the kernel releases the lock on *any* exit, including crashes, so there's no stale PID file to clean up. `flock` locks belong to the open file description; `fcntl` locks are per-process and drop when *any* fd to the file closes, which is a classic bug. Windows: `LockFileEx` on a byte.
-- **Semaphores:** global cap + per-source cap = overall concurrency limit + politeness per site. **⚠ Apple trap:** `DispatchSemaphore` doesn't donate priority, so it can cause priority inversion. Don't block Swift concurrency's cooperative threads with semaphores either.
+- **Semaphores:** global cap + per-source cap = overall concurrency limit + politeness per site. They are **`asyncio.Semaphore`s** (global in `http_client.py`, per-source gates in `monitor.py`). **⚠ Trap:** if asked "POSIX semaphores?", say no, and explain the difference. An OS semaphore (`sem_t`, `std::counting_semaphore`, `dispatch_semaphore_t`) **blocks a thread** in the kernel. An asyncio semaphore **suspends a coroutine** inside one event-loop thread, so the loop keeps running other checks and no kernel object is involved. Apple-specific point if it comes up: `dispatch_semaphore_t` doesn't donate priority, so a high-QoS waiter can be stuck behind a low-QoS signaler (priority inversion).
 - **DynamoDB lease + fencing token:** acquire with a conditional write (`expiresAt < now OR holder = me`), incrementing `epoch` each time it changes hands. Every save is conditioned on `epoch = myEpoch`, so a stale holder that wakes from sleep can't overwrite the new owner's data.
-- **⚠ Trap: the clock wording.** The resume says "macOS's monotonic clock stops during sleep." On macOS, **`CLOCK_MONOTONIC` keeps counting during sleep** (verified in `man clock_gettime`, macOS 26.4). What stops is `mach_absolute_time()` / `CLOCK_UPTIME_RAW`, which `DispatchTime` and Swift's `SuspendingClock` use. `mach_continuous_time()` and `ContinuousClock` keep counting. Say it precisely: *"the uptime clock that DispatchTime uses stops during sleep."* The stronger point: a lease checked by **two machines** has to use wall-clock time anyway, because monotonic clocks are per-machine and per-boot. Clock skew between machines is exactly what the fencing token protects against. Consider fixing the resume line.
+- **⚠ Trap: the clock wording.** The resume says "macOS's monotonic clock stops during sleep." **That's accurate for my code**, but be precise about *which* clock. The checker is Python, and Python's `time.monotonic()` on macOS **is `mach_absolute_time()`** (verified 2026-10-15: `time.get_clock_info('monotonic')` on Python 3.12.7 reports `implementation='mach_absolute_time()'`), which stops while the Mac sleeps. The lease itself uses `time.time()` (wall clock). The C-level picture, for follow-ups (`man clock_gettime`, macOS 26.4):
+  - **Stop during sleep:** `mach_absolute_time()`, `CLOCK_UPTIME_RAW`.
+  - **Keep counting:** `CLOCK_MONOTONIC`, `CLOCK_MONOTONIC_RAW`, `mach_continuous_time()`.
+
+  Say: *"The monotonic clock my checker used, Python's, is `mach_absolute_time` on macOS, and that stops during sleep. C's `CLOCK_MONOTONIC` doesn't."* The stronger point: a lease checked by **two machines** has to use wall-clock time anyway, because monotonic clocks are per-machine and per-boot. Clock skew between machines is exactly what the fencing token protects against.
 - **8 min failover:** where does it come from (lease TTL + Lambda schedule interval)? Know the breakdown.
 
 ### Rendering Pipelines from Scratch
@@ -510,7 +517,7 @@ Q10. Tell me about a disagreement with a teammate or manager.
 A10. [Fill in.] Show: disagreed with data, listened, committed once decided.
 
 Q11. Tell me about a mistake or failure.
-A11. [Fill in.] Candidate: the imprecise clock wording itself, if it comes up ("I've since dug into exactly which macOS clocks stop during sleep").
+A11. [Fill in.] (The clock wording is no longer a candidate: it turned out to be accurate for Python's `time.monotonic()` on macOS. See Role Radar.)
 
 Q12. Are you interviewing with other companies?
 A12. I am actively exploring opportunities in systems and AI/ML engineering. I am in the early to mid stages of the interview process with a few companies, but I don't have any offer deadlines right now. I would prefer not to name any names while the process is still ongoing.

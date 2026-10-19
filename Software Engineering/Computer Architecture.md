@@ -543,9 +543,9 @@ The OS works through these options from cheapest to most drastic:
 1. **Clean pages are dropped.** A clean page is identical to a copy on disk: executable code, read-only `mmap`'d files, file data read in and not modified. The OS frees the frame and clears the page-table entry. If the page is touched again, a page fault re-reads it from the disk.
 2. **Dirty pages are compressed.** A dirty page has no up-to-date copy anywhere else. Either it was modified after loading, or it never had a backing file at all (heap and stack, called **anonymous** memory). Dropping it would lose data, so it has to be saved first. A dirty page backed by a file (e.g. a writable `mmap`) can be written back to that file and then dropped. Anonymous pages have nowhere to go, so the OS **compresses** them: several pages are packed into fewer frames, still in RAM. Getting one back costs a decompression, which is much faster than a disk read. macOS and iOS do this by default; Linux offers it through zswap and zram.
 3. **Dirty pages are swapped.** If compression isn't enough, pages are written to a **swap** area on disk and their frames are freed. Touching one again triggers a page fault that reads it back from disk, the slowest path. On macOS, it's the already-compressed pages that get written out.
-4. **Processes are killed.** When nothing else can be freed, the OS terminates a process to get its memory back. How often that happens depends on the platform:
+4. **Processes are killed.** When nothing else can be freed, the OS terminates a process to get its memory back. On Apple platforms this is **jetsam**, the kernel's memory-pressure killer: a subsystem in XNU (not a daemon) that kills the process in the lowest priority band, set by launchd and runningboardd, until enough memory is free. How often that happens depends on the platform:
    - Linux: the **OOM killer** picks the process with the highest OOM score and kills it.
-   - iOS: **jetsam** does the killing. iPhones don't swap at all (M-series iPads are the exception), so exceeding the memory limit means being killed.
+   - iOS: jetsam kills often. iPhones don't swap at all (M-series iPads are the exception), so exceeding the memory limit means being killed.
    - macOS: ordinary apps have no fixed limit. Memory pressure pushes pages to compression and then swap, so the cost is slowdown, not termination. A process is killed only if it opted in to being reclaimed when idle (`EnablePressuredExit`, Sudden Termination), has an explicit jetsam limit (some Apple daemons), or swap itself runs out.
 
 The hardware tracks what the OS needs here. Each page-table entry has a **dirty bit**, set by the MMU on the first write to the page, and an **accessed bit**, set on any use. The OS reads the dirty bit to decide whether a page can be dropped or must be saved, and the accessed bit to find cold pages to evict first.
@@ -619,7 +619,10 @@ The kernel is responsible for managing the most important system resources:
 
 Modern operating systems separate normal application code from privileged kernel code using two CPU modes:
 
-- **User mode**: where regular applications run. Code can only compute on its own process's memory. It cannot touch hardware, other processes' memory, or protected system resources.
+- **User mode**: where regular applications run. Code can only access pages in its own process's virtual address space that the page tables mark as user-accessible. It cannot touch hardware, other processes' memory, or protected system resources.
+
+        Other processes' memory is unreachable because the kernel never maps their physical frames into this process's page tables, except for deliberate shared memory.
+
 - **Kernel mode**: where the OS kernel runs, with full access to the hardware and all memory.
 
 The **CPU itself enforces** this separation, not just convention. If user-mode code tries a privileged instruction or accesses memory outside its address space, the CPU raises a fault and the kernel takes over, typically killing the process (for example with a segmentation fault). Together with virtual memory, this is what stops one program from crashing or spying on another.
