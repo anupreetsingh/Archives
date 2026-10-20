@@ -17,7 +17,7 @@ POSIX builds on ISO C (the C language standard and its library, e.g. `printf`, `
 `libc` is the library that implements these standards, usually by making system calls into the kernel. "libc" names the role; each OS ships its own:
 
 - `glibc`, the GNU C Library, default on most Linux.
-- `libSystem`, Apple's, default on macOS / iOS. It calls into XNU kernel for kernel mode commands. Besides libc, it bundles libraries that every Mac program gets: `kqueue()` (BSD event notification), libdispatch (GCD, like `dispatch_async()`) and libxpc (XPC).
+- `libSystem`, Apple's, default on macOS / iOS. It calls into XNU kernel for kernel mode commands. Besides libc, it bundles libraries that every Mac program gets: `kqueue()` (BSD event notification), libdispatch  and libxpc (XPC).
 
 All provide the same standard interfaces, so `printf` and `read` behave the same on each. They differ in:
 

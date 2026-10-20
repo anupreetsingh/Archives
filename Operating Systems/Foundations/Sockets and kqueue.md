@@ -420,6 +420,20 @@ The daemon doesn't have to create its own listening socket. The `Sockets` key in
 4. The daemon adds `fds[0]` to its own `kqueue` and `accept()`s the waiting client, the same loop as in the kqueue section. launchd stops watching its fd while the daemon runs, so every later connection wakes the daemon's `kevent()`, not launchd's. launchd never calls `accept()`.
 5. When the last client disconnects, the daemon keeps running, blocked in `kevent()` on `fds[0]`. That uses 0 CPU but still holds memory. It exits on its own idle timeout, or, if its plist sets `EnablePressuredExit`, jetsam (the kernel's memory-pressure killer) can kill it while it has no work in progress. Its fds close, launchd's fd keeps the socket alive, and launchd watches it again until the next client connects.
 
+How launchd knows the daemon is gone, so it can watch `listen_fd` again: it watches the daemon's pid in the same `kqueue`.
+
+1. When launchd starts the daemon, it removes `listen_fd` from its kqueue with `EV_DELETE`. It has to: the waiting client keeps `listen_fd` readable until the daemon `accept()`s it, so launchd's `kevent()` would keep returning and start the daemon again and again.
+2. It adds the daemon's pid with `EVFILT_PROC` and `NOTE_EXIT`. Here `ident` is a pid, not an fd:
+
+   ```c
+   EV_SET(&ev, pid, EVFILT_PROC, EV_ADD, NOTE_EXIT, 0, NULL);   // tell me when pid exits
+   ```
+
+3. The daemon exits or crashes, and launchd's `kevent()` returns that event. launchd calls `waitpid()` to reap the daemon.
+4. launchd adds `listen_fd` back with `EVFILT_READ`. If clients are already waiting in the backlog, it's readable right away and launchd starts the daemon again.
+
+The old open-source launchd called these two steps `socketgroup_ignore()` and `socketgroup_watch()`. Apple stopped publishing launchd's source around macOS 10.10, so today's launchd works this way in concept, not necessarily line for line.
+
 The daemon costs nothing until someone connects. A crash works like step 5: new clients wait in the queue instead of getting `ECONNREFUSED`, and launchd starts the daemon again.
 
 ssh-agent on your Mac works this way. `/System/Library/LaunchAgents/com.openssh.ssh-agent.plist` has a `Sockets` → `Listeners` entry, and `echo $SSH_AUTH_SOCK` prints the path launchd made, like `/var/run/com.apple.launchd.eSvxQXvniH/Listeners`. ssh-agent doesn't start until `ssh` first connects to it.

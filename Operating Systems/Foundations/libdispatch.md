@@ -44,7 +44,11 @@ dispatch_async(q, ^{
 
 ### Event sources: libdispatch replaces your kevent() loop
 
-A source (`dispatch_source_t`) is a libdispatch object that watches one thing for one kind of event, like "`conn_fd` has data to read". Like queues, it lives in the process's memory. A source holds four things:
+A source (`dispatch_source_t`) is a libdispatch object that watches one thing for one kind of event, like "`conn_fd` has data to read". Like queues, it lives in the process's memory.
+
+To watch several things you make several sources: 10 sockets means calling `dispatch_source_create()` 10 times, unlike one `kevent()` call that registers many handles at once.
+
+A source holds four things:
 
 1. What it watches (the handle): an fd like `conn_fd`, a mach-port name like `0x2207`, a pid, or a signal number. It ends up in the kevent's `ident` field.
 2. Which event: the type and mask, like `DISPATCH_SOURCE_TYPE_READ` or `DISPATCH_PROC_EXIT`. These become the kevent's `filter` and `fflags`.
